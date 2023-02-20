@@ -1,12 +1,17 @@
 require('./bootstrap');
+// require('moment-timezone/builds/moment-timezone.min');
+
+const moment = require('moment');
+
 require('bootstrap4-toggle/js/bootstrap4-toggle.min');
 require('jquery-datetimepicker/build/jquery.datetimepicker.full')
+require('bootstrap-daterangepicker/daterangepicker')
 require('bootstrap-4-autocomplete/dist/bootstrap-4-autocomplete')
 require('chart.js/dist/chart.min')
 require('../../bower_components/bootstrap-duallistbox/dist/jquery.bootstrap-duallistbox.min.js')
 require('select2/dist/js/select2.min')
 require('bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min')
-require('trix/dist/trix')
+import Trix from "trix"
 
 import bsCustomFileInput from 'bs-custom-file-input'
 
@@ -14,6 +19,68 @@ const Swal = require('sweetalert2')
 
 // Little bit of Jquery
 const appJquery = function() {
+
+    var createDateRangePickers = function() {
+        // Check if jQuery included
+        if (typeof jQuery == 'undefined') {
+            return;
+        }
+
+        // Check if daterangepicker included
+        if (typeof $.fn.daterangepicker === 'undefined') {
+            return;
+        }
+
+        var elements = [].slice.call(document.querySelectorAll('[data-kt-daterangepicker="true"]'));
+        var start = moment().subtract(29, 'days');
+        var end = moment();
+        
+        elements.map(function (element) {
+            if (element.getAttribute("data-kt-initialized") === "1") {
+                return;
+            }
+
+            var display = element.querySelector('div');
+            var attrOpens  = element.hasAttribute('data-kt-daterangepicker-opens') ? element.getAttribute('data-kt-daterangepicker-opens') : 'left';
+            var range = element.getAttribute('data-kt-daterangepicker-range');
+
+            var cb = function(start, end) {
+                var current = moment();
+
+                if (display) {
+                    if ( current.isSame(start, "day") && current.isSame(end, "day") ) {
+                        display.innerHTML = start.format('D MMM YYYY');
+                    } else {
+                        display.innerHTML = start.format('D MMM YYYY') + ' - ' + end.format('D MMM YYYY');
+                    }                    
+                }
+            }
+
+            if ( range === "today" ) {
+                start = moment();
+                end = moment();
+            }
+
+            $(element).daterangepicker({
+                startDate: start,
+                endDate: end,
+                opens: attrOpens,
+                ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                }
+            }, cb);
+
+            cb(start, end);
+
+            element.setAttribute("data-kt-initialized", "1");
+        });
+    }
+
     return {
         init: function () {
 
@@ -24,6 +91,8 @@ const appJquery = function() {
             });
 
             bsCustomFileInput.init()
+
+            createDateRangePickers();
 
             $('[data-toggle="tooltip"]').tooltip()
 
