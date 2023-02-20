@@ -4,8 +4,10 @@ namespace VentureDrake\LaravelCrm\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use VentureDrake\LaravelCrm\Exports\OrganisationsExport;
 use VentureDrake\LaravelCrm\Http\Requests\StoreOrganisationRequest;
 use VentureDrake\LaravelCrm\Http\Requests\UpdateOrganisationRequest;
+use VentureDrake\LaravelCrm\Http\Requests\UploadOrganisationRequest;
 use VentureDrake\LaravelCrm\Models\Organisation;
 use VentureDrake\LaravelCrm\Services\OrganisationService;
 
@@ -193,5 +195,21 @@ class OrganisationController extends Controller
             'address_code' => $address->code ?? null,
             'address_country' => $address->country ?? null,
         ]);
+    }
+
+    public function upload(UploadOrganisationRequest $request)
+    {
+        $organisation = $this->organisationService->create($request);
+
+        $organisation->labels()->sync($request->labels ?? []);
+        
+        flash(ucfirst(trans('laravel-crm::lang.organization_stored')))->success()->important();
+
+        return redirect(route('laravel-crm.organisations.index'));
+    }
+
+    public function template()
+    {
+        return (new OrganisationsExport())->download('organisations_templates_' . date('Ymdhis') . '.xlsx');
     }
 }

@@ -711,6 +711,14 @@ Route::group(['prefix' => 'organisations', 'middleware' => 'auth.laravel-crm'], 
     Route::any('filter', 'VentureDrake\LaravelCrm\Http\Controllers\OrganisationController@index')
         ->name('laravel-crm.organisations.filter')
         ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Organisation']);
+    
+    Route::any('upload', 'VentureDrake\LaravelCrm\Http\Controllers\OrganisationController@upload')
+        ->name('laravel-crm.organisations.upload')
+        ->middleware(['can:create,VentureDrake\LaravelCrm\Models\Organisation']);
+
+    Route::get('template', 'VentureDrake\LaravelCrm\Http\Controllers\OrganisationController@template')
+        ->name('laravel-crm.organisations.template')
+        ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Organisation']);
 
     Route::any('search', 'VentureDrake\LaravelCrm\Http\Controllers\OrganisationController@search')
         ->name('laravel-crm.organisations.search')
