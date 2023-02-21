@@ -71,7 +71,7 @@ class LiveAddressEdit extends Component
         $i = $i + 1;
         $this->i = $i;
         array_push($this->inputs, $i);
-        $this->country[$i] = 'United States';
+        $this->country[$i] = 'Indonesia';
         $this->dispatchBrowserEvent('addAddressInputs');
     }
 
