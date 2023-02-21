@@ -24,7 +24,7 @@ class UploadOrganisationRequest extends FormRequest
     public function rules()
     {
         return [
-            'file' => 'required|file|mimes:xls,xlsx,csv',
+            'file' => 'required|mimes:xls,xlsx,csv',
         ];
     }
 }
