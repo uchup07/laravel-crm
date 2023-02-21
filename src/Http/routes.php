@@ -712,7 +712,7 @@ Route::group(['prefix' => 'organisations', 'middleware' => 'auth.laravel-crm'], 
         ->name('laravel-crm.organisations.filter')
         ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Organisation']);
     
-    Route::any('upload', 'VentureDrake\LaravelCrm\Http\Controllers\OrganisationController@upload')
+    Route::post('upload', 'VentureDrake\LaravelCrm\Http\Controllers\OrganisationController@upload')
         ->name('laravel-crm.organisations.upload')
         ->middleware(['can:create,VentureDrake\LaravelCrm\Models\Organisation']);
 
@@ -795,6 +795,9 @@ Route::group(['prefix' => 'users', 'middleware' => 'auth.laravel-crm'], function
     Route::delete('{user}', 'VentureDrake\LaravelCrm\Http\Controllers\UserController@destroy')
         ->name('laravel-crm.users.destroy')
         ->middleware(['can:delete,user']);
+
+    Route::get('registration/{token}', 'VentureDrake\LaravelCrm\Http\Controllers\UserController@registrationView')->name('laravel-crm.users.registration')->withoutMiddleware('auth.laravel-crm');
+    Route::post('registration', 'App\Http\Controllers\Auth\RegisteredUserController@store')->name('laravel-crm.users.accept')->withoutMiddleware('auth.laravel-crm');
 });
 
 /* Teams */
