@@ -39,7 +39,12 @@ function users($null = true)
             $users = auth()->user()->currentTeam->allUsers();
         }
     } else {
-        $users = User::all();
+        if(auth()->user()->hasRole('Admin') OR auth()->user()->hasRole('Owner')) {
+            $users = User::all();
+        } else {
+            $users = User::where('id', auth()->user()->id)->get();
+        }
+
     }
 
     foreach ($users as $item) {
