@@ -54,6 +54,12 @@ class LeadController extends Controller
     {
         Lead::resetSearchValue($request);
         $params = Lead::filters($request);
+
+        // check for user hasnt role admin or owner
+        if(!auth()->user()->hasRole('Admin') OR !auth()->user()->hasRole('Owner')) {
+            $userOwners = \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false);
+            $params['user_owner_id'] = array_keys($userOwners);
+        }
         
         if (Lead::filter($params)->whereNull('converted_at')->get()->count() < 30) {
             $leads = Lead::filter($params)->whereNull('converted_at')->latest()->get();
