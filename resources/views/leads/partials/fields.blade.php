@@ -26,7 +26,7 @@
                     'name' => 'currency',
                     'label' => ucfirst(__('laravel-crm::lang.currency')),
                     'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\currencies(),
-                    'value' => old('currency', $lead->currency ?? \VentureDrake\LaravelCrm\Models\Setting::currency()->value ?? 'USD')
+                    'value' => old('currency', $lead->currency ?? \VentureDrake\LaravelCrm\Models\Setting::currency()->value ?? 'IDR')
                 ])
             </div>
         </div>
@@ -166,7 +166,7 @@
                      'name' => 'country',
                      'label' => ucfirst(__('laravel-crm::lang.country')),
                      'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\countries(),
-                     'value' => old('country', $address->country ?? 'United States'),
+                     'value' => old('country', $address->country ?? 'Indonesia'),
                      'attributes' => [
                          'disabled' => 'disabled'
                      ]
