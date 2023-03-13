@@ -1,0 +1,102 @@
+<?php
+
+namespace VentureDrake\LaravelCrm\Services;
+
+use Ramsey\Uuid\Uuid;
+use VentureDrake\LaravelCrm\Models\Address;
+use VentureDrake\LaravelCrm\Models\Delivery;
+use VentureDrake\LaravelCrm\Repositories\DeliveryRepository;
+
+class DeliveryService
+{
+    /**
+     * @var DeliveryRepository
+     */
+    private $deliveryRepository;
+
+    /**
+     * LeadService constructor.
+     * @param DeliveryRepository $deliveryRepository
+     */
+    public function __construct(DeliveryRepository $deliveryRepository)
+    {
+        $this->deliveryRepository = $deliveryRepository;
+    }
+
+    public function create($request, $person = null, $organisation = null)
+    {
+        $delivery = Delivery::create([
+            'order_id' => $request->order_id,
+            'user_owner_id' => $request->user_owner_id ?? auth()->user()->id,
+        ]);
+
+        if (isset($request->products)) {
+            foreach ($request->products as $product) {
+                $delivery->deliveryProducts()->create([
+                    'order_product_id' => $product['order_product_id'],
+                ]);
+            }
+        }
+
+        $this->updateDeliveryAddresses($delivery, $request->addresses);
+
+        return $delivery;
+    }
+
+    public function update($request, Delivery $delivery, $person = null, $organisation = null)
+    {
+        $this->updateDeliveryAddresses($delivery, $request->addresses);
+
+        return $delivery;
+    }
+
+    protected function updateDeliveryAddresses($delivery, $addresses)
+    {
+        $addressIds = [];
+
+        if ($addresses) {
+            foreach ($addresses as $addressRequest) {
+                if ($addressRequest['id'] && $address = Address::find($addressRequest['id'])) {
+                    $address->update([
+                        'address_type_id' => 6,
+                        'address' => $addressRequest['address'] ?? null,
+                        'name' => $addressRequest['name'] ?? null,
+                        'line1' => $addressRequest['line1'],
+                        'line2' => $addressRequest['line2'],
+                        'line3' => $addressRequest['line3'],
+                        'city' => $addressRequest['city'],
+                        'state' => $addressRequest['state'],
+                        'code' => $addressRequest['code'],
+                        'country' => $addressRequest['country'],
+                        'primary' => ((isset($addressRequest['primary']) && $addressRequest['primary'] == 'on') ? 1 : 0),
+                    ]);
+
+                    $addressIds[] = $address->id;
+                } else {
+                    $address = $delivery->addresses()->create([
+                        'external_id' => Uuid::uuid4()->toString(),
+                        'address_type_id' => 6,
+                        'address' => $addressRequest['address'] ?? null,
+                        'name' => $addressRequest['name'] ?? null,
+                        'line1' => $addressRequest['line1'],
+                        'line2' => $addressRequest['line2'],
+                        'line3' => $addressRequest['line3'],
+                        'city' => $addressRequest['city'],
+                        'state' => $addressRequest['state'],
+                        'code' => $addressRequest['code'],
+                        'country' => $addressRequest['country'],
+                        'primary' => ((isset($addressRequest['primary']) && $addressRequest['primary'] == 'on') ? 1 : 0),
+                    ]);
+
+                    $addressIds[] = $address->id;
+                }
+            }
+        }
+
+        foreach ($delivery->addresses as $address) {
+            if (! in_array($address->id, $addressIds)) {
+                $address->delete();
+            }
+        }
+    }
+}

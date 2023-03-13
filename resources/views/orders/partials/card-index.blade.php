@@ -26,8 +26,7 @@
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.created')) }}</th>
                 <th scope="col">#</th>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.labels')) }}</th>
-                <th scope="col">{{ ucwords(__('laravel-crm::lang.organization')) }}</th>
-                <th scope="col">{{ ucwords(__('laravel-crm::lang.contact')) }}</th>
+                <th scope="col">{{ ucwords(__('laravel-crm::lang.customer')) }}</th>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.sub_total')) }}</th>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.discount')) }}</th>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.tax')) }}</th>
@@ -46,8 +45,10 @@
                             'labels' => $order->labels,
                             'limit' => 3
                         ])</td>
-                    <td>{{ $order->organisation->name ?? null }}</td>
-                    <td>{{ $order->person->name ?? null }}</td>
+                    <td>
+                        {{ $order->organisation->name ?? null }}<br />
+                        <small>{{ $order->person->name ?? null }}</small>
+                    </td>
                     <td>{{ money($order->subtotal, $order->currency) }}</td>
                     <td>{{ money($order->discount, $order->currency) }}</td>
                     <td>{{ money($order->tax, $order->currency) }}</td>
@@ -57,11 +58,19 @@
                     <td class="disable-link text-right">
                         @can('edit crm orders')
                             @if($order->invoices()->count() < 1)
-                            <a href="{{ route('laravel-crm.invoices.create',['model' => 'order', 'id' => $order->id]) }}" class="btn btn-success btn-sm">{{ ucwords(__('laravel-crm::lang.invoice')) }}</a>
+                                <a href="{{ route('laravel-crm.invoices.create',['model' => 'order', 'id' => $order->id]) }}" class="btn btn-success btn-sm">{{ ucwords(__('laravel-crm::lang.invoice')) }}</a>
+                            @else
+                                <a href="{{ route('laravel-crm.invoices.show',$order->invoices()->first()) }}" class="btn btn-outline-secondary btn-sm">{{ ucwords(__('laravel-crm::lang.invoiced')) }}</a>
+                            @endif
+                            @if($order->deliveries()->count() < 1) 
+                                <a href="{{ route('laravel-crm.orders.create-delivery',$order) }}" class="btn btn-success btn-sm">{{ ucwords(__('laravel-crm::lang.create_delivery')) }}</a>
+                            @else
+                                <a href="{{ route('laravel-crm.deliveries.show',$order->deliveries()->first()) }}" class="btn btn-outline-secondary btn-sm">{{ ucwords(__('laravel-crm::lang.delivered')) }}</a>
                             @endif
                         @endcan
                         @can('view crm orders')
-                        <a href="{{ route('laravel-crm.orders.show',$order) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-eye" aria-hidden="true"></span></a>
+                            <a class="btn btn-outline-secondary btn-sm" href="{{ route('laravel-crm.orders.download', $order) }}"><span class="fa fa-download" aria-hidden="true"></span></a>
+                            <a href="{{ route('laravel-crm.orders.show',$order) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-eye" aria-hidden="true"></span></a>
                         @endcan
                         @can('edit crm orders')
                         <a href="{{ route('laravel-crm.orders.edit',$order) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-edit" aria-hidden="true"></span></a>

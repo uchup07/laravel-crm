@@ -2,6 +2,8 @@
 
 namespace VentureDrake\LaravelCrm\Services;
 
+use Ramsey\Uuid\Uuid;
+use VentureDrake\LaravelCrm\Models\Address;
 use VentureDrake\LaravelCrm\Models\Order;
 use VentureDrake\LaravelCrm\Models\OrderProduct;
 use VentureDrake\LaravelCrm\Repositories\OrderRepository;
@@ -45,15 +47,20 @@ class OrderService
 
         if (isset($request->products)) {
             foreach ($request->products as $product) {
-                $order->orderProducts()->create([
-                    'product_id' => $product['product_id'],
-                    'quantity' => $product['quantity'],
-                    'price' => $product['unit_price'],
-                    'amount' => $product['amount'],
-                    'currency' => $request->currency,
-                ]);
+                if (isset($product['product_id']) && $product['quantity'] > 0) {
+                    $order->orderProducts()->create([
+                        'product_id' => $product['product_id'],
+                        'quantity' => $product['quantity'],
+                        'price' => $product['unit_price'],
+                        'amount' => $product['amount'],
+                        'currency' => $request->currency,
+                        'comments' => $product['comments'],
+                    ]);
+                }
             }
         }
+
+        $this->updateOrderAddresses($order, $request->addresses);
 
         return $order;
     }
@@ -77,27 +84,114 @@ class OrderService
         $order->labels()->sync($request->labels ?? []);
 
         if (isset($request->products)) {
+            $orderProductIds = [];
+            
             foreach ($request->products as $product) {
                 if (isset($product['order_product_id']) && $orderProduct = OrderProduct::find($product['order_product_id'])) {
-                    $orderProduct->update([
-                        'product_id' => $product['product_id'],
-                        'quantity' => $product['quantity'],
-                        'price' => $product['unit_price'],
-                        'amount' => $product['amount'],
-                        'currency' => $request->currency,
-                    ]);
+                    $orderProductIds[] = $product['order_product_id'];
+
+                    if (! isset($product['product_id']) || $product['quantity'] == 0) {
+                        $orderProduct->delete();
+                    } else {
+                        $orderProduct->update([
+                            'product_id' => $product['product_id'],
+                            'quantity' => $product['quantity'],
+                            'price' => $product['unit_price'],
+                            'amount' => $product['amount'],
+                            'currency' => $request->currency,
+                            'comments' => $product['comments'],
+                        ]);
+                    }
                 } else {
-                    $order->orderProducts()->create([
+                    $orderProduct = $order->orderProducts()->create([
                         'product_id' => $product['product_id'],
                         'quantity' => $product['quantity'],
                         'price' => $product['unit_price'],
                         'amount' => $product['amount'],
                         'currency' => $request->currency,
+                        'comments' => $product['comments'],
                     ]);
+
+                    $orderProductIds[] = $orderProduct->id;
+                }
+            }
+
+            foreach ($order->orderProducts as $orderProduct) {
+                if (! in_array($orderProduct->id, $orderProductIds)) {
+                    $orderProduct->delete();
                 }
             }
         }
 
+        $this->updateOrderAddresses($order, $request->addresses);
+
         return $order;
+    }
+
+    protected function updateOrderAddresses($order, $addresses)
+    {
+        $addressIds = [];
+
+        if ($addresses) {
+            $i = 0;
+            
+            foreach ($addresses as $addressRequest) {
+                if ($i == 0) {
+                    $addressRequest['type'] = 5;
+                } else {
+                    $addressRequest['type'] = 6;
+                }
+                if ($i == 0) {
+                    $addressRequest['type'] = 5;
+                } else {
+                    $addressRequest['type'] = 6;
+                }
+
+                $i++;
+
+                $i++;
+                
+                if ($addressRequest['id'] && $address = Address::find($addressRequest['id'])) {
+                    $address->update([
+                        'address_type_id' => $addressRequest['type'] ?? null,
+                        'address' => $addressRequest['address'] ?? null,
+                        'name' => $addressRequest['name'] ?? null,
+                        'line1' => $addressRequest['line1'],
+                        'line2' => $addressRequest['line2'],
+                        'line3' => $addressRequest['line3'],
+                        'city' => $addressRequest['city'],
+                        'state' => $addressRequest['state'],
+                        'code' => $addressRequest['code'],
+                        'country' => $addressRequest['country'],
+                        'primary' => ((isset($addressRequest['primary']) && $addressRequest['primary'] == 'on') ? 1 : 0),
+                    ]);
+
+                    $addressIds[] = $address->id;
+                } else {
+                    $address = $order->addresses()->create([
+                        'external_id' => Uuid::uuid4()->toString(),
+                        'address_type_id' => $addressRequest['type'] ?? null,
+                        'address' => $addressRequest['address'] ?? null,
+                        'name' => $addressRequest['name'] ?? null,
+                        'line1' => $addressRequest['line1'],
+                        'line2' => $addressRequest['line2'],
+                        'line3' => $addressRequest['line3'],
+                        'city' => $addressRequest['city'],
+                        'state' => $addressRequest['state'],
+                        'code' => $addressRequest['code'],
+                        'country' => $addressRequest['country'],
+                        'primary' => ((isset($addressRequest['primary']) && $addressRequest['primary'] == 'on') ? 1 : 0),
+                    ]);
+
+                    $addressIds[] = $address->id;
+                }
+            }
+        }
+
+        foreach ($order->addresses as $address) {
+            if (! in_array($address->id, $addressIds)) {
+                $address->delete();
+            }
+        }
     }
 }

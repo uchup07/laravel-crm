@@ -11,12 +11,22 @@
                 @include('laravel-crm::partials.return-button',[
                     'model' => $order,
                     'route' => 'orders'
-                ])  
+                ]) |
                 @can('edit crm orders')
-                    @if($order->invoices()->count() < 1) |
-                    <a href="{{ route('laravel-crm.invoices.create',['model' => 'order', 'id' => $order->id])}}" class="btn btn-success btn-sm">{{ ucwords(__('laravel-crm::lang.create_invoice')) }}</a>
+                    @if($order->invoices()->count() < 1) 
+                        <a href="{{ route('laravel-crm.invoices.create',['model' => 'order', 'id' => $order->id])}}" class="btn btn-success btn-sm">{{ ucwords(__('laravel-crm::lang.create_invoice')) }}</a>
+                    @else
+                        <a href="{{ route('laravel-crm.invoices.show',$order->invoices()->first()) }}" class="btn btn-outline-secondary btn-sm">{{ ucwords(__('laravel-crm::lang.invoiced')) }}</a>
+                    @endif
+                    @if($order->deliveries()->count() < 1)
+                        <a href="{{ route('laravel-crm.orders.create-delivery',$order) }}" class="btn btn-success btn-sm">{{ ucwords(__('laravel-crm::lang.create_delivery')) }}</a>
+                    @else
+                        <a href="{{ route('laravel-crm.deliveries.show',$order->deliveries()->first()) }}" class="btn btn-outline-secondary btn-sm">{{ ucwords(__('laravel-crm::lang.delivered')) }}</a>
                     @endif
                 @endcan
+                @can('view crm orders')
+                    <a class="btn btn-outline-secondary btn-sm" href="{{ route('laravel-crm.orders.download', $order) }}">{{ ucfirst(__('laravel-crm::lang.download')) }}</a>
+                @endcan    
                 @include('laravel-crm::partials.navs.activities') |
                 @can('edit crm orders')
                 <a href="{{ url(route('laravel-crm.orders.edit', $order)) }}" type="button" class="btn btn-outline-secondary btn-sm"><span class="fa fa-edit" aria-hidden="true"></span></a>
@@ -40,16 +50,22 @@
                 <h6 class="text-uppercase">{{ ucfirst(__('laravel-crm::lang.details')) }}</h6>
                 <hr />
                 <dl class="row">
-                    <dt class="col-sm-3 text-right">Reference</dt>
-                    <dd class="col-sm-9">{{ $order->reference }}</dd>
-                    <dt class="col-sm-3 text-right">Description</dt>
-                    <dd class="col-sm-9">{{ $order->description }}</dd>
-                    <dt class="col-sm-3 text-right">Labels</dt>
-                    <dd class="col-sm-9">@include('laravel-crm::partials.labels',[
+                    <dt class="col-sm-4 text-right">Reference</dt>
+                    <dd class="col-sm-8">{{ $order->reference }}</dd>
+                    <dt class="col-sm-4 text-right">Description</dt>
+                    <dd class="col-sm-8">{{ $order->description }}</dd>
+                    @foreach($addresses as $address)
+                        <dt class="col-sm-4 text-right">{{ ($address->addressType) ? ucfirst($address->addressType->name).' ' : null }}{{ ucfirst(__('laravel-crm::lang.address')) }}</dt>
+                        <dd class="col-sm-8">
+                            {{ \VentureDrake\LaravelCrm\Http\Helpers\AddressLine\addressSingleLine($address) }} {{ ($address->primary) ? '(Primary)' : null }}
+                        </dd>
+                    @endforeach
+                    <dt class="col-sm-4 text-right">Labels</dt>
+                    <dd class="col-sm-8">@include('laravel-crm::partials.labels',[
                             'labels' => $order->labels
                     ])</dd>
-                    <dt class="col-sm-3 text-right">Owner</dt>
-                    <dd class="col-sm-9">{{ $order->ownerUser->name ?? null }}</dd>
+                    <dt class="col-sm-4 text-right">Owner</dt>
+                    <dd class="col-sm-8">{{ $order->ownerUser->name ?? null }}</dd>
                 </dl>
 
                 <h6 class="mt-4 text-uppercase">{{ ucfirst(__('laravel-crm::lang.contact_person')) }}</h6>
@@ -84,6 +100,14 @@
                             <td>{{ $orderProduct->quantity }}</td>
                             <td>{{ money($orderProduct->amount ?? null, $orderProduct->currency) }}</td>
                         </tr>
+                        @if($orderProduct->comments)
+                            <tr>
+                                <td colspan="4" class="border-0 pt-0">
+                                    <strong>{{ ucfirst(__('laravel-crm::lang.comments')) }}</strong><br />
+                                    {{ $orderProduct->comments }}
+                                </td>
+                            </tr>
+                        @endif
                     @endforeach
                     </tbody>
                     <tfoot>

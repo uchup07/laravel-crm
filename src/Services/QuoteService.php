@@ -47,13 +47,16 @@ class QuoteService
 
         if (isset($request->products)) {
             foreach ($request->products as $product) {
-                $quote->quoteProducts()->create([
-                    'product_id' => $product['product_id'],
-                    'quantity' => $product['quantity'],
-                    'price' => $product['unit_price'],
-                    'amount' => $product['amount'],
-                    'currency' => $request->currency,
-                ]);
+                if (isset($product['product_id']) && $product['quantity'] > 0) {
+                    $quote->quoteProducts()->create([
+                        'product_id' => $product['product_id'],
+                        'quantity' => $product['quantity'],
+                        'price' => $product['unit_price'],
+                        'amount' => $product['amount'],
+                        'currency' => $request->currency,
+                        'comments' => $product['comments'],
+                    ]);
+                }
             }
         }
         
@@ -83,23 +86,41 @@ class QuoteService
         $quote->labels()->sync($request->labels ?? []);
         
         if (isset($request->products)) {
+            $quoteProductIds = [];
+            
             foreach ($request->products as $product) {
                 if (isset($product['quote_product_id']) && $quoteProduct = QuoteProduct::find($product['quote_product_id'])) {
-                    $quoteProduct->update([
+                    $quoteProductIds[] = $product['quote_product_id'];
+                    
+                    if (! isset($product['product_id']) || $product['quantity'] == 0) {
+                        $quoteProduct->delete();
+                    } else {
+                        $quoteProduct->update([
+                            'product_id' => $product['product_id'],
+                            'quantity' => $product['quantity'],
+                            'price' => $product['unit_price'],
+                            'amount' => $product['amount'],
+                            'currency' => $request->currency,
+                            'comments' => $product['comments'],
+                        ]);
+                    }
+                } elseif (isset($product['product_id']) && $product['quantity'] > 0) {
+                    $quoteProduct = $quote->quoteProducts()->create([
                         'product_id' => $product['product_id'],
                         'quantity' => $product['quantity'],
                         'price' => $product['unit_price'],
                         'amount' => $product['amount'],
                         'currency' => $request->currency,
+                        'comments' => $product['comments'],
                     ]);
-                } else {
-                    $quote->quoteProducts()->create([
-                        'product_id' => $product['product_id'],
-                        'quantity' => $product['quantity'],
-                        'price' => $product['unit_price'],
-                        'amount' => $product['amount'],
-                        'currency' => $request->currency,
-                    ]);
+
+                    $quoteProductIds[] = $quoteProduct->id;
+                }
+            }
+
+            foreach ($quote->quoteProducts as $quoteProduct) {
+                if (! in_array($quoteProduct->id, $quoteProductIds)) {
+                    $quoteProduct->delete();
                 }
             }
         }

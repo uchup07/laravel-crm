@@ -1,14 +1,14 @@
 <div class="addresses">
-    <h6 class="text-uppercase mt-4 section-h6-title"><span>{{ ucfirst(__('laravel-crm::lang.addresses')) }}</span> <span class="float-right"><button class="btn btn-outline-secondary btn-sm" wire:click.prevent="add({{$i}})"><span class="fa fa-plus" aria-hidden="true"></span></button></span></h6>
+    <h6 class="text-uppercase mt-4 section-h6-title"><span>{{ ucfirst(__('laravel-crm::lang.addresses')) }}</span> @if(!in_array($model, ['order','delivery']))<span class="float-right"><button class="btn btn-outline-secondary btn-sm" wire:click.prevent="add({{$i}})"><span class="fa fa-plus" aria-hidden="true"></span></button></span>@endif</h6>
     <hr />
     @foreach($inputs as $key => $value)
         <input type="hidden" wire:model="addressId.{{ $value }}" name="addresses[{{ $value }}][id]">
         <div class="form-row">
-            <div class="col-sm-10">
+            <div class="@if(!in_array($model, ['order','delivery'])) col-sm-10 @else col-sm-12 @endif">
 
                 <div class="form-group">
                     <label>{{ ucfirst(__('laravel-crm::lang.type')) }}</label>
-                    <select class="form-control custom-select" wire:model="type.{{ $value }}" name="addresses[{{ $value }}][type]">
+                    <select class="form-control custom-select" wire:model="type.{{ $value }}" name="addresses[{{ $value }}][type]" @if(in_array($model, ['order','delivery'])) disabled="disabled" @endif>
                         @foreach(\VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\optionsFromModel(\VentureDrake\LaravelCrm\Models\AddressType::all()) as $optionKey => $optionName)
                             <option value="{{ $optionKey }}">{{ $optionName }}</option>
                         @endforeach
@@ -22,11 +22,11 @@
                       @error('address.'.$value) <span class="text-danger invalid-feedback-custom">{{ $message }}</span>@enderror
                   </div>--}}
 
-                <div class="form-group">
+                {{--<div class="form-group">
                     <label>{{ ucfirst(__('laravel-crm::lang.name')) }}</label>
-                    <input type="text" class="form-control custom-select" wire:model="name.{{ $value }}" name="addresses[{{ $value }}][name]">
+                    <input type="text" class="form-control" wire:model="name.{{ $value }}" name="addresses[{{ $value }}][name]">
                     @error('name.'.$value) <span class="text-danger invalid-feedback-custom">{{ $message }}</span>@enderror
-                </div>
+                </div>--}}
 
                 <div class="form-group">
                     <label>{{ ucfirst(__('laravel-crm::lang.line_1')) }}</label>
@@ -84,6 +84,7 @@
                     </div>
                 </div>
             </div>
+            @if(!in_array($model, ['order','delivery']))
             <div class="col-sm-1">
                 <div class="form-group" wire:ignore>
                     <label>{{ ucfirst(__('laravel-crm::lang.primary')) }}</label>
@@ -96,19 +97,19 @@
                     <button class="btn btn-danger btn-sm" wire:click.prevent="remove({{$key}})"><span class="fa fa-trash-o" aria-hidden="true"></span></button></span>
                 </div>
             </div>
-        </div>
-
-        @if(!$loop->last)
-        <hr />
-        @endif
-    @endforeach
-    @push('livewire-js')
-        <script>
-            $(document).ready(function () {
-                window.addEventListener('addAddressInputs', event => {
-                    $('input[type=checkbox][data-toggle^=toggle]').bootstrapToggle('destroy').bootstrapToggle('refresh');
-                });
-            });
-        </script>
-    @endpush
+            @endif
+            </div>
+@if(!$loop->last)
+<hr />
+@endif
+@endforeach
+@push('livewire-js')
+<script>
+$(document).ready(function () {
+    window.addEventListener('addAddressInputs', event => {
+        $('input[type=checkbox][data-toggle^=toggle]').bootstrapToggle('destroy').bootstrapToggle('refresh');
+    });
+});
+</script>
+@endpush
 </div>

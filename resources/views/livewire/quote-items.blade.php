@@ -1,27 +1,37 @@
 <div>
     <h6 class="text-uppercase section-h6-title"><span class="fa fa-cart-arrow-down" aria-hidden="true"></span> {{ ucfirst(__('laravel-crm::lang.quote_items')) }} <span class="float-right"><button class="btn btn-outline-secondary btn-sm" wire:click.prevent="add({{ $i }})"><span class="fa fa-plus" aria-hidden="true"></span></button></span></h6>
     <hr class="mb-0" />
-    <script type="text/javascript">
+    {{--<script type="text/javascript">
         let products =  {!! \VentureDrake\LaravelCrm\Http\Helpers\AutoComplete\products() !!}
-    </script>
+    </script>--}}
     <span id="quoteProducts">
         <div class="table-responsive">
-            <table class="table">
-                <thead>
+            <table class="table table-sm table-items">
+                {{--<thead>
                     <tr>
                         <th scope="col" class="border-0">{{ ucfirst(__('laravel-crm::lang.name')) }}</th>
                         <th scope="col" class="col-3 border-0">{{ ucfirst(__('laravel-crm::lang.price')) }}</th>
                         <th scope="col" class="col-2 border-0">{{ ucfirst(__('laravel-crm::lang.quantity')) }}</th>
                         <th scope="col" class="col-3 border-0">{{ ucfirst(__('laravel-crm::lang.amount')) }}</th>
                     </tr>
-                </thead>
+                </thead>--}}
                 <tbody>
                 @foreach($inputs as $key => $value)
                     @include('laravel-crm::quote-products.partials.fields')
                 @endforeach
                 </tbody>
                 <tfoot id="quoteProductsTotals" class="tfoot">
+                 <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td class="text-right align-middle">
+                            <button class="btn btn-outline-secondary btn-sm" wire:click.prevent="add({{ $i }})"><span class="fa fa-plus" aria-hidden="true"></span></button>
+                        </td>
+                 </tr>
                     <tr>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td class="text-right align-middle">{{  ucfirst(__('laravel-crm::lang.sub_total')) }}</td>
@@ -42,7 +52,8 @@
                  <tr>
                     <td></td>
                     <td></td>
-                   <td class="text-right align-middle">{{  ucfirst(__('laravel-crm::lang.discount')) }}</td>
+                      <td></td>
+                    <td class="text-right align-middle">{{  ucfirst(__('laravel-crm::lang.discount')) }}</td>
                     <td>
                          @include('laravel-crm::partials.form.text',[
                           'name' => 'discount',
@@ -60,6 +71,7 @@
                 <tr>
                     <td></td>
                     <td></td>
+                    <td></td>
                     <td class="text-right align-middle">{{  ucfirst(__('laravel-crm::lang.tax')) }}</td>
                     <td>
                      @include('laravel-crm::partials.form.text',[
@@ -74,10 +86,12 @@
                        ]
                     ])
                     </td>
+                    
                   </tr>
                 <tr>
                     <td></td>
                     <td></td>
+                     <td></td>
                     <td class="text-right align-middle">{{  ucfirst(__('laravel-crm::lang.adjustment')) }}</td>
                     <td>
                     @include('laravel-crm::partials.form.text',[
@@ -92,10 +106,12 @@
                        ]
                     ])
                     </td>
+                    
                   </tr>
                  <tr>
                     <td></td>
                     <td></td>
+                      <td></td>
                     <td class="text-right align-middle">{{  ucfirst(__('laravel-crm::lang.total')) }}</td>
                     <td>
                    @include('laravel-crm::partials.form.text',[
@@ -119,9 +135,9 @@
     @push('livewire-js')
         <script>
             $(document).ready(function () {
-                $(document).delegate("input[name^='products']", "focus", function() {
-                    var number = $(this).attr('value')
-                    $(this).autocomplete({
+                //$(document).delegate("select[name^='products']", "focus", function() {
+                    //var number = $(this).attr('value')
+                    /*$(this).autocomplete({
                         source: products,
                         onSelectItem: function(item, element){
                             @this.set('product_id.' + number,item.value);
@@ -130,8 +146,28 @@
                         },
                         highlightClass: 'text-danger',
                         treshold: 2,
-                    });
-                })
+                    });*/
+
+                    /*$(this).select2().on('select2:select', function (e) {
+                        var data = e.params.data;
+                        console.log(data);
+                    })*/
+                //})
+
+                window.addEventListener('addedItem', event => {
+                    $("tr[data-number='" + event.detail.id + "'] select[name^='products']").select2()
+                        .on('change', function (e) {
+                            @this.set('product_id.' + $(this).data('value'), $(this).val());
+                            @this.set('name.' + $(this).data('value'), $(this).find("option:selected").text());
+                            Livewire.emit('loadItemDefault', $(this).data('value'))
+                        });
+                });
+
+                $("select[name^='products']").on('change', function (e) {
+                    @this.set('product_id.' + $(this).data('value'), $(this).val());
+                    @this.set('name.' + $(this).data('value'), $(this).find("option:selected").text());
+                    Livewire.emit('loadItemDefault', $(this).data('value'))
+                });
             });
         </script>
     @endpush
