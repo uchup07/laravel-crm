@@ -8,15 +8,15 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 use VentureDrake\LaravelCrm\Models\Organisation;
 
 
-class OrganisationsSheet implements FromQuery, WithTitle, WithHeadings
+class OrganisationsSheet implements WithTitle, WithHeadings
 {
     /**
      * @return Builder
      */
-    public function query()
+    /* public function query()
     {
         return Organisation::select(['name', 'description', 'organisation_type_id', 'user_owner_id'])->newQuery();
-    }
+    } */
 
     /**
      * @return string
@@ -32,8 +32,13 @@ class OrganisationsSheet implements FromQuery, WithTitle, WithHeadings
             'Name',
             'Description',
             'OrganisationType',
+            'Label',
             'OwnerID',
-            'Contact'
+            'PhoneNumber',
+            'EmailAddress',
+            'ContactName',
+            'ContactPhoneNumber',
+            'ContactEmailAddress'
         ];
     }
 }
