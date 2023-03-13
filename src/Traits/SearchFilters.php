@@ -58,7 +58,7 @@ trait SearchFilters
     public static function anyFilterActive($filters = [])
     {
         foreach ($filters as $key => $options) {
-            if (SearchFilters::filterActive($key, $options)) {
+            if (self::filterActive($key, $options)) {
                 return true;
             }
         }
