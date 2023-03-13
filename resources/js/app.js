@@ -133,6 +133,12 @@ const appJquery = function() {
                 }
             });
 
+            $(document).on('change','select[name^="currency"]', function(e) {
+                var val = $(this).val();
+
+                $('input[name="amount"]').parent().find("#inputGroupPrepend").html(val);
+            });
+
             $('#input_hex').colorpicker();
 
             $('form.form-delete-button > button[type="submit"]').on('click', function (e) {
