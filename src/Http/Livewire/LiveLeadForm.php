@@ -2,7 +2,9 @@
 
 namespace VentureDrake\LaravelCrm\Http\Livewire;
 
+use Illuminate\Support\Facades\Log;
 use Livewire\Component;
+use VentureDrake\LaravelCrm\Models\Organisation;
 
 class LiveLeadForm extends Component
 {
@@ -23,12 +25,41 @@ class LiveLeadForm extends Component
 
     public function updatedPersonName($value)
     {
-        $this->dispatchBrowserEvent('updatedNameFieldAutocomplete');
+        $data = [];
+        if($this->organisation_id) {
+            $organisation = Organisation::find($this->organisation_id);
+
+            if($organisation) {
+                $person = $organisation->people()->get();
+
+                if($person) {
+                    foreach($person as $p) {
+                        $data[$p->name] = $p->id;
+                    }
+                }
+            }
+        }
+        $this->dispatchBrowserEvent('updatedNameFieldAutocomplete',['people' => $data]);
     }
 
     public function updatedOrganisationName($value)
     {
-        $this->dispatchBrowserEvent('updatedNameFieldAutocomplete');
+//        Log::info('value: ' . $value);
+        $data = [];
+        if($this->organisation_id) {
+            $organisation = Organisation::find($this->organisation_id);
+
+            if($organisation) {
+                $person = $organisation->people()->get();
+
+                if($person) {
+                    foreach($person as $p) {
+                        $data[$p->name] = $p->id;
+                    }
+                }
+            }
+        }
+        $this->dispatchBrowserEvent('updatedNameFieldAutocomplete',['people' => $data]);
     }
     
     public function render()
