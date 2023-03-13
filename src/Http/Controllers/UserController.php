@@ -5,11 +5,17 @@ namespace VentureDrake\LaravelCrm\Http\Controllers;
 use App\User;
 use DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Notification;
 use VentureDrake\LaravelCrm\Http\Requests\InviteUserRequest;
 use VentureDrake\LaravelCrm\Http\Requests\StoreUserRequest;
 use VentureDrake\LaravelCrm\Http\Requests\UpdateUserRequest;
+use VentureDrake\LaravelCrm\Models\Invite;
 use VentureDrake\LaravelCrm\Models\Role;
 use VentureDrake\LaravelCrm\Models\Team;
+use VentureDrake\LaravelCrm\Notifications\InviteNotification;
+use Ramsey\Uuid\Uuid;
 
 class UserController extends Controller
 {
@@ -59,9 +65,30 @@ class UserController extends Controller
      */
     public function sendInvite(InviteUserRequest $request)
     {
+
+        do {
+            $token = Str::random(20);
+        } while (Invite::where('token', $token)->first());
+        Invite::create([
+            'external_id' => Uuid::uuid4()->toString(),
+            'token' => $token,
+            'email' => $request->input('email')
+        ]);
+        $url = URL::temporarySignedRoute(
+            'laravel-crm.users.registration', now()->addMinutes(300), ['token' => $token]
+        );
+
+        Notification::route('mail', $request->input('email'))->notify(new InviteNotification($url));
+
         flash(ucfirst(trans('laravel-crm::lang.user_invitation_sent')))->success()->important();
 
         return redirect(route('laravel-crm.users.index'));
+    }
+
+    public function registrationView($token)
+    {
+        $invite = Invite::where('token', $token)->first();
+        return view('auth.register',['invite' => $invite]);
     }
 
     /**
