@@ -2,17 +2,21 @@
 
 namespace VentureDrake\LaravelCrm\Http\Controllers;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Ramsey\Uuid\Uuid;
 use VentureDrake\LaravelCrm\Http\Requests\StoreOrderRequest;
 use VentureDrake\LaravelCrm\Http\Requests\UpdateOrderRequest;
 use VentureDrake\LaravelCrm\Models\Order;
 use VentureDrake\LaravelCrm\Models\Organisation;
 use VentureDrake\LaravelCrm\Models\Person;
+use VentureDrake\LaravelCrm\Services\DeliveryService;
 use VentureDrake\LaravelCrm\Services\InvoiceService;
 use VentureDrake\LaravelCrm\Services\OrderService;
 use VentureDrake\LaravelCrm\Services\OrganisationService;
 use VentureDrake\LaravelCrm\Services\PersonService;
+use VentureDrake\LaravelCrm\Services\SettingService;
 
 class OrderController extends Controller
 {
@@ -36,12 +40,24 @@ class OrderController extends Controller
      */
     private $invoiceService;
 
-    public function __construct(OrderService $orderService, PersonService $personService, OrganisationService $organisationService, InvoiceService $invoiceService)
+    /**
+     * @var SettingService
+     */
+    private $settingService;
+
+    /**
+     * @var DeliveryService
+     */
+    private $deliveryService;
+
+    public function __construct(OrderService $orderService, PersonService $personService, OrganisationService $organisationService, InvoiceService $invoiceService, SettingService $settingService, DeliveryService $deliveryService)
     {
         $this->orderService = $orderService;
         $this->personService = $personService;
         $this->organisationService = $organisationService;
         $this->invoiceService = $invoiceService;
+        $this->settingService = $settingService;
+        $this->deliveryService = $deliveryService;
     }
 
     /**
@@ -128,19 +144,18 @@ class OrderController extends Controller
         if ($order->person) {
             $email = $order->person->getPrimaryEmail();
             $phone = $order->person->getPrimaryPhone();
-            $address = $order->person->getPrimaryAddress();
         }
 
         if ($order->organisation) {
-            $organisation_address = $order->organisation->getPrimaryAddress();
+            $address = $order->organisation->getPrimaryAddress();
         }
 
         return view('laravel-crm::orders.show', [
             'order' => $order,
             'email' => $email ?? null,
             'phone' => $phone ?? null,
-            'address' => $address ?? null,
-            'organisation_address' => $organisation_address ?? null,
+            'organisation_address' => $address,
+            'addresses' => $order->addresses,
         ]);
     }
 
@@ -165,7 +180,8 @@ class OrderController extends Controller
             'order' => $order,
             'email' => $email ?? null,
             'phone' => $phone ?? null,
-            'address' => $address ?? null,
+            'organisation_address' => $address,
+            'addresses' => $order->addresses,
         ]);
     }
 
@@ -255,5 +271,102 @@ class OrderController extends Controller
             'orders' => $orders,
             'searchValue' => $searchValue ?? null,
         ]);
+    }
+
+    /**
+     * Create an order from the quote
+     *
+     * @param  Order  $order
+     * @return \Illuminate\Http\Response
+     */
+    public function createDelivery(Order $order)
+    {
+        $request = new \Illuminate\Http\Request();
+        $products = [];
+
+        foreach ($order->orderProducts as $orderProduct) {
+            $products[] = [
+                'order_product_id' => $orderProduct->id,
+            ];
+        }
+
+        $request->replace([
+            'order_id' => $order->id,
+            'user_owner_id' => $order->user_owner_id,
+            'products' => $products,
+        ]);
+
+        $delivery = $this->deliveryService->create($request, $order);
+
+        if ($address = $order->getShippingAddress()) {
+            $shippingAddress = $address;
+        } elseif ($address = $order->organisation->getShippingAddress()) {
+            $shippingAddress = $address;
+        } elseif ($address = $order->organisation->getPrimaryAddress()) {
+            $shippingAddress = $address;
+        }
+
+        if (isset($shippingAddress)) {
+            $delivery->addresses()->create([
+                'external_id' => Uuid::uuid4()->toString(),
+                'address_type_id' => 6,
+                'address' => $shippingAddress->address,
+                'name' => $shippingAddress->name,
+                'line1' => $shippingAddress->line1,
+                'line2' => $shippingAddress->line2,
+                'line3' => $shippingAddress->line3,
+                'city' => $shippingAddress->city,
+                'state' => $shippingAddress->state,
+                'code' => $shippingAddress->code,
+                'country' => $shippingAddress->country,
+                'primary' => $shippingAddress->primary,
+            ]);
+        }
+
+        flash(ucfirst(trans('laravel-crm::lang.delivery_created_from_order')))->success()->important();
+
+        return back();
+    }
+
+    public function download(Order $order)
+    {
+        if ($order->person) {
+            $email = $order->person->getPrimaryEmail();
+            $phone = $order->person->getPrimaryPhone();
+            $address = $order->person->getPrimaryAddress();
+        }
+
+        if ($order->organisation) {
+            $organisation_address = $order->organisation->getPrimaryAddress();
+        }
+
+        /*$pdfLocation = 'laravel-crm/'.strtolower(class_basename($quote)).'/'.$quote->id.'/';
+
+        if(!File::exists($pdfLocation)){
+            Storage::makeDirectory($pdfLocation);
+        }*/
+
+        /*return view('laravel-crm::orders.pdf', [
+            'order' => $order,
+            'email' => $email ?? null,
+            'phone' => $phone ?? null,
+            'address' => $address ?? null,
+            'organisation_address' => $organisation_address ?? null,
+            'fromName' => $this->settingService->get('organisation_name')->value ?? null,
+            'logo' => $this->settingService->get('logo_file')->value ?? null,
+        ]);*/
+
+        return Pdf::setOption([
+            'fontDir' => public_path('vendor/laravel-crm/fonts'),
+        ])
+            ->loadView('laravel-crm::orders.pdf', [
+                'order' => $order,
+                'email' => $email ?? null,
+                'phone' => $phone ?? null,
+                'address' => $address ?? null,
+                'organisation_address' => $organisation_address ?? null,
+                'fromName' => $this->settingService->get('organisation_name')->value ?? null,
+                'logo' => $this->settingService->get('logo_file')->value ?? null,
+            ])->download('order-'.$order->id.'.pdf');
     }
 }

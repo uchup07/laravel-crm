@@ -133,6 +133,10 @@ const appJquery = function() {
                 }
             });
 
+            $("select[name^='products']").select2();
+
+            $("select[name^='invoiceLines']").select2();
+
             $(document).on('change','select[name^="currency"]', function(e) {
                 var val = $(this).val();
 

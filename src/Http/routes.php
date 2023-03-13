@@ -329,6 +329,14 @@ Route::group(['prefix' => 'orders', 'middleware' => 'auth.laravel-crm'], functio
     Route::delete('{order}', 'VentureDrake\LaravelCrm\Http\Controllers\OrderController@destroy')
         ->name('laravel-crm.orders.destroy')
         ->middleware(['can:delete,order']);
+
+    Route::get('{order}/create-delivery', 'VentureDrake\LaravelCrm\Http\Controllers\OrderController@createDelivery')
+        ->name('laravel-crm.orders.create-delivery')
+        ->middleware(['can:update,order', 'can:create,VentureDrake\LaravelCrm\Models\Order']);
+
+    Route::get('{order}/download', 'VentureDrake\LaravelCrm\Http\Controllers\OrderController@download')
+        ->name('laravel-crm.orders.download')
+        ->middleware(['can:view,order']);
     
     /* Order Products */
 
@@ -402,6 +410,50 @@ Route::group(['prefix' => 'invoices', 'middleware' => 'auth.laravel-crm'], funct
     Route::post('{invoice}/pay', 'VentureDrake\LaravelCrm\Http\Controllers\InvoiceController@pay')
         ->name('laravel-crm.invoices.pay')
         ->middleware(['can:update,invoice']);
+});
+
+/* Deliveries */
+
+Route::group(['prefix' => 'deliveries', 'middleware' => 'auth.laravel-crm'], function () {
+    Route::any('filter', 'VentureDrake\LaravelCrm\Http\Controllers\DeliveryController@index')
+        ->name('laravel-crm.deliveries.filter')
+        ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Delivery']);
+
+    Route::any('search', 'VentureDrake\LaravelCrm\Http\Controllers\DeliveryController@search')
+        ->name('laravel-crm.deliveries.search')
+        ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Delivery']);
+
+    Route::get('', 'VentureDrake\LaravelCrm\Http\Controllers\DeliveryController@index')
+        ->name('laravel-crm.deliveries.index')
+        ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Delivery']);
+
+    Route::get('create/{model?}/{id?}', 'VentureDrake\LaravelCrm\Http\Controllers\DeliveryController@create')
+        ->name('laravel-crm.deliveries.create')
+        ->middleware(['can:create,VentureDrake\LaravelCrm\Models\Delivery']);
+
+    Route::post('', 'VentureDrake\LaravelCrm\Http\Controllers\DeliveryController@store')
+        ->name('laravel-crm.deliveries.store')
+        ->middleware(['can:create,VentureDrake\LaravelCrm\Models\Delivery']);
+
+    Route::get('{delivery}', 'VentureDrake\LaravelCrm\Http\Controllers\DeliveryController@show')
+        ->name('laravel-crm.deliveries.show')
+        ->middleware(['can:view,delivery']);
+
+    Route::get('{delivery}/edit', 'VentureDrake\LaravelCrm\Http\Controllers\DeliveryController@edit')
+        ->name('laravel-crm.deliveries.edit')
+        ->middleware(['can:update,delivery']);
+
+    Route::put('{delivery}', 'VentureDrake\LaravelCrm\Http\Controllers\DeliveryController@update')
+        ->name('laravel-crm.deliveries.update')
+        ->middleware(['can:update,delivery']);
+
+    Route::delete('{delivery}', 'VentureDrake\LaravelCrm\Http\Controllers\DeliveryController@destroy')
+        ->name('laravel-crm.deliveries.destroy')
+        ->middleware(['can:delete,delivery']);
+
+    Route::get('{delivery}/download', 'VentureDrake\LaravelCrm\Http\Controllers\DeliveryController@download')
+        ->name('laravel-crm.deliveries.download')
+        ->middleware(['can:view,delivery']);
 });
 
 /* Activities */
@@ -659,6 +711,50 @@ Route::group(['prefix' => 'files', 'middleware' => 'auth.laravel-crm'], function
     Route::get('{file}/complete', 'VentureDrake\LaravelCrm\Http\Controllers\FileController@complete')
         ->name('laravel-crm.files.complete')
         ->middleware(['can:update,file']);
+});
+
+/* Clients */
+
+Route::group(['prefix' => 'clients', 'middleware' => 'auth.laravel-crm'], function () {
+    Route::any('filter', 'VentureDrake\LaravelCrm\Http\Controllers\ClientController@index')
+        ->name('laravel-crm.clients.filter')
+        ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Client']);
+
+    Route::any('search', 'VentureDrake\LaravelCrm\Http\Controllers\ClientController@search')
+        ->name('laravel-crm.clients.search')
+        ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Client']);
+
+    Route::get('', 'VentureDrake\LaravelCrm\Http\Controllers\ClientController@index')
+        ->name('laravel-crm.clients.index')
+        ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Client']);
+
+    Route::get('create/{model?}/{id?}', 'VentureDrake\LaravelCrm\Http\Controllers\ClientController@create')
+        ->name('laravel-crm.clients.create')
+        ->middleware(['can:create,VentureDrake\LaravelCrm\Models\Client']);
+
+    Route::post('', 'VentureDrake\LaravelCrm\Http\Controllers\ClientController@store')
+        ->name('laravel-crm.clients.store')
+        ->middleware(['can:create,VentureDrake\LaravelCrm\Models\Client']);
+
+    Route::get('{client}', 'VentureDrake\LaravelCrm\Http\Controllers\ClientController@show')
+        ->name('laravel-crm.clients.show')
+        ->middleware(['can:view,client']);
+
+    Route::get('{client}/edit', 'VentureDrake\LaravelCrm\Http\Controllers\ClientController@edit')
+        ->name('laravel-crm.clients.edit')
+        ->middleware(['can:update,client']);
+
+    Route::put('{client}', 'VentureDrake\LaravelCrm\Http\Controllers\ClientController@update')
+        ->name('laravel-crm.clients.update')
+        ->middleware(['can:update,client']);
+
+    Route::delete('{client}', 'VentureDrake\LaravelCrm\Http\Controllers\ClientController@destroy')
+        ->name('laravel-crm.clients.destroy')
+        ->middleware(['can:delete,client']);
+
+    Route::get('{client}/autocomplete', 'VentureDrake\LaravelCrm\Http\Controllers\ClientController@autocomplete')
+        ->name('laravel-crm.clients.autocomplete')
+        ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Client']);
 });
 
 /* People */

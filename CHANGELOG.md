@@ -9,25 +9,60 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Documents
 - Calendar
 - Custom Fields
-- Activity Feed / Timelines
 - CSV Import / Export
 - SMS
 - Payments
 - Kanban boards
 
-<!--- ## 1.0.0 - 2022-XX-XX
+<!--- ## 1.0.0 - 2023-XX-XX
 ### Added
 ### Changed
 ### Fixed
 ### Removed --->
 
-## 0.14.1 - 2022-01-20
+## 0.16.0 - 2023-03-12
+### Added
+- Menu icons
+- User model relations trait
+- Client model
+- Invoice generation in xero integration
+- Billing & shipping addresses on orders
+- Shipping address on Deliveries
+### Changed
+- No text wrapping on responsive tables
+- Quote items now using Select2
+- Order items now using Select2
+- Invoice lines now using Select2
+- Improved layout for quote items, order items & invoice lines
+### Fixed
+- Typo in delivery products migration
+- Bug when retrieving related contacts by type
+- Bug with decimal missing from product pricing in xero integration
+- Layout issues fixed on smaller screens
+
+## 0.15.0 - 2023-02-24
+### Added
+- Usage request logging
+- Custom fields and field groups
+- Disable UI setting
+- Deliveries
+- Quote, Order, Invoice & Delivery PDF downloads
+- Default Quote & Invoice Terms setting
+### Changed
+- Use mail template for outgoing emails
+### Fixed
+- Validate signed urls for quotes and invoices
+- Only run xero schedule commands with integration enabled
+- Fixed multi-tenant xero connection
+- Increase url fields size on usage requests table
+
+## 0.14.1 - 2023-01-20
 ### Added
 - Laravel Breeze profile section support
 ### Changed
 - Completed the CLI installer
 
-## 0.14.0 - 2022-01-17
+## 0.14.0 - 2023-01-17
 ### Added
 - Invoicing
 

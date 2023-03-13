@@ -20,14 +20,16 @@ class LiveAddressEdit extends Component
     public $primary;
     public $addressId;
     public $old;
+    public $model;
     public $updateMode = false;
     public $inputs = [];
     public $i = 0;
 
-    public function mount($addresses, $old)
+    public function mount($addresses, $old, $model = null)
     {
         $this->addresses = $addresses;
         $this->old = $old;
+        $this->model = $model;
 
         if ($this->old) {
             foreach ($this->old as $address) {
@@ -63,6 +65,14 @@ class LiveAddressEdit extends Component
             }
         } else {
             $this->add($this->i);
+            
+            if ($model == 'order') {
+                $this->type[$this->i] = 5;
+                $this->add($this->i);
+                $this->type[$this->i] = 6;
+            } elseif ($model == 'delivery') {
+                $this->type[$this->i] = 6;
+            }
         }
     }
 
@@ -71,7 +81,7 @@ class LiveAddressEdit extends Component
         $i = $i + 1;
         $this->i = $i;
         array_push($this->inputs, $i);
-        $this->country[$i] = 'Indonesia';
+        $this->country[$i] = \VentureDrake\LaravelCrm\Models\Setting::country()->value;
         $this->dispatchBrowserEvent('addAddressInputs');
     }
 

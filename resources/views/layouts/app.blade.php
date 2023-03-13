@@ -14,10 +14,9 @@
     <script src="https://kit.fontawesome.com/489f6ee958.js" crossorigin="anonymous"></script>
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
-
-
+    
     <!-- Styles -->
-    <link href="{{ asset('vendor/laravel-crm/css/app.css') }}?v=989356899057r679" rel="stylesheet">
+    <link href="{{ asset('vendor/laravel-crm/css/app.css') }}?v=456345634565" rel="stylesheet">
 
     @livewireStyles
 
@@ -68,7 +67,7 @@
                        @include('laravel-crm::layouts.partials.nav')
                     </div>
                     @endauth
-                    <div class="col">
+                    <div class="col col-md-10">
                         @include('flash::message')
                         @yield('content', $slot ?? null)
                     </div>
@@ -81,7 +80,7 @@
             </div>
         </footer>
     </div>
-    <script src="{{ asset('vendor/laravel-crm/js/app.js') }}?v=78578978909890"></script>
+    <script src="{{ asset('vendor/laravel-crm/js/app.js') }}?v=357446865898"></script>
     <script src="{{ asset('vendor/laravel-crm/libs/bootstrap-multiselect/bootstrap-multiselect.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
     @livewireScripts

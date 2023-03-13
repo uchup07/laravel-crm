@@ -94,7 +94,7 @@
              'name' => 'terms',
              'label' => ucfirst(__('laravel-crm::lang.terms')),
              'rows' => 5,
-             'value' => old('terms', $invoice->terms ?? null)
+             'value' => old('terms', $invoice->terms ?? $invoiceTerms->value ??  null)
         ])
         {{--@include('laravel-crm::partials.form.multiselect',[
             'name' => 'labels',
@@ -114,7 +114,7 @@
         @livewire('invoice-lines',[
             'invoice' => $invoice ?? null,
             'invoiceLines' => $invoice->invoiceLines ?? $order->orderProducts ?? null,
-            'old' => old('lines')
+            'old' => old('invoiceLines')
         ])
     </div>
 </div>
