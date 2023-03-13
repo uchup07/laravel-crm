@@ -4,6 +4,7 @@ namespace VentureDrake\LaravelCrm\Exports;
 
 use Maatwebsite\Excel\Concerns\Exportable;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
+use VentureDrake\LaravelCrm\Exports\Sheets\LabelsSheet;
 use VentureDrake\LaravelCrm\Exports\Sheets\OrganisationsSheet;
 use VentureDrake\LaravelCrm\Exports\Sheets\OrganisationTypesSheet;
 use VentureDrake\LaravelCrm\Exports\Sheets\UsersSheet;
@@ -20,6 +21,7 @@ class OrganisationsExport implements WithMultipleSheets
         $sheets = [
             new OrganisationsSheet(),
             new OrganisationTypesSheet(),
+            new LabelsSheet(),
             new UsersSheet()
         ];
 
