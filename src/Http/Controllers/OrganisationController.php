@@ -3,6 +3,7 @@
 namespace VentureDrake\LaravelCrm\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use VentureDrake\LaravelCrm\Exports\OrganisationsExport;
 use VentureDrake\LaravelCrm\Http\Requests\StoreOrganisationRequest;
@@ -10,6 +11,8 @@ use VentureDrake\LaravelCrm\Http\Requests\UpdateOrganisationRequest;
 use VentureDrake\LaravelCrm\Http\Requests\UploadOrganisationRequest;
 use VentureDrake\LaravelCrm\Models\Organisation;
 use VentureDrake\LaravelCrm\Services\OrganisationService;
+use Maatwebsite\Excel\Facades\Excel;
+use VentureDrake\LaravelCrm\Imports\OrganisationsImport;
 
 class OrganisationController extends Controller
 {
@@ -32,6 +35,13 @@ class OrganisationController extends Controller
     {
         Organisation::resetSearchValue($request);
         $params = Organisation::filters($request);
+
+        // check for user hasnt role admin or owner
+        if(!auth()->user()->hasRole('Admin') OR !auth()->user()->hasRole('Owner')) {
+            $userOwners = \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false);
+            $params['user_owner_id'] = array_keys($userOwners);
+        }
+
         $organisations = Organisation::filter($params);
 
         // This is  not the best, will refactor. Problem with trying to sort encryoted fields
@@ -84,6 +94,7 @@ class OrganisationController extends Controller
      */
     public function store(StoreOrganisationRequest $request)
     {
+        // dd($request);
         $organisation = $this->organisationService->create($request);
 
         $organisation->labels()->sync($request->labels ?? []);
@@ -185,6 +196,14 @@ class OrganisationController extends Controller
     public function autocomplete(Organisation $organisation)
     {
         $address = $organisation->getPrimaryAddress();
+        $persons = $organisation->people()->get();
+        $data = [];
+
+        if($persons) {
+            foreach($persons as $person) {
+                $data[$person->name] = $person->id;
+            }
+        }
         
         return response()->json([
             'address_line1' => $address->line1 ?? null,
@@ -194,14 +213,40 @@ class OrganisationController extends Controller
             'address_state' => $address->state ?? null,
             'address_code' => $address->code ?? null,
             'address_country' => $address->country ?? null,
+            'people' => $data
         ]);
     }
 
     public function upload(UploadOrganisationRequest $request)
     {
-        $organisation = $this->organisationService->create($request);
+        /* $organisation = $this->organisationService->create($request);
 
-        $organisation->labels()->sync($request->labels ?? []);
+        $organisation->labels()->sync($request->labels ?? []); */
+
+        
+
+        //try {
+            $import = new OrganisationsImport($this->organisationService);
+            $import->import($request->file('file'));
+        /* } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+             $failures = $e->failures();
+             
+             foreach ($failures as $failure) {
+                 $failure->row(); // row that went wrong
+                 $failure->attribute(); // either heading key (if using heading row concern) or column index
+                 $failure->errors(); // Actual error messages from Laravel validator
+                 $failure->values(); // The values of the row that has failed.
+                 Log::error(collect($failure->errors())->implode(', '));
+             }
+            //  flash(ucfirst(trans('laravel-crm::lang.organization_stored')))->error()->important();
+        } */
+
+        if($import->failures()->isNotEmpty()) {
+            foreach ($import->failures() as $failure) {
+                Log::error(collect($failure->errors())->implode(', '));
+            }
+        }
+
         
         flash(ucfirst(trans('laravel-crm::lang.organization_stored')))->success()->important();
 
