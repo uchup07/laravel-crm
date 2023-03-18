@@ -20,7 +20,8 @@ class ProductPrice extends Model
     public function setUnitPriceAttribute($value)
     {
         if (isset($value)) {
-            $this->attributes['unit_price'] = $value * 100;
+//            $this->attributes['unit_price'] = $value * 100;
+            $this->attributes['unit_price'] = $value;
         } else {
             $this->attributes['unit_price'] = null;
         }
@@ -29,7 +30,8 @@ class ProductPrice extends Model
     public function setCostPerUnitAttribute($value)
     {
         if (isset($value)) {
-            $this->attributes['cost_per_unit'] = $value * 100;
+//            $this->attributes['cost_per_unit'] = $value * 100;
+            $this->attributes['cost_per_unit'] = $value;
         } else {
             $this->attributes['cost_per_unit'] = null;
         }
@@ -38,7 +40,8 @@ class ProductPrice extends Model
     public function setDirectCostAttribute($value)
     {
         if (isset($value)) {
-            $this->attributes['direct_cost'] = $value * 100;
+//            $this->attributes['direct_cost'] = $value * 100;
+            $this->attributes['direct_cost'] = $value;
         } else {
             $this->attributes['direct_cost'] = null;
         }
@@ -56,6 +59,6 @@ class ProductPrice extends Model
 
     public function scopeDefault($query)
     {
-        return $query->where('currency', Setting::currency() ?? 'USD');
+        return $query->where('currency', Setting::currency() ?? 'IDR');
     }
 }
