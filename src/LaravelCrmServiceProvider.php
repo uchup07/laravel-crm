@@ -30,6 +30,8 @@ use VentureDrake\LaravelCrm\Http\Livewire\LiveActivities;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveActivityMenu;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveAddressEdit;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveCalls;
+use VentureDrake\LaravelCrm\Http\Livewire\LiveDealReason;
+use VentureDrake\LaravelCrm\Http\Livewire\LiveDeals;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveEmailEdit;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveFiles;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveInvoiceLines;
@@ -448,6 +450,8 @@ class LaravelCrmServiceProvider extends ServiceProvider
         Livewire::component('invoice-lines', LiveInvoiceLines::class);
         Livewire::component('send-invoice',  SendInvoice::class);
         Livewire::component('pay-invoice', PayInvoice::class);
+        // Livewire::component('deal-reason', LiveDealReason::class); // for deal reason
+        Livewire::component('deals', LiveDeals::class); // for deals
 
         if ($this->app->runningInConsole()) {
             $this->app->booted(function () {
