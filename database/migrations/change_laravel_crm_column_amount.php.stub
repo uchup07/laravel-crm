@@ -14,20 +14,26 @@ class ChangeLaravelCrmColumnAmount extends Migration
     public function up()
     {
         Schema::table(config('laravel-crm.db_table_prefix').'leads', function (Blueprint $table) {
-            $table->decimal('amount',10,2)->change();
-        }
+            $table->decimal('amount',13,2)->change();
+        });
 
         Schema::table(config('laravel-crm.db_table_prefix').'deals', function (Blueprint $table) {
-            $table->decimal('amount',10,2)->change();
-        }
+            $table->decimal('amount',13,2)->change();
+            $table->text('reason')->nullable()->after('closed_status');
+        });
 
         Schema::table(config('laravel-crm.db_table_prefix').'deal_products', function (Blueprint $table) {
-            $table->decimal('amount',10,2)->change();
-        }
+            $table->decimal('amount',13,2)->change();
+            $table->decimal('price',13,2)->change();
+        });
 
         Schema::table(config('laravel-crm.db_table_prefix').'order_products', function (Blueprint $table) {
-            $table->decimal('amount',10,2)->change();
-        }
+            $table->decimal('amount',13,2)->change();
+        });
+
+        Schema::table(config('laravel-crm.db_table_prefix').'product_prices', function (Blueprint $table) {
+            $table->decimal('unit_price',13,2)->change();
+        });
     }
 
     /**
