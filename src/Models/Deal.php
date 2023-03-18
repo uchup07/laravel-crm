@@ -36,6 +36,8 @@ class Deal extends Model
     protected $filterable = [
         'user_owner_id',
         'labels.id',
+        'created_from',
+        'created_to'
     ];
 
     public function getSearchable()
