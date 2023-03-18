@@ -47,6 +47,17 @@ class DealController extends Controller
     {
         Deal::resetSearchValue($request);
         $params = Deal::filters($request);
+
+        // check for user hasnt role admin or owner
+        if(!auth()->user()->hasRole('Admin') OR !auth()->user()->hasRole('Owner')) {
+            $userOwners = \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false);
+            $params['user_owner_id'] = array_keys($userOwners);
+        }
+
+        if(!$request->has('created_from') && !$request->has('created_to')) {
+            $params['created_from'] = Carbon::now()->subDays(29)->format('Y-m-d') . ' 00:00:00';
+            $params['created_to'] = Carbon::now()->format('Y-m-d') . ' 23:59:59';
+        }
         
         if (Deal::filter($params)->get()->count() < 30) {
             $deals = Deal::filter($params)->latest()->get();
@@ -298,6 +309,7 @@ class DealController extends Controller
         $deal->update([
             'closed_status' => null,
             'closed_at' => null,
+            'reason' => null,
         ]);
         
         flash(ucfirst(trans('laravel-crm::lang.deal_reopened')))->success()->important();

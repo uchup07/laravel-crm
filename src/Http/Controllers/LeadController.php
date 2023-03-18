@@ -4,6 +4,7 @@ namespace VentureDrake\LaravelCrm\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use VentureDrake\LaravelCrm\Http\Requests\StoreLeadRequest;
 use VentureDrake\LaravelCrm\Http\Requests\UpdateLeadRequest;
@@ -59,6 +60,11 @@ class LeadController extends Controller
         if(!auth()->user()->hasRole('Admin') OR !auth()->user()->hasRole('Owner')) {
             $userOwners = \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false);
             $params['user_owner_id'] = array_keys($userOwners);
+        }
+
+        if(!$request->has('created_from') && !$request->has('created_to')) {
+            $params['created_from'] = Carbon::now()->subDays(29)->format('Y-m-d') . ' 00:00:00';
+            $params['created_to'] = Carbon::now()->format('Y-m-d') . ' 23:59:59';
         }
         
         if (Lead::filter($params)->whereNull('converted_at')->get()->count() < 30) {
