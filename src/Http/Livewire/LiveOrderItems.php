@@ -3,6 +3,7 @@
 namespace VentureDrake\LaravelCrm\Http\Livewire;
 
 use Livewire\Component;
+use VentureDrake\LaravelCrm\Models\Product;
 use VentureDrake\LaravelCrm\Traits\NotifyToast;
 
 class LiveOrderItems extends Component
@@ -54,7 +55,7 @@ class LiveOrderItems extends Component
                 $this->add($this->i);
                 $this->order_product_id[$this->i] = $old['order_product_id'] ?? null;
                 $this->product_id[$this->i] = $old['product_id'] ?? null;
-                $this->name[$this->i] = $old['name'] ?? null;
+                $this->name[$this->i] = Product::find($old['product_id'])->name ?? null;
                 $this->quantity[$this->i] = $old['quantity'] ?? null;
                 $this->unit_price[$this->i] = $old['unit_price'] ?? null;
                 $this->amount[$this->i] = $old['amount'] ?? null;
@@ -114,10 +115,19 @@ class LiveOrderItems extends Component
                 $this->amount[$i] = $this->unit_price[$i] * $this->quantity[$i];
                 $this->sub_total += $this->amount[$i];
                 $this->tax += $this->amount[$i] * ($product->tax_rate / 100);
+
+                $this->unit_price[$i] = $this->currencyFormat($this->unit_price[$i]);
+                $this->amount[$i] = $this->currencyFormat($this->amount[$i]);
             }
         }
 
         $this->total = $this->sub_total + $this->tax;
+
+        $this->sub_total = $this->currencyFormat($this->sub_total);
+        $this->tax = $this->currencyFormat($this->tax);
+        $this->discount = $this->currencyFormat($this->discount);
+        $this->adjustment = $this->currencyFormat($this->adjustment);
+        $this->total = $this->currencyFormat($this->total);
     }
 
     public function remove($id)
@@ -127,6 +137,11 @@ class LiveOrderItems extends Component
         $this->calculateAmounts();
     }
 
+    protected function currencyFormat($number)
+    {
+        return number_format($number, 2, '.', '');
+    }
+    
     public function render()
     {
         return view('laravel-crm::livewire.order-items');

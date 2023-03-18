@@ -3,6 +3,7 @@
 namespace VentureDrake\LaravelCrm\Http\Livewire;
 
 use Livewire\Component;
+use VentureDrake\LaravelCrm\Models\Product;
 use VentureDrake\LaravelCrm\Traits\NotifyToast;
 
 class LiveInvoiceLines extends Component
@@ -48,7 +49,7 @@ class LiveInvoiceLines extends Component
                 $this->add($this->i);
                 $this->invoice_line_id[$this->i] = $old['invoice_line_id'] ?? null;
                 $this->product_id[$this->i] = $old['product_id'] ?? null;
-                $this->name[$this->i] = $old['name'] ?? null;
+                $this->name[$this->i] = Product::find($old['product_id'])->name ?? null;
                 $this->quantity[$this->i] = $old['quantity'] ?? null;
                 $this->price[$this->i] = $old['price'] ?? null;
                 $this->amount[$this->i] = $old['amount'] ?? null;
@@ -106,10 +107,17 @@ class LiveInvoiceLines extends Component
                 $this->amount[$i] = $this->price[$i] * $this->quantity[$i];
                 $this->sub_total += $this->amount[$i];
                 $this->tax += $this->amount[$i] * ($product->tax_rate / 100);
+
+                $this->price[$i] = $this->currencyFormat($this->price[$i]);
+                $this->amount[$i] = $this->currencyFormat($this->amount[$i]);
             }
         }
 
         $this->total = $this->sub_total + $this->tax;
+
+        $this->sub_total = $this->currencyFormat($this->sub_total);
+        $this->tax = $this->currencyFormat($this->tax);
+        $this->total = $this->currencyFormat($this->total);
     }
 
     public function remove($id)
@@ -117,6 +125,11 @@ class LiveInvoiceLines extends Component
         unset($this->inputs[$id - 1], $this->product_id[$id]);
 
         $this->calculateAmounts();
+    }
+
+    protected function currencyFormat($number)
+    {
+        return number_format($number, 2, '.', '');
     }
 
     public function render()
