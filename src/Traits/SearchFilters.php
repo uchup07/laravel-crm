@@ -3,6 +3,7 @@
 namespace VentureDrake\LaravelCrm\Traits;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 /**
@@ -66,7 +67,10 @@ trait SearchFilters
     
     public function scopeFilter($query, $params)
     {
+        $createdAt = [];
+        $count = 0;
         foreach ($this->filterable as $field) {
+
             if (Str::contains($field, '.')) {
                 $relation = explode('.', $field);
                 $field = Str::singular($relation[0]).'_'.$relation[1];
@@ -82,6 +86,13 @@ trait SearchFilters
                         });
                     });
                 }
+            } elseif(isset($params[$field]) && Str::contains($field, 'created_')) {
+                $arrField = explode('_', $field);
+
+                if($arrField[0] == 'created') {
+                    $createdAt[$count] = $params[$field] . (Str::contains($field, 'from') ? ' 00:00:00' : ' 23:59:59');
+                    $count++;
+                }
             } elseif (isset($params[$field]) && is_array($params[$field])) {
                 $query->where(function ($query) use ($params, $field) {
                     $query->orWhereIn($this->getTable().'.'.$field, $params[$field]);
@@ -90,6 +101,10 @@ trait SearchFilters
                     }
                 });
             }
+        }
+
+        if(count($createdAt) == 2) {
+            $query->whereBetween($this->getTable() . '.' . 'created_at', $createdAt);
         }
       
         return $query;
