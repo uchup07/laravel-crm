@@ -31,9 +31,12 @@ const appJquery = function() {
             return;
         }
 
+        var createdStart = $('input[name="created_from"]').val();
+        var createdEnd = $('input[name="created_to"]').val();
+
         var elements = [].slice.call(document.querySelectorAll('[data-kt-daterangepicker="true"]'));
-        var start = moment().subtract(29, 'days');
-        var end = moment();
+        var start = (createdStart == '') ? moment().subtract(29, 'days') : moment(new Date(createdStart));
+        var end = (createdEnd == '') ? moment() : moment(new Date(createdEnd));
         
         elements.map(function (element) {
             if (element.getAttribute("data-kt-initialized") === "1") {
@@ -54,6 +57,9 @@ const appJquery = function() {
                         display.innerHTML = start.format('D MMM YYYY') + ' - ' + end.format('D MMM YYYY');
                     }                    
                 }
+
+                $('input[name="created_from"]').val(start.format('YYYY-MM-DD'));
+                $('input[name="created_to"]').val(end.format('YYYY-MM-DD'));
             }
 
             if ( range === "today" ) {
@@ -76,7 +82,6 @@ const appJquery = function() {
             }, cb);
 
             cb(start, end);
-
             element.setAttribute("data-kt-initialized", "1");
         });
     }
