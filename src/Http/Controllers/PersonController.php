@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 use VentureDrake\LaravelCrm\Http\Requests\StorePersonRequest;
 use VentureDrake\LaravelCrm\Http\Requests\UpdatePersonRequest;
+use VentureDrake\LaravelCrm\Models\Note;
 use VentureDrake\LaravelCrm\Models\Organisation;
 use VentureDrake\LaravelCrm\Models\Person;
 use VentureDrake\LaravelCrm\Services\PersonService;
@@ -206,6 +207,7 @@ class PersonController extends Controller
      */
     public function destroy(Person $person)
     {
+//        dd($person);
         $person->delete();
 
         flash(ucfirst(trans('laravel-crm::lang.person_deleted')))->success()->important();
