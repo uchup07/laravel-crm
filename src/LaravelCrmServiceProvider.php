@@ -30,16 +30,19 @@ use VentureDrake\LaravelCrm\Http\Livewire\LiveActivities;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveActivityMenu;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveAddressEdit;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveCalls;
+use VentureDrake\LaravelCrm\Http\Livewire\LiveDealForm;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveDealReason;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveDeals;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveEmailEdit;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveFiles;
+use VentureDrake\LaravelCrm\Http\Livewire\LiveImportFile;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveInvoiceLines;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveLeadForm;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveLunches;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveMeetings;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveNotes;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveOrderItems;
+use VentureDrake\LaravelCrm\Http\Livewire\LiveOrganisations;
 use VentureDrake\LaravelCrm\Http\Livewire\LivePhoneEdit;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveQuoteItems;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveRelatedContactOrganisation;
@@ -452,6 +455,9 @@ class LaravelCrmServiceProvider extends ServiceProvider
         Livewire::component('pay-invoice', PayInvoice::class);
         // Livewire::component('deal-reason', LiveDealReason::class); // for deal reason
         Livewire::component('deals', LiveDeals::class); // for deals
+        Livewire::component('live-deal-form', LiveDealForm::class); // for deal form
+        Livewire::component('organisations', LiveOrganisations::class); // for organisations
+        Livewire::component('import-file', LiveImportFile::class); // import file
 
         if ($this->app->runningInConsole()) {
             $this->app->booted(function () {
