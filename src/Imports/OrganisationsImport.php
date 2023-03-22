@@ -5,10 +5,17 @@ namespace VentureDrake\LaravelCrm\Imports;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Concerns\SkipsEmptyRows;
+use Maatwebsite\Excel\Concerns\SkipsErrors;
+use Maatwebsite\Excel\Concerns\SkipsOnError;
+use Maatwebsite\Excel\Concerns\SkipsUnknownSheets;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\Importable;
+use Maatwebsite\Excel\Concerns\WithConditionalSheets;
+use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use VentureDrake\LaravelCrm\Imports\Sheets\OrganisationsSheet;
 use VentureDrake\LaravelCrm\Models\OrganisationType;
 use VentureDrake\LaravelCrm\Services\OrganisationService;
 // use Maatwebsite\Excel\Concerns\SkipsOnError;
@@ -21,11 +28,10 @@ use Ramsey\Uuid\Uuid;
 use VentureDrake\LaravelCrm\Models\Label;
 use VentureDrake\LaravelCrm\Models\Person;
 
-class OrganisationsImport implements ToCollection, WithValidation, WithHeadingRow, SkipsOnFailure
+#[\AllowDynamicProperties]
+class OrganisationsImport implements ToCollection, WithMultipleSheets, WithValidation, SkipsOnFailure, WithHeadingRow
 {
     use Importable,SkipsFailures;
-
-    
 
     /**
      * @var OrganisationService
@@ -34,9 +40,15 @@ class OrganisationsImport implements ToCollection, WithValidation, WithHeadingRo
 
     public function __construct(OrganisationService $organisationService)
     {
-        //$this->organisationService = $organisationService;
-        HeadingRowFormatter::default('none');
         $this->organisationService = $organisationService;
+        HeadingRowFormatter::default('none');
+    }
+
+    public function sheets(): array
+    {
+        return [
+            0 => $this
+        ];
     }
 
     public function collection(Collection $rows)
@@ -100,7 +112,7 @@ class OrganisationsImport implements ToCollection, WithValidation, WithHeadingRo
 
             }
 
-            
+
         }
     }
 
