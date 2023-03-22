@@ -396,5 +396,6 @@ return [
     'delivery_deleted' => 'delivery deleted',
     'quote_deleted' => 'quote deleted',
     'closed_at' => 'closed at',
-    'reason' => 'reason'
+    'reason' => 'reason',
+    'reports' => 'reports'
 ];
