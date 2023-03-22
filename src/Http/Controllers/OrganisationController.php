@@ -73,6 +73,7 @@ class OrganisationController extends Controller
         
         return view('laravel-crm::organisations.index', [
             'organisations' => $organisations,
+            'orgService' => $this->organisationService
         ]);
     }
 
