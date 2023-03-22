@@ -4,6 +4,7 @@ namespace VentureDrake\LaravelCrm\Policies;
 
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Support\Facades\Log;
 use VentureDrake\LaravelCrm\Models\Person;
 
 class PersonPolicy
@@ -32,7 +33,7 @@ class PersonPolicy
      */
     public function view(User $user, Person $person)
     {
-        if ($user->hasPermissionTo('view crm people')) {
+        if (($user->hasPermissionTo('view crm people') && $person->user_owner_id == auth()->user()->id) || (auth()->user()->hasRole(['Owner','Admin']))) {
             return true;
         }
     }
@@ -59,7 +60,7 @@ class PersonPolicy
      */
     public function update(User $user, Person $person)
     {
-        if ($user->hasPermissionTo('edit crm people')) {
+        if (($user->hasPermissionTo('edit crm people') && $person->user_owner_id == auth()->user()->id) || (auth()->user()->hasRole(['Owner','Admin']))) {
             return true;
         }
     }
@@ -73,7 +74,7 @@ class PersonPolicy
      */
     public function delete(User $user, Person $person)
     {
-        if ($user->hasPermissionTo('delete crm people')) {
+        if (($user->hasPermissionTo('delete crm people') && $person->user_owner_id == auth()->user()->id) || (auth()->user()->hasRole(['Owner','Admin']))) {
             return true;
         }
     }
@@ -87,7 +88,7 @@ class PersonPolicy
      */
     public function restore(User $user, Person $person)
     {
-        if ($user->hasPermissionTo('delete crm people')) {
+        if (($user->hasPermissionTo('delete crm people') && $person->user_owner_id == auth()->user()->id) || (auth()->user()->hasRole(['Owner','Admin']))) {
             return true;
         }
     }

@@ -32,7 +32,7 @@ class DealPolicy
      */
     public function view(User $user, Deal $deal)
     {
-        if ($user->hasPermissionTo('view crm deals')) {
+        if (($user->hasPermissionTo('view crm deals') && $deal->user_owner_id == auth()->user()->id) || (auth()->user()->hasRole(['Owner','Admin']))) {
             return true;
         }
     }
@@ -59,7 +59,7 @@ class DealPolicy
      */
     public function update(User $user, Deal $deal)
     {
-        if ($user->hasPermissionTo('edit crm deals')) {
+        if (($user->hasPermissionTo('edit crm deals') && $deal->user_owner_id == auth()->user()->id) || (auth()->user()->hasRole(['Owner','Admin']))) {
             return true;
         }
     }
@@ -73,7 +73,7 @@ class DealPolicy
      */
     public function delete(User $user, Deal $deal)
     {
-        if ($user->hasPermissionTo('delete crm deals')) {
+        if (($user->hasPermissionTo('delete crm deals') && $deal->user_owner_id == auth()->user()->id) || (auth()->user()->hasRole(['Owner','Admin']))) {
             return true;
         }
     }
@@ -87,7 +87,7 @@ class DealPolicy
      */
     public function restore(User $user, Deal $deal)
     {
-        if ($user->hasPermissionTo('delete crm deals')) {
+        if (($user->hasPermissionTo('delete crm deals') && $deal->user_owner_id == auth()->user()->id) || (auth()->user()->hasRole(['Owner','Admin']))) {
             return true;
         }
     }

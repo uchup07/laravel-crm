@@ -32,7 +32,7 @@ class OrganisationPolicy
      */
     public function view(User $user, Organisation $organisation)
     {
-        if ($user->hasPermissionTo('view crm organisations')) {
+        if (($user->hasPermissionTo('view crm organisations') && $organisation->user_owner_id == auth()->user()->id) || (auth()->user()->hasRole(['Owner','Admin']))) {
             return true;
         }
     }
@@ -59,7 +59,7 @@ class OrganisationPolicy
      */
     public function update(User $user, Organisation $organisation)
     {
-        if ($user->hasPermissionTo('edit crm organisations')) {
+        if (($user->hasPermissionTo('edit crm organisations') && $organisation->user_owner_id == auth()->user()->id) || (auth()->user()->hasRole(['Owner','Admin']))) {
             return true;
         }
     }
@@ -73,7 +73,7 @@ class OrganisationPolicy
      */
     public function delete(User $user, Organisation $organisation)
     {
-        if ($user->hasPermissionTo('delete crm organisations')) {
+        if (($user->hasPermissionTo('delete crm organisations') && $organisation->user_owner_id == auth()->user()->id) || (auth()->user()->hasRole(['Owner','Admin']))) {
             return true;
         }
     }
@@ -87,7 +87,7 @@ class OrganisationPolicy
      */
     public function restore(User $user, Organisation $organisation)
     {
-        if ($user->hasPermissionTo('delete crm organisations')) {
+        if (($user->hasPermissionTo('delete crm organisations') && $organisation->user_owner_id == auth()->user()->id) || (auth()->user()->hasRole(['Owner','Admin']))) {
             return true;
         }
     }

@@ -32,7 +32,7 @@ class LeadPolicy
      */
     public function view(User $user, Lead $lead)
     {
-        if ($user->hasPermissionTo('view crm leads')) {
+        if (($user->hasPermissionTo('view crm leads') && $lead->user_owner_id == auth()->user()->id) || (auth()->user()->hasRole(['Owner','Admin']))) {
             return true;
         }
     }
@@ -59,7 +59,7 @@ class LeadPolicy
      */
     public function update(User $user, Lead $lead)
     {
-        if ($user->hasPermissionTo('edit crm leads')) {
+        if (($user->hasPermissionTo('edit crm leads') && $lead->user_owner_id == auth()->user()->id) || (auth()->user()->hasRole(['Owner','Admin']))) {
             return true;
         }
     }
@@ -73,7 +73,7 @@ class LeadPolicy
      */
     public function delete(User $user, Lead $lead)
     {
-        if ($user->hasPermissionTo('delete crm leads')) {
+        if (($user->hasPermissionTo('delete crm leads') && $lead->user_owner_id == auth()->user()->id) || (auth()->user()->hasRole(['Owner','Admin']))) {
             return true;
         }
     }
@@ -87,7 +87,7 @@ class LeadPolicy
      */
     public function restore(User $user, Lead $lead)
     {
-        if ($user->hasPermissionTo('delete crm leads')) {
+        if (($user->hasPermissionTo('delete crm leads') && $lead->user_owner_id == auth()->user()->id) || (auth()->user()->hasRole(['Owner','Admin']))) {
             return true;
         }
     }
