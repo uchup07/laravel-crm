@@ -20,6 +20,7 @@ class LiveNote extends Component
         'refreshComponent' => '$refresh',
         'notePinned' => '$refresh',
         'noteUnpinned' => '$refresh',
+        'noteDeleted' => '$refresh'
     ];
     
     public function mount(Note $note, $view = 'note')
