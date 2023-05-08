@@ -50,8 +50,19 @@
                             'limit' => 3
                         ])</td>
                    <td>
-                       {{ $quote->organisation->name ?? null }}<br />
-                       <small>{{ $quote->person->name ?? null }}</small>
+                       @if($quote->client)
+                           {{ $quote->client->name }}
+                       @endif
+                       @if($quote->organisation)
+                           @if($quote->client)<br /><small>@endif
+                               {{ $quote->organisation->name }}
+                               @if($quote->client)</small>@endif
+                       @endif
+                       @if($quote->organisation && $quote->person)
+                           <br /><small>{{ $quote->person->name }}</small>
+                       @elseif($quote->person)
+                           {{ $quote->person->name }}
+                       @endif
                    </td>
                   
                    {{--<td>{{ money($quote->subtotal, $quote->currency) }}</td>
@@ -59,8 +70,8 @@
                    <td>{{ money($quote->tax, $quote->currency) }}</td>
                    <td>{{ money($quote->adjustments, $quote->currency) }}</td>--}}
                    <td>{{ money($quote->total, $quote->currency) }}</td>
-                   <td>{{ ($quote->issue_at) ? $quote->issue_at->toFormattedDateString() : null }}</td>
-                   <td>{{ ($quote->expire_at) ? $quote->expire_at->toFormattedDateString() : null }}</td>
+                   <td>{{ ($quote->issue_at) ? $quote->issue_at->format($dateFormat) : null }}</td>
+                   <td>{{ ($quote->expire_at) ? $quote->expire_at->format($dateFormat) : null }}</td>
                    <td>{{ $quote->ownerUser->name ?? null }}</td>
                    <td class="disable-link text-right">
                        @if(! $quote->order)

@@ -4,47 +4,15 @@
              'name' => 'lead_id',
              'value' => old('lead_id', $deal->lead->id ?? $lead->id ?? null),
         ])
-        <span class="autocomplete">
-             @include('laravel-crm::partials.form.hidden',[
-               'name' => 'person_id',
-               'value' => old('person_id', $deal->person->id ?? $person->id ?? null),
-            ])
-            <script type="text/javascript">
-                let people =  {!! \VentureDrake\LaravelCrm\Http\Helpers\AutoComplete\people() !!}
-            </script>
-            @include('laravel-crm::partials.form.text',[
-               'name' => 'person_name',
-               'label' => ucfirst(__('laravel-crm::lang.contact_person')),
-               'prepend' => '<span class="fa fa-user" aria-hidden="true"></span>',
-               'value' => old('person_name', $deal->person->name ?? $person->name ?? null),
-               'attributes' => [
-                  'autocomplete' => \Illuminate\Support\Str::random()
-               ]
-            ])
-        </span>
-        <span class="autocomplete">
-            @include('laravel-crm::partials.form.hidden',[
-              'name' => 'organisation_id',
-              'value' => old('organisation_id', $deal->organisation->id ?? $organisation->id ??  null),
-            ])
-            <script type="text/javascript">
-                let organisations = {!! \VentureDrake\LaravelCrm\Http\Helpers\AutoComplete\organisations() !!}
-            </script>
-            @include('laravel-crm::partials.form.text',[
-                'name' => 'organisation_name',
-                'label' => ucfirst(__('laravel-crm::lang.organization')),
-                'prepend' => '<span class="fa fa-building" aria-hidden="true"></span>',
-                'value' => old('organisation_name',$deal->organisation->name ?? $organisation->name ?? null),
-                'attributes' => [
-                  'autocomplete' => \Illuminate\Support\Str::random()
-               ]
-            ])
-        </span>    
-        @include('laravel-crm::partials.form.text',[
-            'name' => 'title',
-            'label' => ucfirst(__('laravel-crm::lang.title')),
-            'value' => old('title',$deal->title ?? null)
+
+        @livewire('deal-form',[
+            'deal' => $deal ?? null,
+            'generateTitle' => $generateTitle ?? true,
+            'client' => $client ?? null,
+            'organisation' => $organisation ?? null,
+            'person' => $person ?? null
         ])
+        
         @include('laravel-crm::partials.form.textarea',[
              'name' => 'description',
              'label' => ucfirst(__('laravel-crm::lang.description')),
@@ -72,7 +40,7 @@
         @include('laravel-crm::partials.form.text',[
              'name' => 'expected_close',
              'label' => ucfirst(__('laravel-crm::lang.expected_close_date')),
-             'value' => old('expected_close', (isset($deal->expected_close)) ? \Carbon\Carbon::parse($deal->expected_close)->format('Y/m/d') : null),
+             'value' => old('expected_close', (isset($deal->expected_close)) ? \Carbon\Carbon::parse($deal->expected_close)->format($dateFormat) : null),
              'attributes' => [
                  'autocomplete' => \Illuminate\Support\Str::random()
               ]

@@ -11,6 +11,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use VentureDrake\LaravelCrm\Console\LaravelCrmAddressTypes;
@@ -41,9 +42,11 @@ use VentureDrake\LaravelCrm\Http\Livewire\LiveLeadForm;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveLunches;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveMeetings;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveNotes;
+use VentureDrake\LaravelCrm\Http\Livewire\LiveOrderForm;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveOrderItems;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveOrganisations;
 use VentureDrake\LaravelCrm\Http\Livewire\LivePhoneEdit;
+use VentureDrake\LaravelCrm\Http\Livewire\LiveQuoteForm;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveQuoteItems;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveRelatedContactOrganisation;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveRelatedContactPerson;
@@ -387,6 +390,14 @@ class LaravelCrmServiceProvider extends ServiceProvider
                 __DIR__ . '/../database/migrations/create_laravel_crm_xero_invoices_table.php.stub' => $this->getMigrationFileName($filesystem, 'create_laravel_crm_xero_invoices_table.php', 66),
                 __DIR__ . '/../database/migrations/create_laravel_crm_invites_table.php.stub' => $this->getMigrationFileName($filesystem, 'create_laravel_crm_invites_table.php', 67),
                 __DIR__ . '/../database/migrations/change_laravel_crm_column_amount.php.stub' => $this->getMigrationFileName($filesystem, 'change_laravel_crm_column_amount.php', 68),
+                __DIR__ . '/../database/migrations/add_contact_to_laravel_crm_addresses_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_contact_to_laravel_crm_addresses_table.php', 69),
+                __DIR__ . '/../database/migrations/add_phone_to_laravel_crm_addresses_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_phone_to_laravel_crm_addresses_table.php', 70),
+                __DIR__ . '/../database/migrations/add_name_to_laravel_crm_clients_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_name_to_laravel_crm_clients_table.php', 71),
+                __DIR__ . '/../database/migrations/add_delivery_dates_to_laravel_crm_deliveries_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_delivery_dates_to_laravel_crm_deliveries_table.php', 72),
+                __DIR__ . '/../database/migrations/add_client_to_laravel_crm_orders_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_client_to_laravel_crm_orders_table.php', 73),
+                __DIR__ . '/../database/migrations/add_client_to_laravel_crm_leads_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_client_to_laravel_crm_leads_table.php', 74),
+                __DIR__ . '/../database/migrations/add_client_to_laravel_crm_deals_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_client_to_laravel_crm_deals_table.php', 75),
+                __DIR__ . '/../database/migrations/add_client_to_laravel_crm_quotes_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_client_to_laravel_crm_quotes_table.php', 76),
             ], 'migrations');
 
             // Publishing the seeders
@@ -443,15 +454,18 @@ class LaravelCrmServiceProvider extends ServiceProvider
         Livewire::component('related-contact-people', LiveRelatedContactPerson::class);
         Livewire::component('related-people', LiveRelatedPerson::class);
         Livewire::component('live-lead-form', LiveLeadForm::class);
+        Livewire::component('deal-form', LiveDealForm::class);
+        Livewire::component('quote-form', LiveQuoteForm::class);
         Livewire::component('notify-toast', NotifyToast::class);
         Livewire::component('quote-items', LiveQuoteItems::class);
+        Livewire::component('order-form', LiveOrderForm::class);
         Livewire::component('order-items', LiveOrderItems::class);
         Livewire::component('activity-menu', LiveActivityMenu::class);
         Livewire::component('xero-connect', XeroConnect::class);
         Livewire::component('activities', LiveActivities::class);
         Livewire::component('send-quote', SendQuote::class);
         Livewire::component('invoice-lines', LiveInvoiceLines::class);
-        Livewire::component('send-invoice',  SendInvoice::class);
+        Livewire::component('send-invoice', SendInvoice::class);
         Livewire::component('pay-invoice', PayInvoice::class);
         // Livewire::component('deal-reason', LiveDealReason::class); // for deal reason
         Livewire::component('deals', LiveDeals::class); // for deals
@@ -464,11 +478,27 @@ class LaravelCrmServiceProvider extends ServiceProvider
                 $schedule = $this->app->make(Schedule::class);
                 
                 if (config('xero.clientId') && config('xero.clientSecret')) {
-                    $schedule->command('xero:keep-alive')->everyFiveMinutes();
-                    $schedule->command('laravelcrm:xero contacts')->daily();
-                    $schedule->command('laravelcrm:xero products')->daily();
+                    $schedule->command('xero:keep-alive')
+                        ->everyFiveMinutes();
+                    $schedule->command('laravelcrm:xero contacts')
+                        ->everyTenMinutes()
+                        ->withoutOverlapping();
+                    $schedule->command('laravelcrm:xero products')
+                        ->everyTenMinutes()
+                        ->withoutOverlapping();
                 }
             });
+        }
+
+        // This was causing composer install post dump autoload to fail when no DB connected
+        if (! $this->app->runningInConsole()) {
+            if (Schema::hasTable(config('laravel-crm.db_table_prefix').'settings')) {
+                view()->share('dateFormat', Setting::where('name', 'date_format')->first()->value ?? 'Y/m/d');
+                view()->share('timeFormat', Setting::where('name', 'time_format')->first()->value ?? 'H:i');
+            } else {
+                view()->share('dateFormat', 'Y/m/d');
+                view()->share('timeFormat', 'H:i');
+            }
         }
     }
 

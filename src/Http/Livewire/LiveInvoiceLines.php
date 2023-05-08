@@ -104,11 +104,15 @@ class LiveInvoiceLines extends Component
 
         for ($i = 1; $i <= $this->i; $i++) {
             if (isset($this->product_id[$i]) && $product = \VentureDrake\LaravelCrm\Models\Product::find($this->product_id[$i])) {
-                $this->amount[$i] = $this->price[$i] * $this->quantity[$i];
+                if (is_numeric($this->price[$i]) && is_numeric($this->quantity[$i])) {
+                    $this->amount[$i] = $this->price[$i] * $this->quantity[$i];
+                    $this->price[$i] = $this->currencyFormat($this->price[$i]);
+                } else {
+                    $this->amount[$i] = 0;
+                }
+                
                 $this->sub_total += $this->amount[$i];
                 $this->tax += $this->amount[$i] * ($product->tax_rate / 100);
-
-                $this->price[$i] = $this->currencyFormat($this->price[$i]);
                 $this->amount[$i] = $this->currencyFormat($this->amount[$i]);
             }
         }
@@ -122,7 +126,9 @@ class LiveInvoiceLines extends Component
 
     public function remove($id)
     {
-        unset($this->inputs[$id - 1], $this->product_id[$id]);
+        unset($this->inputs[$id - 1], $this->product_id[$id], $this->name[$id]);
+
+        $this->dispatchBrowserEvent('removedItem', ['id' => $id]);
 
         $this->calculateAmounts();
     }

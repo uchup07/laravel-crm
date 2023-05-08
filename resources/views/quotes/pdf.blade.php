@@ -2,7 +2,7 @@
 
 @section('content')
 
-    <table class="table table-sm">
+    <table class="table table-sm table-items">
         <tbody>
             <tr>
                 <td width="50%"> 
@@ -11,10 +11,10 @@
                         <p><strong>{{ ucfirst(__('laravel-crm::lang.reference')) }}</strong> {{ $quote->reference }}</p>
                     @endif
                     @if($quote->issue_at)
-                        <p><strong>{{ ucfirst(__('laravel-crm::lang.issue_date')) }}</strong> {{ $quote->issue_at->toFormattedDateString() }}</p>
+                        <p><strong>{{ ucfirst(__('laravel-crm::lang.issue_date')) }}</strong> {{ $quote->issue_at->format($dateFormat) }}</p>
                     @endif
                     @if($quote->expire_at)
-                        <p><strong>{{ ucfirst(__('laravel-crm::lang.expiry_date')) }}</strong>  {{ $quote->expire_at->toFormattedDateString() }}</p>
+                        <p><strong>{{ ucfirst(__('laravel-crm::lang.expiry_date')) }}</strong>  {{ $quote->expire_at->format($dateFormat) }}</p>
                     @endif
                 </td>
                 <td width="50%" style="text-align: right">
@@ -27,7 +27,9 @@
                 <td>
                     <strong>{{ ucfirst(__('laravel-crm::lang.issued_to')) }}</strong><br />
                     {{ $quote->organisation->name ?? $quote->organisation->person->name }}<br />
+                    @isset($quote->person)
                     {{ $quote->person->name }}<br />
+                    @endisset
                     @if(isset($organisation_address))
                         @if($organisation_address->line1)
                             {{ $organisation_address->line1 }}<br />
@@ -66,7 +68,7 @@
         </tbody>
     </table>
     @if($quote->description)
-        <table class="table table-bordered table-sm">
+        <table class="table table-bordered table-sm table-items">
           <tbody>
             <tr>
                 <td><h4>{{ ucfirst(__('laravel-crm::lang.description')) }}</h4>
@@ -75,7 +77,7 @@
           </tbody>  
         </table>
     @endif
-    <table class="table table-bordered table-sm">
+    <table class="table table-bordered table-sm table-items">
         <thead>
         <tr>
             <th scope="col">{{ ucfirst(__('laravel-crm::lang.item')) }}</th>
@@ -137,7 +139,7 @@
         </tfoot>
     </table>
     @if($quote->terms)
-        <table class="table table-bordered table-sm">
+        <table class="table table-bordered table-sm table-items">
             <tbody>
             <tr>
                 <td>

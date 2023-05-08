@@ -2,10 +2,14 @@
 
 namespace VentureDrake\LaravelCrm\Http\Requests;
 
+use Dcblogdev\Xero\Facades\Xero;
 use Illuminate\Foundation\Http\FormRequest;
+use VentureDrake\LaravelCrm\Traits\HasGlobalSettings;
 
 class StoreInvoiceRequest extends FormRequest
 {
+    use HasGlobalSettings;
+    
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -23,13 +27,18 @@ class StoreInvoiceRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
             'person_name' => 'required_without:organisation_name|max:255',
             'organisation_name' => 'required_without:person_name|max:255',
-            'number' => 'required|integer|unique:VentureDrake\LaravelCrm\Models\Invoice,number',
-            'issue_date' => 'required|date_format:Y/m/d',
-            'due_date' => 'required|date_format:Y/m/d',
+            'issue_date' => 'required|date_format:'.$this->dateFormat(),
+            'due_date' => 'required|date_format:'.$this->dateFormat(),
             'currency' => 'required',
         ];
+
+        if (! Xero::isConnected()) {
+            $rules['number'] = 'required|integer|unique:VentureDrake\LaravelCrm\Models\Invoice,number';
+        }
+        
+        return $rules;
     }
 }

@@ -6,7 +6,7 @@
     </script>
     <span id="invoiceLines">
         <div class="table-responsive">
-            <table class="table table-sm table-items">
+            <table class="table table-sm table-items ">
                 {{--<thead>
                     <tr>
                         <th scope="col" class="border-0">{{ ucfirst(__('laravel-crm::lang.name')) }}</th>
@@ -113,13 +113,17 @@
                 window.addEventListener('addedItem', event => {
                     $("tr[data-number='" + event.detail.id + "'] select[name^='invoiceLines']").select2({
                         data: products,
-                    })
+                    }).select2('open')
                         .on('change', function (e) {
                             @this.set('product_id.' + $(this).data('value'), $(this).val());
                             @this.set('name.' + $(this).data('value'), $(this).find("option:selected").text());
                             Livewire.emit('loadInvoiceLineDefault', $(this).data('value'))
                         });
                 });
+
+                /*window.addEventListener('removedItem', event => {
+                    $("tr[data-number='" + event.detail.id + "']").remove()
+                });*/
 
                 $("select[name^='invoiceLines']").on('change', function (e) {
                     @this.set('product_id.' + $(this).data('value'), $(this).val());

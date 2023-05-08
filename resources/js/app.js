@@ -101,14 +101,33 @@ const appJquery = function() {
 
             $('[data-toggle="tooltip"]').tooltip()
 
-            $('input[name="birthday"], input[name="expected_close"], input[name="issue_at"], input[name="expire_at"], input[name="issue_date"], input[name="due_date"]').datetimepicker({
+            if($('meta[name=date_format]').length > 0){
+                var dateFormat = $('meta[name=date_format]').attr('content');
+            }else{
+                var dateFormat = 'Y/m/d';
+            }
+
+            if($('meta[name=time_format]').length > 0){
+                var timeFormat = $('meta[name=time_format]').attr('content');
+            }else{
+                var timeFormat = 'H:i';
+            }
+
+            $('input[name="birthday"],' +
+                ' input[name="expected_close"],' +
+                ' input[name="issue_at"],' +
+                ' input[name="expire_at"],' +
+                ' input[name="issue_date"],' +
+                ' input[name="due_date"],' +
+                ' input[name="delivery_expected"],' +
+                ' input[name="delivered_on"]').datetimepicker({
                 timepicker:false,
-                format: 'Y/m/d',
+                format: dateFormat,
             });
 
             $('input[name="noted_at"], input[name="due_at"], input[name="start_at"], input[name="finish_at"]').datetimepicker({
                 timepicker:true,
-                format: 'Y/m/d H:i',
+                format: dateFormat + ' H:i',
             });
 
             $( "tr.has-link > td:not(.disable-link)" ).on({
@@ -232,7 +251,7 @@ const appJquery = function() {
                 var chartDeals = [];
                 var chartDealsLabel = chart.data('label-deals');
                 Object.values(chartData).forEach(function (item, index) {
-
+                    console.log('Testing...')
                     console.log(item, index);
                     chartDays.push(item.daily.date);
                     chartLeads.push(item.daily.leads);

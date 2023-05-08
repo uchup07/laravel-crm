@@ -27,6 +27,8 @@ class DeliveryService
     {
         $delivery = Delivery::create([
             'order_id' => $request->order_id,
+            'delivery_expected' => $request->delivery_expected,
+            'delivered_on' => $request->delivered_on,
             'user_owner_id' => $request->user_owner_id ?? auth()->user()->id,
         ]);
 
@@ -45,6 +47,11 @@ class DeliveryService
 
     public function update($request, Delivery $delivery, $person = null, $organisation = null)
     {
+        $delivery->update([
+            'delivery_expected' => $request->delivery_expected,
+            'delivered_on' => $request->delivered_on,
+        ]);
+        
         $this->updateDeliveryAddresses($delivery, $request->addresses);
 
         return $delivery;
@@ -61,6 +68,8 @@ class DeliveryService
                         'address_type_id' => 6,
                         'address' => $addressRequest['address'] ?? null,
                         'name' => $addressRequest['name'] ?? null,
+                        'contact' => $addressRequest['contact'] ?? null,
+                        'phone' => $addressRequest['phone'] ?? null,
                         'line1' => $addressRequest['line1'],
                         'line2' => $addressRequest['line2'],
                         'line3' => $addressRequest['line3'],
@@ -78,6 +87,8 @@ class DeliveryService
                         'address_type_id' => 6,
                         'address' => $addressRequest['address'] ?? null,
                         'name' => $addressRequest['name'] ?? null,
+                        'contact' => $addressRequest['contact'] ?? null,
+                        'phone' => $addressRequest['phone'] ?? null,
                         'line1' => $addressRequest['line1'],
                         'line2' => $addressRequest['line2'],
                         'line3' => $addressRequest['line3'],

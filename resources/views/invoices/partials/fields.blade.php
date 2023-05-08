@@ -19,7 +19,8 @@
                'value' => old('person_name', $invoice->person->name ?? $person->name ?? null),
                'attributes' => [
                   'autocomplete' => \Illuminate\Support\Str::random()
-               ]
+               ],
+               'required' => 'true'
             ])
         </span>
         <span class="autocomplete">
@@ -37,7 +38,8 @@
                 'value' => old('organisation_name',$invoice->organisation->name ?? $organisation->name ?? null),
                 'attributes' => [
                   'autocomplete' => \Illuminate\Support\Str::random()
-               ]
+               ],
+               'required' => 'true'
             ])
         </span>
         <div class="row">
@@ -54,12 +56,15 @@
                      'value' => old('prefix', ($invoice->prefix ?? $prefix->value ?? 'INV-')),
                 ])
                 
-                @include('laravel-crm::partials.form.text',[
-                    'name' => 'number',
-                    'label' => ucfirst(__('laravel-crm::lang.invoice_number')),
-                    'value' => old('number', $invoice->number ?? $number ?? null),
-                    'prepend' => '<span aria-hidden="true">'.($invoice->prefix ?? $invoicePrefix->value ?? 'INV-').'</span>',
-                ])
+                @if(! \Dcblogdev\Xero\Facades\Xero::isConnected())
+                    @include('laravel-crm::partials.form.text',[
+                        'name' => 'number',
+                        'label' => ucfirst(__('laravel-crm::lang.invoice_number')),
+                        'value' => old('number', $invoice->number ?? $number ?? null),
+                        'prepend' => '<span aria-hidden="true">'.($invoice->prefix ?? $invoicePrefix->value ?? 'INV-').'</span>',
+                        'required' => 'true'
+                    ])
+                @endif    
             </div>
         </div>
         <div class="row">
@@ -67,20 +72,22 @@
                 @include('laravel-crm::partials.form.text',[
                       'name' => 'issue_date',
                       'label' => ucfirst(__('laravel-crm::lang.issue_date')),
-                      'value' => old('issue_date', (isset($invoice->issue_date)) ? \Carbon\Carbon::parse($invoice->issue_date)->format('Y/m/d') : null),
+                      'value' => old('issue_date', (isset($invoice->issue_date)) ? \Carbon\Carbon::parse($invoice->issue_date)->format($dateFormat) : null),
                        'attributes' => [
                          'autocomplete' => \Illuminate\Support\Str::random()
-                       ]
+                       ],
+                       'required' => 'true'
                   ])
             </div>
             <div class="col-sm-6">
                 @include('laravel-crm::partials.form.text',[
                        'name' => 'due_date',
                        'label' => ucfirst(__('laravel-crm::lang.due_date')),
-                       'value' => old('due_date', (isset($invoice->due_date)) ? \Carbon\Carbon::parse($invoice->due_date)->format('Y/m/d') : null),
+                       'value' => old('due_date', (isset($invoice->due_date)) ? \Carbon\Carbon::parse($invoice->due_date)->format($dateFormat) : null),
                        'attributes' => [
                          'autocomplete' => \Illuminate\Support\Str::random()
-                       ]
+                       ],
+                       'required' => 'true'
                    ])
             </div>
         </div>

@@ -71,7 +71,7 @@ class InvoiceService
                     /*'TaxAmount' => ($line->tax_total->value / 100),*/
                     // 'LineAmount' => null,
                     'ItemCode' => $line->product->xeroItem->code ?? $line->product->code ?? null,
-                    /*'AccountCode' => null*/
+                    'AccountCode' => 200 // Added setting for this
                 ];
             }
 
@@ -85,6 +85,7 @@ class InvoiceService
                     'LineItems' => $lineItems ?? [],
                     'Date' => Carbon::now()->format('Y-m-d'),
                     'DueDate' => Carbon::now()->addDays(30)->format('Y-m-d'),
+                    'Reference' => $invoice->reference,
                 ]);
 
                 XeroInvoice::create([

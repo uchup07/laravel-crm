@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use VentureDrake\LaravelCrm\Http\Requests\StoreDealRequest;
 use VentureDrake\LaravelCrm\Http\Requests\UpdateDealRequest;
+use VentureDrake\LaravelCrm\Models\Client;
 use VentureDrake\LaravelCrm\Models\Deal;
 use VentureDrake\LaravelCrm\Models\Organisation;
 use VentureDrake\LaravelCrm\Models\Person;
@@ -78,20 +79,26 @@ class DealController extends Controller
     public function create(Request $request)
     {
         switch ($request->model) {
-            case "person":
-                $person = Person::find($request->id);
+            case 'client':
+                $client = Client::find($request->id);
 
                 break;
-                
-            case "organisation":
+
+            case 'organisation':
                 $organisation = Organisation::find($request->id);
 
                 break;
+
+            case 'person':
+                $person = Person::find($request->id);
+
+                break;
         }
-        
+
         return view('laravel-crm::deals.create', [
-            'person' => $person ?? null,
+            'client' => $client ?? null,
             'organisation' => $organisation ?? null,
+            'person' => $person ?? null,
         ]);
     }
 
@@ -114,8 +121,33 @@ class DealController extends Controller
         } elseif ($request->organisation_id) {
             $organisation = Organisation::find($request->organisation_id);
         }
+
+        if ($request->client_name && ! $request->client_id) {
+            $client = Client::create([
+                'name' => $request->client_name,
+                'user_owner_id' => $request->user_owner_id,
+            ]);
+        } elseif ($request->client_id) {
+            $client = Client::find($request->client_id);
+        }
+
+        if (isset($client)) {
+            if (isset($organisation)) {
+                $client->contacts()->firstOrCreate([
+                    'entityable_type' => $organisation->getMorphClass(),
+                    'entityable_id' => $organisation->id,
+                ]);
+            }
+
+            if (isset($person)) {
+                $client->contacts()->firstOrCreate([
+                    'entityable_type' => $person->getMorphClass(),
+                    'entityable_id' => $person->id,
+                ]);
+            }
+        }
         
-        $this->dealService->create($request, $person ?? null, $organisation ?? null);
+        $this->dealService->create($request, $person ?? null, $organisation ?? null, $client ?? null);
         
         flash(ucfirst(trans('laravel-crm::lang.deal_stored')))->success()->important();
 
@@ -195,7 +227,32 @@ class DealController extends Controller
             $organisation = Organisation::find($request->organisation_id);
         }
 
-        $deal = $this->dealService->update($request, $deal, $person ?? null, $organisation ?? null);
+        if ($request->client_name && ! $request->client_id) {
+            $client = Client::create([
+                'name' => $request->client_name,
+                'user_owner_id' => $request->user_owner_id,
+            ]);
+        } elseif ($request->client_id) {
+            $client = Client::find($request->client_id);
+        }
+
+        if (isset($client)) {
+            if (isset($organisation)) {
+                $client->contacts()->firstOrCreate([
+                    'entityable_type' => $organisation->getMorphClass(),
+                    'entityable_id' => $organisation->id,
+                ]);
+            }
+
+            if (isset($person)) {
+                $client->contacts()->firstOrCreate([
+                    'entityable_type' => $person->getMorphClass(),
+                    'entityable_id' => $person->id,
+                ]);
+            }
+        }
+
+        $deal = $this->dealService->update($request, $deal, $person ?? null, $organisation ?? null, $client ?? null);
         
         flash(ucfirst(trans('laravel-crm::lang.deal_updated')))->success()->important();
 

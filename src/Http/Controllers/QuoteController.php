@@ -5,12 +5,12 @@ namespace VentureDrake\LaravelCrm\Http\Controllers;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Ramsey\Uuid\Uuid;
 use VentureDrake\LaravelCrm\Http\Requests\StoreQuoteRequest;
 use VentureDrake\LaravelCrm\Http\Requests\UpdateQuoteRequest;
+use VentureDrake\LaravelCrm\Models\Client;
 use VentureDrake\LaravelCrm\Models\Organisation;
 use VentureDrake\LaravelCrm\Models\Person;
 use VentureDrake\LaravelCrm\Models\Quote;
@@ -85,13 +85,18 @@ class QuoteController extends Controller
     public function create(Request $request)
     {
         switch ($request->model) {
-            case "person":
-                $person = Person::find($request->id);
+            case 'client':
+                $client = Client::find($request->id);
 
                 break;
 
-            case "organisation":
+            case 'organisation':
                 $organisation = Organisation::find($request->id);
+
+                break;
+
+            case 'person':
+                $person = Person::find($request->id);
 
                 break;
         }
@@ -99,8 +104,9 @@ class QuoteController extends Controller
         $quoteTerms = $this->settingService->get('quote_terms');
 
         return view('laravel-crm::quotes.create', [
-            'person' => $person ?? null,
+            'client' => $client ?? null,
             'organisation' => $organisation ?? null,
+            'person' => $person ?? null,
             'quoteTerms' => $quoteTerms,
         ]);
     }
@@ -125,7 +131,32 @@ class QuoteController extends Controller
             $organisation = Organisation::find($request->organisation_id);
         }
 
-        $this->quoteService->create($request, $person ?? null, $organisation ?? null);
+        if ($request->client_name && ! $request->client_id) {
+            $client = Client::create([
+                'name' => $request->client_name,
+                'user_owner_id' => $request->user_owner_id,
+            ]);
+        } elseif ($request->client_id) {
+            $client = Client::find($request->client_id);
+        }
+
+        if (isset($client)) {
+            if (isset($organisation)) {
+                $client->contacts()->firstOrCreate([
+                    'entityable_type' => $organisation->getMorphClass(),
+                    'entityable_id' => $organisation->id,
+                ]);
+            }
+
+            if (isset($person)) {
+                $client->contacts()->firstOrCreate([
+                    'entityable_type' => $person->getMorphClass(),
+                    'entityable_id' => $person->id,
+                ]);
+            }
+        }
+
+        $this->quoteService->create($request, $person ?? null, $organisation ?? null, $client ?? null);
 
         flash(ucfirst(trans('laravel-crm::lang.quote_stored')))->success()->important();
 
@@ -205,7 +236,32 @@ class QuoteController extends Controller
             $organisation = Organisation::find($request->organisation_id);
         }
 
-        $quote = $this->quoteService->update($request, $quote, $person ?? null, $organisation ?? null);
+        if ($request->client_name && ! $request->client_id) {
+            $client = Client::create([
+                'name' => $request->client_name,
+                'user_owner_id' => $request->user_owner_id,
+            ]);
+        } elseif ($request->client_id) {
+            $client = Client::find($request->client_id);
+        }
+
+        if (isset($client)) {
+            if (isset($organisation)) {
+                $client->contacts()->firstOrCreate([
+                    'entityable_type' => $organisation->getMorphClass(),
+                    'entityable_id' => $organisation->id,
+                ]);
+            }
+
+            if (isset($person)) {
+                $client->contacts()->firstOrCreate([
+                    'entityable_type' => $person->getMorphClass(),
+                    'entityable_id' => $person->id,
+                ]);
+            }
+        }
+
+        $quote = $this->quoteService->update($request, $quote, $person ?? null, $organisation ?? null, $client ?? null);
 
         flash(ucfirst(trans('laravel-crm::lang.quote_updated')))->success()->important();
 
@@ -377,6 +433,8 @@ class QuoteController extends Controller
                 'address_type_id' => 5,
                 'address' => $billingAddress->address,
                 'name' => $billingAddress->name,
+                'contact' => $billingAddress->contact,
+                'phone' => $billingAddress->phone,
                 'line1' => $billingAddress->line1,
                 'line2' => $billingAddress->line2,
                 'line3' => $billingAddress->line3,
@@ -400,6 +458,8 @@ class QuoteController extends Controller
                 'address_type_id' => 6,
                 'address' => $shippingAddress->address,
                 'name' => $shippingAddress->name,
+                'contact' => $shippingAddress->contact,
+                'phone' => $shippingAddress->phone,
                 'line1' => $shippingAddress->line1,
                 'line2' => $shippingAddress->line2,
                 'line3' => $shippingAddress->line3,
@@ -427,22 +487,6 @@ class QuoteController extends Controller
         if ($quote->organisation) {
             $organisation_address = $quote->organisation->getPrimaryAddress();
         }
-        
-        /*$pdfLocation = 'laravel-crm/'.strtolower(class_basename($quote)).'/'.$quote->id.'/';
-
-        if(!File::exists($pdfLocation)){
-            Storage::makeDirectory($pdfLocation);
-        }*/
-        
-        /*return view('laravel-crm::quotes.pdf', [
-            'quote' => $quote,
-            'email' => $email ?? null,
-            'phone' => $phone ?? null,
-            'address' => $address ?? null,
-            'organisation_address' => $organisation_address ?? null,
-            'fromName' => $this->settingService->get('organisation_name')->value ?? null,
-            'logo' => $this->settingService->get('logo_file')->value ?? null,
-        ]);*/
         
         return Pdf::setOption([
             'fontDir' => public_path('vendor/laravel-crm/fonts'),

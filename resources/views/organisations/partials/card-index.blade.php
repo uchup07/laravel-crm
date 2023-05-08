@@ -23,7 +23,7 @@
         <table class="table mb-0 card-table table-hover">
             <thead>
             <tr>
-                <th scope="col">@sortablelink('name', ucwords(__('laravel-crm::lang.name')))</th>
+                <th scope="col" colspan="2">@sortablelink('name', ucwords(__('laravel-crm::lang.name')))</th>
                 <th scope="col">@sortablelink('organisationType.name', ucwords(__('laravel-crm::lang.type')))</th>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.labels')) }}</th>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.contact')) }}</th>
@@ -38,7 +38,8 @@
             <tbody>
             @foreach($organisations as $organisation)
                 <tr class="has-link" data-url="{{ url(route('laravel-crm.organisations.show',$organisation)) }}">
-                    <td>{{ $organisation->name }}</td>
+                    <td>{{ $organisation->name }} </td>
+                    <td>@if($organisation->xeroContact)<img src="/vendor/laravel-crm/img/xero-icon.png" height="20" />@endif</td>
                     <td>{{ $organisation->organisationType->name ?? null }}</td>
                     <td>@include('laravel-crm::partials.labels',[
                             'labels' => $organisation->labels,
@@ -51,11 +52,23 @@
                     <td></td>
                     <td>{{ $organisation->ownerUser->name ?? null }}</td>
                     <td class="disable-link text-right">
+                        @can('create crm leads')
+                        <a href="{{ route('laravel-crm.leads.create', ['model' => 'organisation', 'id' => $organisation->id]) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-arrow-right" aria-hidden="true"></span> <span class="fa fa-crosshairs" aria-hidden="true"></span></a>
+                        @endcan
+                        @can('create crm deals')
+                            <a href="{{ route('laravel-crm.deals.create', ['model' => 'organisation', 'id' => $organisation->id]) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-arrow-right" aria-hidden="true"></span> <span class="fa fa-dollar" aria-hidden="true"></span></a>
+                        @endcan
+                        @can('create crm quotes')
+                            <a href="{{ route('laravel-crm.quotes.create', ['model' => 'organisation', 'id' => $organisation->id]) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-arrow-right" aria-hidden="true"></span> <span class="fa fa-file-text" aria-hidden="true"></span></a>
+                        @endcan
+                        @can('create crm orders')
+                            <a href="{{ route('laravel-crm.orders.create', ['model' => 'organisation', 'id' => $organisation->id]) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-arrow-right" aria-hidden="true"></span> <span class="fa fa-shopping-cart" aria-hidden="true"></span></a>
+                        @endcan
                         @can('view crm organisations')
-                        <a href="{{  route('laravel-crm.organisations.show',$organisation) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-eye" aria-hidden="true"></span></a>
+                        <a href="{{ route('laravel-crm.organisations.show',$organisation) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-eye" aria-hidden="true"></span></a>
                         @endcan
                         @can('edit crm organisations')
-                        <a href="{{  route('laravel-crm.organisations.edit',$organisation) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-edit" aria-hidden="true"></span></a>
+                        <a href="{{ route('laravel-crm.organisations.edit',$organisation) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-edit" aria-hidden="true"></span></a>
                         @endcan
                         @can('delete crm organisations')    
                         <form action="{{ route('laravel-crm.organisations.destroy',$organisation) }}" method="POST" class="form-check-inline mr-0 form-delete-button">
