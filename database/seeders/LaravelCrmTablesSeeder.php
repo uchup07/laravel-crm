@@ -48,6 +48,36 @@ class LaravelCrmTablesSeeder extends Seeder
                     'external_id' => Uuid::uuid4()->toString(),
                 ],
             ],
+            [
+                [
+                    'id' => 4,
+                ],
+                [
+                    'name' => 'Customer A',
+                    'hex' => 'ffc107',
+                    'external_id' => Uuid::uuid4()->toString(),
+                ],
+            ],
+            [
+                [
+                    'id' => 5,
+                ],
+                [
+                    'name' => 'Customer B',
+                    'hex' => 'ffc107',
+                    'external_id' => Uuid::uuid4()->toString(),
+                ],
+            ],
+            [
+                [
+                    'id' => 6,
+                ],
+                [
+                    'name' => 'Customer C',
+                    'hex' => 'ffc107',
+                    'external_id' => Uuid::uuid4()->toString(),
+                ],
+            ],
         ];
 
         foreach ($items as $item) {
