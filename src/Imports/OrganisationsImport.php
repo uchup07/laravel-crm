@@ -80,39 +80,40 @@ class OrganisationsImport implements ToCollection, WithMultipleSheets, WithValid
             $organisation = $this->organisationService->create($req);
 
             $organisation->labels()->sync($labels ?? []);
+            
+            for($i=1;$i<=10;$i++) {
+                if($row['ContactName' . $i] != '') {
+                    $name = \VentureDrake\LaravelCrm\Http\Helpers\PersonName\firstLastFromName($row['ContactName' . $i]);
 
-            if($row['ContactName'] != '') {
-                $name = \VentureDrake\LaravelCrm\Http\Helpers\PersonName\firstLastFromName($row['ContactName']);
-
-                $person = Person::create([
-                    'external_id' => Uuid::uuid4()->toString(),
-                    'first_name' => $name['first_name'],
-                    'last_name' => $name['last_name'] ?? null,
-                    'user_owner_id' => $req->user_owner_id,
-                    'organisation_id' => $organisation->id,
-                ]);
-
-                if($row['ContactPhoneNumber'] != '') {
-                    $person->phones()->create([
+                    $person = Person::create([
                         'external_id' => Uuid::uuid4()->toString(),
-                        'number' => $row['ContactPhoneNumber'],
-                        'type' => 'work',
-                        'primary' => 1,
+                        'first_name' => $name['first_name'],
+                        'last_name' => $name['last_name'] ?? null,
+                        'user_owner_id' => $req->user_owner_id,
+                        'organisation_id' => $organisation->id,
                     ]);
-                }
 
-                if($row['ContactEmailAddress'] != '') {
-                    $person->emails()->create([
-                        'external_id' => Uuid::uuid4()->toString(),
-                        'address' => $row['ContactEmailAddress'],
-                        'type' => 'work',
-                        'primary' => 1,
-                    ]);
-                }
+                    if($row['ContactPhoneNumber' . $i] != '') {
+                        $person->phones()->create([
+                            'external_id' => Uuid::uuid4()->toString(),
+                            'number' => $row['ContactPhoneNumber' . $i],
+                            'type' => 'work',
+                            'primary' => 1,
+                        ]);
+                    }
 
+                    if($row['ContactEmailAddress' . $i] != '') {
+                        $person->emails()->create([
+                            'external_id' => Uuid::uuid4()->toString(),
+                            'address' => $row['ContactEmailAddress' . $i],
+                            'type' => 'work',
+                            'primary' => 1,
+                        ]);
+                    }
+                }
             }
 
-
+            
         }
     }
 

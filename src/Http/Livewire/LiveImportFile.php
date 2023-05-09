@@ -29,10 +29,11 @@ class LiveImportFile extends Component
         'organisationUpdated' => '$refresh'
     ];
 
-    public function mount($organisations)
+    /* public function mount($organisations)
     {
+        Log::info(print_r($organisations, true));
         $this->organisations = $organisations;
-    }
+    } */
 
     public function import()
     {
@@ -64,19 +65,24 @@ class LiveImportFile extends Component
                 $failCount = 0;
                 foreach ($failures as $failure) {
                     $this->errors['errors'][$failCount] = $failure->toArray();
-                    $failureValues->push([
+                    $arrFailures = [
                         'Name' => $failure->values()['Name'],
                         'Description' => $failure->values()['Description'],
                         'OrganisationType' => $failure->values()['OrganisationType'],
                         'Label' => $failure->values()['Label'],
                         'OwnerID' => $failure->values()['OwnerID'],
                         'PhoneNumber' => $failure->values()['PhoneNumber'],
-                        'EmailAddress' => $failure->values()['EmailAddress'],
-                        'ContactName' => $failure->values()['ContactName'],
-                        'ContactPhoneNumber' => $failure->values()['ContactPhoneNumber'],
-                        'ContactEmailAddress' => $failure->values()['ContactEmailAddress'],
-                        'Reason' => collect($failure->errors())->implode(', ')
-                    ]);
+                        'EmailAddress' => $failure->values()['EmailAddress']
+                    ];
+                    // for contact
+                    for($i=1;$i<=10;$i++) {
+                        $arrFailures['ContactName'.$i] = $failure->values()['ContactName'.$i];
+                        $arrFailures['ContactPhoneNumber'.$i] = $failure->values()['ContactPhoneNumber'.$i];
+                        $arrFailures['ContactEmailAddress'.$i] = $failure->values()['ContactEmailAddress'.$i];
+                    }
+                    $arrFailures['Reason'] = collect($failure->errors())->implode(', ');
+                    
+                    $failureValues->push($arrFailures);
                     $failCount++;
                 }
             }
