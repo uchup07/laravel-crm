@@ -21,7 +21,7 @@ class OrganisationErrorsSheet implements FromCollection, WithTitle, WithHeadings
 
     public function headings(): array
     {
-        return [
+        $arr = [
             'Name',
             'Description',
             'OrganisationType',
@@ -29,11 +29,15 @@ class OrganisationErrorsSheet implements FromCollection, WithTitle, WithHeadings
             'OwnerID',
             'PhoneNumber',
             'EmailAddress',
-            'ContactName',
-            'ContactPhoneNumber',
-            'ContactEmailAddress',
-            'Reason'
         ];
+
+        for($i=1;$i<=10;$i++) {
+            array_push($arr, 'ContactName'.$i,'ContactPhoneNumber'.$i,'ContactEmailAddress'.$i);
+        }
+
+        array_push($arr, 'Reason');
+
+        return $arr;
     }
 
     public function collection()
