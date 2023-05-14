@@ -77,7 +77,13 @@ class LiveLeadForm extends Component
     {
         if ($organisation = Organisation::find($value)) {
             $address = $organisation->getPrimaryAddress();
+            $peopleOrganisation = [];
             $people = $organisation->people;
+            if($people) {
+                foreach($people as $p) {
+                    $peopleOrganisation[$p->name] = $p->id;
+                }
+            }
             $this->dispatchBrowserEvent('selectedOrganisation', [
                 'id' => $value,
                 'address_line1' => $address->line1 ?? null,
@@ -87,7 +93,7 @@ class LiveLeadForm extends Component
                 'address_state' => $address->state ?? null,
                 'address_code' => $address->code ?? null,
                 'address_country' => $address->country ?? null,
-                'people' => $people
+                'people' => $peopleOrganisation
             ]);
             $this->organisation_name = $organisation->name;
         } else {
