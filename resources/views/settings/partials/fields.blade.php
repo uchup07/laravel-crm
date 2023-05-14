@@ -3,7 +3,8 @@
         @include('laravel-crm::partials.form.text',[
          'name' => 'organisation_name',
          'label' => ucfirst(trans('laravel-crm::lang.organization_name')),
-         'value' => old('organisation_name', $organisationName->value ?? null)
+         'value' => old('organisation_name', $organisationName->value ?? null),
+         'required' => 'true'
         ])
 
         @if($logoFile)
@@ -16,6 +17,18 @@
              'label' => ucfirst(trans('laravel-crm::lang.logo')),
              'value' => old('logo', $timezone ?? null)
          ])
+
+        @include('laravel-crm::partials.form.text',[
+         'name' => 'quote_prefix',
+         'label' => ucfirst(trans('laravel-crm::lang.quote_prefix')),
+         'value' => old('quote_prefix', $quotePrefix->value ?? null)
+        ])
+
+        @include('laravel-crm::partials.form.text',[
+         'name' => 'order_prefix',
+         'label' => ucfirst(trans('laravel-crm::lang.order_prefix')),
+         'value' => old('order_prefix', $orderPrefix->value ?? null)
+        ])
 
         @include('laravel-crm::partials.form.text',[
          'name' => 'invoice_prefix',
@@ -43,25 +56,43 @@
                 'name' => 'country',
                 'label' => ucfirst(trans('laravel-crm::lang.country')),
                 'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\countries(),
-                'value' => old('country', $country->value  ?? 'United States')
+                'value' => old('country', $country->value  ?? 'United States'),
+                'required' => 'true'
              ])
         @include('laravel-crm::partials.form.select',[
            'name' => 'language',
            'label' => ucfirst(trans('laravel-crm::lang.language')),
            'options' => ['english' => 'English'],
-           'value' => old('language', $language->value ?? 'english')
+           'value' => old('language', $language->value ?? 'english'),
+           'required' => 'true'
         ])
         @include('laravel-crm::partials.form.select',[
            'name' => 'currency',
            'label' => ucfirst(trans('laravel-crm::lang.currency')),
            'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\currencies(),
-           'value' => old('currency', $currency->value ?? 'USD')
+           'value' => old('currency', $currency->value ?? 'USD'),
+           'required' => 'true'
        ])
        @include('laravel-crm::partials.form.select',[
             'name' => 'timezone',
             'label' => ucfirst(trans('laravel-crm::lang.timezone')),
             'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\timezones(),
-            'value' => old('timezone', $timezone->value ?? null)
+            'value' => old('timezone', $timezone->value ?? null),
+            'required' => 'true'
+       ])
+        @include('laravel-crm::partials.form.select',[
+            'name' => 'date_format',
+            'label' => ucfirst(trans('laravel-crm::lang.date_format')),
+            'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\dateFormats(),
+            'value' => old('date_format', $dateFormat->value ?? null),
+            'required' => 'true'
+       ])
+        @include('laravel-crm::partials.form.select',[
+            'name' => 'time_format',
+            'label' => ucfirst(trans('laravel-crm::lang.time_format')),
+            'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\timeFormats(),
+            'value' => old('time_format', $timeFormat->value ?? null),
+            'required' => 'true'
        ])
     </div>
 </div>

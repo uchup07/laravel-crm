@@ -2,10 +2,12 @@
 
 namespace VentureDrake\LaravelCrm\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use VentureDrake\LaravelCrm\Traits\BelongsToTeams;
 use VentureDrake\LaravelCrm\Traits\HasCrmActivities;
+use VentureDrake\LaravelCrm\Traits\HasGlobalSettings;
 use VentureDrake\LaravelCrm\Traits\SearchFilters;
 
 class Delivery extends Model
@@ -14,6 +16,7 @@ class Delivery extends Model
     use BelongsToTeams;
     use SearchFilters;
     use HasCrmActivities;
+    use HasGlobalSettings;
 
     protected $guarded = ['id'];
 
@@ -29,6 +32,41 @@ class Delivery extends Model
     public function getTable()
     {
         return config('laravel-crm.db_table_prefix').'deliveries';
+    }
+
+    public function getTitleAttribute()
+    {
+        if ($this->order) {
+            return money($this->order->total, $this->order->currency).' - '.($this->order->client->name ?? $this->order->organisation->name ?? $this->order->organisation->person->name ?? null);
+        }
+    }
+
+    public function setDeliveryExpectedAttribute($value)
+    {
+        if ($value) {
+            $this->attributes['delivery_expected'] = Carbon::createFromFormat($this->dateFormat(), $value);
+        }
+    }
+
+    public function getDeliveryExpectedAttribute($value)
+    {
+        if ($value) {
+            return Carbon::parse($value)->format($this->dateFormat());
+        }
+    }
+
+    public function setDeliveredOnAttribute($value)
+    {
+        if ($value) {
+            $this->attributes['delivered_on'] = Carbon::createFromFormat($this->dateFormat(), $value);
+        }
+    }
+
+    public function getDeliveredOnAttribute($value)
+    {
+        if ($value) {
+            return Carbon::parse($value)->format($this->dateFormat());
+        }
     }
 
     public function order()

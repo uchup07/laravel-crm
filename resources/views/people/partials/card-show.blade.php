@@ -14,8 +14,17 @@
                     'model' => $person,
                     'route' => 'people'
                 ]) | 
+                @can('create crm leads')
+                    <a href="{{ route('laravel-crm.leads.create', ['model' => 'person', 'id' => $person->id]) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-arrow-right" aria-hidden="true"></span> <span class="fa fa-crosshairs" aria-hidden="true"></span></a>
+                @endcan
                 @can('create crm deals')
-                <a href="{{ url(route('laravel-crm.deals.create',['model' => 'person', 'id' => $person->id])) }}" alt="Add deal" class="btn btn-success btn-sm"><span class="fa fa-plus" aria-hidden="true"></span> {{ ucfirst(__('laravel-crm::lang.add_new_deal')) }}</a>
+                    <a href="{{ route('laravel-crm.deals.create', ['model' => 'person', 'id' => $person->id]) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-arrow-right" aria-hidden="true"></span> <span class="fa fa-dollar" aria-hidden="true"></span></a>
+                @endcan
+                @can('create crm quotes')
+                    <a href="{{ route('laravel-crm.quotes.create', ['model' => 'person', 'id' => $person->id]) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-arrow-right" aria-hidden="true"></span> <span class="fa fa-file-text" aria-hidden="true"></span></a>
+                @endcan
+                @can('create crm orders')
+                    <a href="{{ route('laravel-crm.orders.create', ['model' => 'person', 'id' => $person->id]) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-arrow-right" aria-hidden="true"></span> <span class="fa fa-shopping-cart" aria-hidden="true"></span></a>
                 @endcan
                 @include('laravel-crm::partials.navs.activities') |
                 @can('edit crm people')
@@ -89,6 +98,9 @@
                     <dt class="col-sm-3 text-right">{{ ucfirst(__('laravel-crm::lang.address')) }}</dt>
                     <dd class="col-sm-9">{{ ($organisation_address) ? \VentureDrake\LaravelCrm\Http\Helpers\AddressLine\addressSingleLine($organisation_address) : null }}</dd>
                 </dl>
+                @livewire('related-contact-people',[
+                    'model' => $person
+                ])
                 @can('view crm deals')
                     <h6 class="text-uppercase mt-4 section-h6-title"><span>{{ ucfirst(__('laravel-crm::lang.deals')) }} ({{ $person->deals->count() }})</span>@can('create crm deals')<span class="float-right"><a href="{{ url(route('laravel-crm.deals.create',['model' => 'person', 'id' => $person->id])) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-plus" aria-hidden="true"></span></a></span>@endcan</h6>
                     <hr />
@@ -97,9 +109,6 @@
                             <small>{{ money($deal->amount, $deal->currency) }}</small></p>
                     @endforeach
                 @endcan
-                @livewire('related-contact-people',[
-                    'model' => $person
-                ])
             </div>
             <div class="col-sm-6">
                 @include('laravel-crm::partials.activities', [

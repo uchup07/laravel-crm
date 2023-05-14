@@ -27,6 +27,8 @@
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.reference')) }}</th>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.customer')) }}</th>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.shipping_address')) }}</th>
+                <th scope="col">{{ ucwords(__('laravel-crm::lang.delivery_expected')) }}</th>
+                <th scope="col">{{ ucwords(__('laravel-crm::lang.delivered_on')) }}</th>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.owner')) }}</th>
                 <th scope="col" width="240"></th>
             </tr>
@@ -35,9 +37,16 @@
             @foreach($deliveries as $delivery)
                 <tr class="has-link" data-url="{{ url(route('laravel-crm.deliveries.show', $delivery)) }}">
                     <td>{{ $delivery->created_at->diffForHumans() }}</td>
-                    <td><a href="{{ route('laravel-crm.orders.show', $delivery->order) }}">{{ $delivery->order->id }}</a> </td>
-                    <td><a href="{{ route('laravel-crm.orders.show', $delivery->order) }}">{{ $delivery->order->reference }}</a> </td>
-
+                    <td>
+                        @if($delivery->order)
+                            <a href="{{ route('laravel-crm.orders.show', $delivery->order) }}">{{ $delivery->order->order_id }}</a>
+                        @endif    
+                    </td>
+                    <td>
+                        @if($delivery->order)
+                            <a href="{{ route('laravel-crm.orders.show', $delivery->order) }}">{{ $delivery->order->reference }}</a>
+                        @endif    
+                    </td>
                     <td>
                         {{ $delivery->order->organisation->name ?? null }}<br />
                         <small>{{ $delivery->order->person->name ?? null }}</small>
@@ -45,7 +54,19 @@
                     <td>
                         @if($address = $delivery->getShippingAddress())
                             {{ \VentureDrake\LaravelCrm\Http\Helpers\AddressLine\addressSingleLine($address) }} {{ ($address->primary) ? '(Primary)' : null }}
+                            @if($address->contact)
+                                <small><br >{{ ucwords(__('laravel-crm::lang.contact')) }}: {{ $address->contact }}</small>
+                            @endif
+                            @if($address->phone)
+                                <small><br >{{ ucwords(__('laravel-crm::lang.phone')) }}: {{ $address->phone }}</small>
+                            @endif
                         @endif    
+                    </td>
+                    <td>
+                        {{ $delivery->delivery_expected ?? null }}
+                    </td>
+                    <td>
+                        {{ $delivery->delivered_on ?? null }}
                     </td>
                     <td>{{ $delivery->ownerUser->name ?? null }}</td>
                     <td class="disable-link text-right">

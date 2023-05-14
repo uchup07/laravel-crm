@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use VentureDrake\LaravelCrm\Traits\BelongsToTeams;
 use VentureDrake\LaravelCrm\Traits\HasCrmActivities;
 use VentureDrake\LaravelCrm\Traits\HasCrmFields;
+use VentureDrake\LaravelCrm\Traits\HasGlobalSettings;
 use VentureDrake\LaravelCrm\Traits\SearchFilters;
 
 class Quote extends Model
@@ -16,6 +17,7 @@ class Quote extends Model
     use BelongsToTeams;
     use SearchFilters;
     use HasCrmActivities;
+    use HasGlobalSettings;
 
     protected $guarded = ['id'];
 
@@ -28,6 +30,8 @@ class Quote extends Model
 
     protected $searchable = [
         'title',
+        'reference',
+        'quote_id',
         'person.first_name',
         'person.middle_name',
         'person.last_name',
@@ -50,17 +54,26 @@ class Quote extends Model
         return config('laravel-crm.db_table_prefix').'quotes';
     }
 
+    public function getNumberAttribute($value)
+    {
+        if ($value) {
+            return $value;
+        } else {
+            return 1000 + $this->id;
+        }
+    }
+
     public function setIssueAtAttribute($value)
     {
         if ($value) {
-            $this->attributes['issue_at'] = Carbon::createFromFormat('Y/m/d', $value);
+            $this->attributes['issue_at'] = Carbon::createFromFormat($this->dateFormat(), $value);
         }
     }
 
     public function setExpireAtAttribute($value)
     {
         if ($value) {
-            $this->attributes['expire_at'] = Carbon::createFromFormat('Y/m/d', $value);
+            $this->attributes['expire_at'] = Carbon::createFromFormat($this->dateFormat(), $value);
         }
     }
 
@@ -117,6 +130,11 @@ class Quote extends Model
     public function organisation()
     {
         return $this->belongsTo(\VentureDrake\LaravelCrm\Models\Organisation::class);
+    }
+
+    public function client()
+    {
+        return $this->belongsTo(\VentureDrake\LaravelCrm\Models\Client::class);
     }
 
     public function quoteProducts()

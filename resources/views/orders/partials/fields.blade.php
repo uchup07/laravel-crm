@@ -4,42 +4,14 @@
              'name' => 'lead_id',
              'value' => old('lead_id', $order->lead->id ?? $lead->id ?? null),
         ])
-        <span class="autocomplete">
-             @include('laravel-crm::partials.form.hidden',[
-               'name' => 'person_id',
-               'value' => old('person_id', $order->person->id ?? $person->id ?? null),
-            ])
-            <script type="text/javascript">
-                let people =  {!! \VentureDrake\LaravelCrm\Http\Helpers\AutoComplete\people() !!}
-            </script>
-            @include('laravel-crm::partials.form.text',[
-               'name' => 'person_name',
-               'label' => ucfirst(__('laravel-crm::lang.contact_person')),
-               'prepend' => '<span class="fa fa-user" aria-hidden="true"></span>',
-               'value' => old('person_name', $order->person->name ?? $person->name ?? null),
-               'attributes' => [
-                  'autocomplete' => \Illuminate\Support\Str::random()
-               ]
-            ])
-        </span>
-        <span class="autocomplete">
-            @include('laravel-crm::partials.form.hidden',[
-              'name' => 'organisation_id',
-              'value' => old('organisation_id', $order->organisation->id ?? $organisation->id ??  null),
-            ])
-            <script type="text/javascript">
-                let organisations = {!! \VentureDrake\LaravelCrm\Http\Helpers\AutoComplete\organisations() !!}
-            </script>
-            @include('laravel-crm::partials.form.text',[
-                'name' => 'organisation_name',
-                'label' => ucfirst(__('laravel-crm::lang.organization')),
-                'prepend' => '<span class="fa fa-building" aria-hidden="true"></span>',
-                'value' => old('organisation_name',$order->organisation->name ?? $organisation->name ?? null),
-                'attributes' => [
-                  'autocomplete' => \Illuminate\Support\Str::random()
-               ]
-            ])
-        </span>
+
+        @livewire('order-form',[
+            'order' => $order ?? null,
+            'client' => $client ?? null,
+            'organisation' => $organisation ?? null,
+            'person' => $person ?? null
+        ])
+        
         @include('laravel-crm::partials.form.textarea',[
              'name' => 'description',
              'label' => ucfirst(__('laravel-crm::lang.description')),
@@ -63,24 +35,25 @@
                 ])
             </div>
         </div>
+        
         @include('laravel-crm::partials.form.multiselect',[
             'name' => 'labels',
             'label' => ucfirst(__('laravel-crm::lang.labels')),
             'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\optionsFromModel(\VentureDrake\LaravelCrm\Models\Label::all(), false),
             'value' =>  old('labels', (isset($order)) ? $order->labels->pluck('id')->toArray() : null)
         ])
-
+        
         @include('laravel-crm::partials.form.select',[
-                 'name' => 'user_owner_id',
-                 'label' => ucfirst(__('laravel-crm::lang.owner')),
-                 'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false),
-                 'value' =>  old('user_owner_id', $order->user_owner_id ?? auth()->user()->id),
-              ])
+             'name' => 'user_owner_id',
+             'label' => ucfirst(__('laravel-crm::lang.owner')),
+             'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false),
+             'value' =>  old('user_owner_id', $order->user_owner_id ?? auth()->user()->id),
+          ])
 
         @livewire('address-edit', [
-        'addresses' => $addresses ?? null,
-        'old' => old('addresses'),
-        'model' => 'order'
+            'addresses' => $addresses ?? null,
+            'old' => old('addresses'),
+            'model' => 'order'
         ])
     </div>
     <div class="col-sm-7">

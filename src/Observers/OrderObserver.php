@@ -4,9 +4,20 @@ namespace VentureDrake\LaravelCrm\Observers;
 
 use Ramsey\Uuid\Uuid;
 use VentureDrake\LaravelCrm\Models\Order;
+use VentureDrake\LaravelCrm\Services\SettingService;
 
 class OrderObserver
 {
+    /**
+     * @var SettingService
+     */
+    private $settingService;
+
+    public function __construct(SettingService $settingService)
+    {
+        $this->settingService = $settingService;
+    }
+    
     /**
      * Handle the order "creating" event.
      *
@@ -20,6 +31,10 @@ class OrderObserver
         if (! app()->runningInConsole()) {
             $order->user_created_id = auth()->user()->id ?? null;
         }
+        
+        $order->number = Order::orderBy('number', 'DESC')->first()->number + 1;
+        $order->prefix = $this->settingService->get('order_prefix')->value;
+        $order->order_id = $order->prefix.$order->number;
     }
 
     /**
@@ -30,11 +45,11 @@ class OrderObserver
      */
     public function created(Order $order)
     {
-        if ($order->organisation && ! $order->organisation->client) {
+        /*if ($order->organisation && ! $order->organisation->client) {
             $order->organisation->client()->create([
                 'user_owner_id' => $order->organisation->user_owner_id,
             ]);
-        }
+        }*/
     }
 
     /**

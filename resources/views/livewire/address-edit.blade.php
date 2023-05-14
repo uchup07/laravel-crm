@@ -8,11 +8,16 @@
 
                 <div class="form-group">
                     <label>{{ ucfirst(__('laravel-crm::lang.type')) }}</label>
-                    <select class="form-control custom-select" wire:model="type.{{ $value }}" name="addresses[{{ $value }}][type]" @if(in_array($model, ['order','delivery'])) disabled="disabled" @endif>
-                        @foreach(\VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\optionsFromModel(\VentureDrake\LaravelCrm\Models\AddressType::all()) as $optionKey => $optionName)
-                            <option value="{{ $optionKey }}">{{ $optionName }}</option>
-                        @endforeach
-                    </select>
+                    @if(in_array($model, ['order','delivery']))
+                        <input type="hidden" class="form-control" wire:model="type.{{ $value }}" name="addresses[{{ $value }}][type]">
+                        <input type="text" class="form-control" wire:model="type_name.{{ $value }}" name="addresses[{{ $value }}][type_name]" readonly="readonly">
+                    @else    
+                        <select class="form-control custom-select" wire:model="type.{{ $value }}" name="addresses[{{ $value }}][type]" @if(in_array($model, ['order','delivery'])) disabled="disabled" @endif>
+                            @foreach(\VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\optionsFromModel(\VentureDrake\LaravelCrm\Models\AddressType::all()) as $optionKey => $optionName)
+                                <option value="{{ $optionKey }}">{{ $optionName }}</option>
+                            @endforeach
+                        </select>
+                    @endif
                     @error('type.'.$value) <span class="text-danger invalid-feedback-custom">{{ $message }}</span>@enderror
                 </div>
 
@@ -22,11 +27,22 @@
                       @error('address.'.$value) <span class="text-danger invalid-feedback-custom">{{ $message }}</span>@enderror
                   </div>--}}
 
-                {{--<div class="form-group">
-                    <label>{{ ucfirst(__('laravel-crm::lang.name')) }}</label>
-                    <input type="text" class="form-control" wire:model="name.{{ $value }}" name="addresses[{{ $value }}][name]">
-                    @error('name.'.$value) <span class="text-danger invalid-feedback-custom">{{ $message }}</span>@enderror
-                </div>--}}
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label>{{ ucfirst(__('laravel-crm::lang.contact_name')) }}</label>
+                            <input type="text" class="form-control" wire:model="contact.{{ $value }}" name="addresses[{{ $value }}][contact]">
+                            @error('contact.'.$value) <span class="text-danger invalid-feedback-custom">{{ $message }}</span>@enderror
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label>{{ ucfirst(__('laravel-crm::lang.contact_phone')) }}</label>
+                            <input type="text" class="form-control" wire:model="phone.{{ $value }}" name="addresses[{{ $value }}][phone]">
+                            @error('phone.'.$value) <span class="text-danger invalid-feedback-custom">{{ $message }}</span>@enderror
+                        </div>
+                    </div>
+                </div>
 
                 <div class="form-group">
                     <label>{{ ucfirst(__('laravel-crm::lang.line_1')) }}</label>

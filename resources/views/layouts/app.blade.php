@@ -8,6 +8,8 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    @include('laravel-crm::layouts.partials.meta')
+
     <title>{{ (config('app.name')) ? config('app.name').' - ' : null }} CRM</title>
 
     <!-- Fonts -->
@@ -16,7 +18,7 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
     
     <!-- Styles -->
-    <link href="{{ asset('vendor/laravel-crm/css/app.css') }}?v=3245245367547678657754" rel="stylesheet">
+    <link href="{{ asset('vendor/laravel-crm/css/app.css') }}?v=76546474567678" rel="stylesheet">
 
     @livewireStyles
 
@@ -80,7 +82,7 @@
             </div>
         </footer>
     </div>
-    <script src="{{ asset('vendor/laravel-crm/js/app.js') }}?v=325643675486"></script>
+    <script src="{{ asset('vendor/laravel-crm/js/app.js') }}?v=2343423423423"></script>
     <script src="{{ asset('vendor/laravel-crm/libs/bootstrap-multiselect/bootstrap-multiselect.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
     @livewireScripts

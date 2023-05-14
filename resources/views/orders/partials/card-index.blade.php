@@ -24,7 +24,8 @@
             <thead>
             <tr>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.created')) }}</th>
-                <th scope="col">#</th>
+                <th scope="col">{{ ucwords(__('laravel-crm::lang.number')) }}</th>
+                <th scope="col">{{ ucwords(__('laravel-crm::lang.reference')) }}</th>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.labels')) }}</th>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.customer')) }}</th>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.sub_total')) }}</th>
@@ -40,14 +41,26 @@
             @foreach($orders as $order)
                <tr class="has-link" data-url="{{ url(route('laravel-crm.orders.show', $order)) }}">
                    <td>{{ $order->created_at->diffForHumans() }}</td>
+                   <td>{{ $order->order_id }}</td>
                    <td>{{ $order->reference }}</td>
                    <td>@include('laravel-crm::partials.labels',[
                             'labels' => $order->labels,
                             'limit' => 3
                         ])</td>
                     <td>
-                        {{ $order->organisation->name ?? null }}<br />
-                        <small>{{ $order->person->name ?? null }}</small>
+                        @if($order->client)
+                            {{ $order->client->name }}
+                        @endif
+                        @if($order->organisation)
+                            @if($order->client)<br /><small>@endif
+                                {{ $order->organisation->name }}
+                                @if($order->client)</small>@endif
+                        @endif
+                        @if($order->organisation && $order->person)
+                            <br /><small>{{ $order->person->name }}</small>
+                        @elseif($order->person)
+                            {{ $order->person->name }}
+                        @endif
                     </td>
                     <td>{{ money($order->subtotal, $order->currency) }}</td>
                     <td>{{ money($order->discount, $order->currency) }}</td>

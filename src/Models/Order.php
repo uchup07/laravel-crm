@@ -19,6 +19,8 @@ class Order extends Model
     protected $guarded = ['id'];
 
     protected $searchable = [
+        'reference',
+        'order_id',
         'person.first_name',
         'person.middle_name',
         'person.last_name',
@@ -41,9 +43,18 @@ class Order extends Model
         return config('laravel-crm.db_table_prefix').'orders';
     }
 
+    public function getNumberAttribute($value)
+    {
+        if ($value) {
+            return $value;
+        } else {
+            return 1000 + $this->id;
+        }
+    }
+
     public function getTitleAttribute()
     {
-        return money($this->total, $this->currency).' - '.($this->organisation->name ?? $this->organisation->person->name ?? null);
+        return money($this->total, $this->currency).' - '.($this->client->name ?? $this->organisation->name ?? $this->organisation->person->name ?? null);
     }
 
     public function setSubtotalAttribute($value)
@@ -99,6 +110,11 @@ class Order extends Model
     public function organisation()
     {
         return $this->belongsTo(\VentureDrake\LaravelCrm\Models\Organisation::class);
+    }
+
+    public function client()
+    {
+        return $this->belongsTo(\VentureDrake\LaravelCrm\Models\Client::class);
     }
 
     public function orderProducts()

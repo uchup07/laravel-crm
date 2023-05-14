@@ -3,13 +3,16 @@
 namespace VentureDrake\LaravelCrm\Http\Livewire;
 
 use Livewire\Component;
+use VentureDrake\LaravelCrm\Models\AddressType;
 
 class LiveAddressEdit extends Component
 {
     public $addresses;
     public $address;
     public $type;
-    public $name;
+    public $type_name;
+    public $contact;
+    public $phone;
     public $line1;
     public $line2;
     public $line3;
@@ -25,7 +28,7 @@ class LiveAddressEdit extends Component
     public $inputs = [];
     public $i = 0;
 
-    public function mount($addresses, $old, $model = null)
+    public function mount($addresses, $old, $model = null, $show = [])
     {
         $this->addresses = $addresses;
         $this->old = $old;
@@ -36,7 +39,9 @@ class LiveAddressEdit extends Component
                 $this->add($this->i);
                 $this->address[$this->i] = $address['address'] ?? null;
                 $this->type[$this->i] = $address['type'] ?? null;
-                $this->name[$this->i] = $address['name'] ?? null;
+                $this->type_name[$this->i] = $address['type_name'] ?? null;
+                $this->contact[$this->i] = $address['contact'] ?? null;
+                $this->phone[$this->i] = $address['phone'] ?? null;
                 $this->line1[$this->i] = $address['line1'] ?? null;
                 $this->line2[$this->i] = $address['line2'] ?? null;
                 $this->line3[$this->i] = $address['line3'] ?? null;
@@ -52,7 +57,9 @@ class LiveAddressEdit extends Component
                 $this->add($this->i);
                 $this->address[$this->i] = $address->address;
                 $this->type[$this->i] = $address->addressType->id ?? null;
-                $this->name[$this->i] = $address->name;
+                $this->type_name[$this->i] = $address->addressType->name ?? null;
+                $this->contact[$this->i] = $address->contact;
+                $this->phone[$this->i] = $address->phone;
                 $this->line1[$this->i] = $address->line1;
                 $this->line2[$this->i] = $address->line2;
                 $this->line3[$this->i] = $address->line3;
@@ -67,11 +74,25 @@ class LiveAddressEdit extends Component
             $this->add($this->i);
             
             if ($model == 'order') {
-                $this->type[$this->i] = 5;
-                $this->add($this->i);
-                $this->type[$this->i] = 6;
+                if (count($show) > 0) {
+                    foreach ($show as $key => $address) {
+                        $this->type[$this->i] = $address;
+                        $this->type_name[$this->i] = AddressType::find($address)->name;
+                        
+                        if (array_key_last($show) != $key) {
+                            $this->add($this->i);
+                        }
+                    }
+                } else {
+                    $this->type[$this->i] = 5;
+                    $this->type_name[$this->i] = AddressType::find(5)->name;
+                    $this->add($this->i);
+                    $this->type[$this->i] = 6;
+                    $this->type_name[$this->i] = AddressType::find(6)->name;
+                }
             } elseif ($model == 'delivery') {
                 $this->type[$this->i] = 6;
+                $this->type_name[$this->i] = AddressType::find(6)->name;
             }
         }
     }

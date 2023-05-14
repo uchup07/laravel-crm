@@ -2,14 +2,26 @@
 
 @section('content')
 
-    <table class="table table-condensed">
+    <table class="table table-sm table-items">
         <tbody>
             <tr>
                 <td width="50%"> 
                     <h1>{{ strtoupper(__('laravel-crm::lang.delivery')) }}</h1>
-                    @if($order->reference)
-                        <p><strong>{{ ucfirst(__('laravel-crm::lang.reference')) }}</strong> {{ $order->reference }}</p>
-                    @endif
+                    @if($order->reference || $delivery->delivery_expected)
+                    <p>
+                    @endif    
+                        @if($order->reference)
+                            <strong>{{ ucfirst(__('laravel-crm::lang.reference')) }}</strong> {{ $order->reference }}
+                        @endif
+                        @if($delivery->delivery_expected)
+                            @if($order->reference)
+                                <br />
+                            @endif    
+                            <strong>{{ ucwords(__('laravel-crm::lang.delivery_date')) }}</strong> {{ $delivery->delivery_expected }}
+                        @endif
+                    @if($order->reference || $delivery->delivery_expected)
+                    </p>
+                   @endif
                 </td>
                 <td width="50%" style="text-align: right">
                     @if($logo)
@@ -21,7 +33,15 @@
                 <td>
                     <strong>{{ ucfirst(__('laravel-crm::lang.to')) }}</strong><br />
                     {{ $order->organisation->name ?? $order->organisation->person->name }}<br />
-                    {{ $order->person->name }}<br />
+                    @isset($order->person)
+                        {{ $order->person->name }}<br />
+                    @endisset
+                    @if($address->contact)
+                        <strong>{{ ucwords(__('laravel-crm::lang.contact')) }}: {{ $address->contact }}</strong><br >
+                    @endif
+                    @if($address->phone)
+                        <strong>{{ ucwords(__('laravel-crm::lang.phone')) }}: {{ $address->phone }}</strong><br >
+                    @endif
                     @if($address)
                         {{ $address->line1 }}<br />
                         @if($address->line2)
@@ -60,7 +80,7 @@
         </tbody>
     </table>
     @if($order->description)
-        <table class="table table-bordered table-condensed">
+        <table class="table table-bordered table-sm table-items">
           <tbody>
             <tr>
                 <td><h4>{{ ucfirst(__('laravel-crm::lang.description')) }}</h4>
@@ -69,11 +89,11 @@
           </tbody>  
         </table>
     @endif
-    <table class="table table-bordered table-condensed">
+    <table class="table table-bordered table-sm table-items">
         <thead>
         <tr>
             <th scope="col">{{ ucfirst(__('laravel-crm::lang.item')) }}</th>
-            <th scope="col">{{ ucfirst(__('laravel-crm::lang.quantity')) }}</th>
+            <th scope="col">{{ ucfirst(__('laravel-crm::lang.qty')) }}</th>
             <th scope="col">{{ ucfirst(__('laravel-crm::lang.comments')) }}</th>
         </tr>
         </thead>
@@ -88,7 +108,7 @@
         </tbody>
     </table>
     @if($order->terms)
-        <table class="table table-bordered table-condensed">
+        <table class="table table-bordered table-sm table-items">
             <tbody>
             <tr>
                 <td>
@@ -99,4 +119,21 @@
             </tbody>
         </table>
     @endif
+
+    <table class="table table-bordered table-sm table-delivery">
+        <tbody>
+        <tr>
+            <th width="150">{{ ucfirst(__('laravel-crm::lang.received_by')) }} </th>
+            <td></td>
+        </tr>
+        <tr>
+            <th>{{ ucfirst(__('laravel-crm::lang.received_date')) }} </th>
+            <td></td>
+        </tr>
+        <tr>
+            <th>{{ ucfirst(__('laravel-crm::lang.signature')) }} </th>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
 @endsection

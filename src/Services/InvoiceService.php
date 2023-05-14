@@ -32,9 +32,9 @@ class InvoiceService
             'person_id' => $person->id ?? null,
             'organisation_id' => $organisation->id ?? null,
             'reference' => $request->reference,
-            'invoice_id' => $request->prefix.$request->number,
+            /*'invoice_id' => $request->prefix.$request->number,
             'prefix' => $request->prefix,
-            'number' => $request->number,
+            'number' => $request->number,*/
             'issue_date' => $request->issue_date,
             'due_date' => $request->due_date,
             'currency' => $request->currency,
@@ -71,7 +71,7 @@ class InvoiceService
                     /*'TaxAmount' => ($line->tax_total->value / 100),*/
                     // 'LineAmount' => null,
                     'ItemCode' => $line->product->xeroItem->code ?? $line->product->code ?? null,
-                    /*'AccountCode' => null*/
+                    'AccountCode' => 200, // Added setting for this
                 ];
             }
 
@@ -83,8 +83,9 @@ class InvoiceService
                         'ContactID' => $invoice->organisation->xeroContact->contact_id,
                     ],
                     'LineItems' => $lineItems ?? [],
-                    'Date' => Carbon::now()->format('Y-m-d'),
-                    'DueDate' => Carbon::now()->addDays(30)->format('Y-m-d'),
+                    'Date' => ($invoice->issue_date) ? $invoice->issue_date->format('Y-m-d') : Carbon::now()->format('Y-m-d'),
+                    'DueDate' => ($invoice->due_date) ? $invoice->due_date->format('Y-m-d') : Carbon::now()->addDays(30)->format('Y-m-d'),
+                    'Reference' => $invoice->reference,
                 ]);
 
                 XeroInvoice::create([
@@ -109,9 +110,9 @@ class InvoiceService
             'person_id' => $person->id ?? null,
             'organisation_id' => $organisation->id ?? null,
             'reference' => $request->reference,
-            'invoice_id' => $request->prefix.$request->number,
+            /*'invoice_id' => $request->prefix.$request->number,
             'prefix' => $request->prefix,
-            'number' => $request->number,
+            'number' => $request->number,*/
             'issue_date' => $request->issue_date,
             'due_date' => $request->due_date,
             'currency' => $request->currency,

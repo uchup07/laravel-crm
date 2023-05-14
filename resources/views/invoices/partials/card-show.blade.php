@@ -15,7 +15,7 @@
                 @livewire('send-invoice',[
                     'invoice' => $invoice
                 ])
-                <a class="btn btn-outline-secondary btn-sm" href="#">{{ ucfirst(__('laravel-crm::lang.download')) }}</a>
+                <a class="btn btn-outline-secondary btn-sm" href="{{ route('laravel-crm.invoices.download', $invoice) }}">{{ ucfirst(__('laravel-crm::lang.download')) }}</a>
                 @if(! $invoice->fully_paid_at)
                     @livewire('pay-invoice',[
                         'invoice' => $invoice
@@ -50,13 +50,16 @@
                     <dt class="col-sm-3 text-right">Number</dt>
                     <dd class="col-sm-9">{{ $invoice->invoice_id }}</dd>
                     <dt class="col-sm-3 text-right">Issue Date</dt>
-                    <dd class="col-sm-9">{{ ($invoice->issue_date) ? $invoice->issue_date->toFormattedDateString() : null }}</dd>
+                    <dd class="col-sm-9">{{ ($invoice->issue_date) ? $invoice->issue_date->format($dateFormat) : null }}</dd>
                     <dt class="col-sm-3 text-right">Due Date</dt>
-                    <dd class="col-sm-9">{{ ($invoice->due_date) ? $invoice->due_date->toFormattedDateString() : null }}</dd>
+                    <dd class="col-sm-9">{{ ($invoice->due_date) ? $invoice->due_date->format($dateFormat) : null }}</dd>
                     <dt class="col-sm-3 text-right">Terms</dt>
                     <dd class="col-sm-9">{{ $invoice->terms }}</dd>
                 </dl>
-
+                <h6 class="mt-4 text-uppercase">{{ ucfirst(__('laravel-crm::lang.organization')) }}</h6>
+                <hr />
+                <p><span class="fa fa-building" aria-hidden="true"></span> @if($invoice->organisation)<a href="{{ route('laravel-crm.organisations.show',$invoice->organisation) }}">{{ $invoice->organisation->name }}</a>@endif</p>
+                <p><span class="fa fa-map-marker" aria-hidden="true"></span> {{ ($organisation_address) ? \VentureDrake\LaravelCrm\Http\Helpers\AddressLine\addressSingleLine($organisation_address) : null }} </p>
                 <h6 class="mt-4 text-uppercase">{{ ucfirst(__('laravel-crm::lang.contact_person')) }}</h6>
                 <hr />
                 <p><span class="fa fa-user" aria-hidden="true"></span> @if($invoice->person)<a href="{{ route('laravel-crm.people.show',$invoice->person) }}">{{ $invoice->person->name }}</a>@endif </p>
@@ -66,10 +69,6 @@
                 @isset($phone)
                     <p><span class="fa fa-phone" aria-hidden="true"></span> <a href="tel:{{ $phone->number }}">{{ $phone->number }}</a> ({{ ucfirst($phone->type) }})</p>
                 @endisset
-                <h6 class="mt-4 text-uppercase">{{ ucfirst(__('laravel-crm::lang.organization')) }}</h6>
-                <hr />
-                <p><span class="fa fa-building" aria-hidden="true"></span> @if($invoice->organisation)<a href="{{ route('laravel-crm.organisations.show',$invoice->organisation) }}">{{ $invoice->organisation->name }}</a>@endif</p>
-                <p><span class="fa fa-map-marker" aria-hidden="true"></span> {{ ($organisation_address) ? \VentureDrake\LaravelCrm\Http\Helpers\AddressLine\addressSingleLine($organisation_address) : null }} </p>
                 @can('view crm products')
                 <h6 class="text-uppercase mt-4 section-h6-title-table"><span>{{ ucfirst(__('laravel-crm::lang.invoice_lines')) }} ({{ $invoice->invoiceLines->count() }})</span></h6>
                 <table class="table table-hover">
@@ -84,7 +83,12 @@
                     <tbody>
                     @foreach($invoice->invoiceLines()->whereNotNull('product_id')->get() as $invoiceLine)
                         <tr>
-                            <td>{{ $invoiceLine->product->name }}</td>
+                            <td>
+                                {{ $invoiceLine->product->name }}
+                                @if($invoiceLine->product->code)
+                                    <br /><small>{{ $orderProduct->product->code }}</small>
+                                @endif
+                            </td>
                             <td>{{ money($invoiceLine->price ?? null, $invoiceLine->currency) }}</td>
                             <td>{{ $invoiceLine->quantity }}</td>
                             <td>{{ money($invoiceLine->amount ?? null, $invoiceLine->currency) }}</td>

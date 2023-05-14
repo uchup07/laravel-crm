@@ -4,47 +4,15 @@
              'name' => 'lead_id',
              'value' => old('lead_id', $quote->lead->id ?? $lead->id ?? null),
         ])
-        <span class="autocomplete">
-             @include('laravel-crm::partials.form.hidden',[
-               'name' => 'person_id',
-               'value' => old('person_id', $quote->person->id ?? $person->id ?? null),
-            ])
-            <script type="text/javascript">
-                let people =  {!! \VentureDrake\LaravelCrm\Http\Helpers\AutoComplete\people() !!}
-            </script>
-            @include('laravel-crm::partials.form.text',[
-               'name' => 'person_name',
-               'label' => ucfirst(__('laravel-crm::lang.contact_person')),
-               'prepend' => '<span class="fa fa-user" aria-hidden="true"></span>',
-               'value' => old('person_name', $quote->person->name ?? $person->name ?? null),
-               'attributes' => [
-                  'autocomplete' => \Illuminate\Support\Str::random()
-               ]
-            ])
-        </span>
-        <span class="autocomplete">
-            @include('laravel-crm::partials.form.hidden',[
-              'name' => 'organisation_id',
-              'value' => old('organisation_id', $quote->organisation->id ?? $organisation->id ??  null),
-            ])
-            <script type="text/javascript">
-                let organisations = {!! \VentureDrake\LaravelCrm\Http\Helpers\AutoComplete\organisations() !!}
-            </script>
-            @include('laravel-crm::partials.form.text',[
-                'name' => 'organisation_name',
-                'label' => ucfirst(__('laravel-crm::lang.organization')),
-                'prepend' => '<span class="fa fa-building" aria-hidden="true"></span>',
-                'value' => old('organisation_name',$quote->organisation->name ?? $organisation->name ?? null),
-                'attributes' => [
-                  'autocomplete' => \Illuminate\Support\Str::random()
-               ]
-            ])
-        </span>    
-        @include('laravel-crm::partials.form.text',[
-            'name' => 'title',
-            'label' => ucfirst(__('laravel-crm::lang.title')),
-            'value' => old('title',$quote->title ?? null)
+
+        @livewire('quote-form',[
+            'quote' => $quote ?? null,
+            'generateTitle' => $generateTitle ?? true,
+            'client' => $client ?? null,
+            'organisation' => $organisation ?? null,
+            'person' => $person ?? null
         ])
+        
         @include('laravel-crm::partials.form.textarea',[
              'name' => 'description',
              'label' => ucfirst(__('laravel-crm::lang.description')),
@@ -68,12 +36,13 @@
                 ])
             </div>
         </div>
+        
         <div class="row">
             <div class="col-sm-6">
                 @include('laravel-crm::partials.form.text',[
                      'name' => 'issue_at',
                      'label' => ucfirst(__('laravel-crm::lang.issue_date')),
-                     'value' => old('issue_at', (isset($quote->issue_at)) ? \Carbon\Carbon::parse($quote->issue_at)->format('Y/m/d') : null),
+                     'value' => old('issue_at', (isset($quote->issue_at)) ? \Carbon\Carbon::parse($quote->issue_at)->format($dateFormat) : null),
                      'attributes' => [
                          'autocomplete' => \Illuminate\Support\Str::random()
                       ]
@@ -83,7 +52,7 @@
                 @include('laravel-crm::partials.form.text',[
                      'name' => 'expire_at',
                      'label' => ucfirst(__('laravel-crm::lang.expiry_date')),
-                     'value' => old('expire_at', (isset($quote->expire_at)) ? \Carbon\Carbon::parse($quote->expire_at)->format('Y/m/d') : null),
+                     'value' => old('expire_at', (isset($quote->expire_at)) ? \Carbon\Carbon::parse($quote->expire_at)->format($dateFormat) : null),
                      'attributes' => [
                          'autocomplete' => \Illuminate\Support\Str::random()
                       ]

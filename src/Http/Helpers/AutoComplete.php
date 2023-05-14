@@ -2,9 +2,21 @@
 
 namespace VentureDrake\LaravelCrm\Http\Helpers\AutoComplete;
 
+use VentureDrake\LaravelCrm\Models\Client;
 use VentureDrake\LaravelCrm\Models\Organisation;
 use VentureDrake\LaravelCrm\Models\Person;
 use VentureDrake\LaravelCrm\Models\Product;
+
+function clients()
+{
+    $data = [];
+
+    foreach (Client::all() as $client) {
+        $data[$client->name] = $client->id;
+    }
+
+    return json_encode($data);
+}
 
 function people()
 {
@@ -22,7 +34,11 @@ function organisations()
     $data = [];
 
     foreach (Organisation::all() as $organisation) {
-        $data[$organisation->name] = $organisation->id;
+        if ($organisation->xeroContact) {
+            $data[$organisation->name . ' (xero contact)'] = $organisation->id;
+        } else {
+            $data[$organisation->name] = $organisation->id;
+        }
     }
 
     return json_encode($data);

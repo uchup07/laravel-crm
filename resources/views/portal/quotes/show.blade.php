@@ -67,10 +67,10 @@
                                 <p class="mb-0"><strong>{{ ucfirst(__('laravel-crm::lang.reference')) }}</strong> {{ $quote->reference }}</p>
                             @endif
                             @if($quote->issue_at)
-                                <p class="mb-0"><strong>{{ ucfirst(__('laravel-crm::lang.issue_date')) }}</strong> {{ $quote->issue_at->toFormattedDateString() }}</p>
+                                <p class="mb-0"><strong>{{ ucfirst(__('laravel-crm::lang.issue_date')) }}</strong> {{ $quote->issue_at->format($dateFormat) }}</p>
                             @endif
                             @if($quote->expire_at)
-                                <p class="mb-0"><strong>{{ ucfirst(__('laravel-crm::lang.expiry_date')) }}</strong>  {{ $quote->expire_at->toFormattedDateString() }}</p>
+                                <p class="mb-0"><strong>{{ ucfirst(__('laravel-crm::lang.expiry_date')) }}</strong>  {{ $quote->expire_at->format($dateFormat) }}</p>
                             @endif
                         </div>
                         <div class="col px-5 py-4 text-right">
@@ -87,8 +87,8 @@
                                     <strong>{{ ucfirst(__('laravel-crm::lang.issued_to')) }}</strong>
                                 </div>
                                 <div class="col">
-                                    {{ $quote->organisation->name ?? $quote->organisation->person->name }}<br />
-                                    {{ $quote->person->name }}<br />
+                                    {{ $quote->organisation->name ?? $quote->organisation->person->name ?? null }}<br />
+                                    {{ $quote->person->name ?? null }}<br />
                                     @if(isset($organisation_address))
                                         @if($organisation_address->line2)
                                             {{ $organisation_address->line1 }}<br />

@@ -31,9 +31,13 @@ class SettingController extends Controller
         $currency = $this->settingService->get('currency');
         $timezone = $this->settingService->get('timezone');
         $logoFile = $this->settingService->get('logo_file');
+        $quotePrefix = $this->settingService->get('quote_prefix');
+        $orderPrefix = $this->settingService->get('order_prefix');
         $invoicePrefix = $this->settingService->get('invoice_prefix');
         $quoteTerms = $this->settingService->get('quote_terms');
         $invoiceTerms = $this->settingService->get('invoice_terms');
+        $dateFormat = $this->settingService->get('date_format');
+        $timeFormat = $this->settingService->get('time_format');
 
         return view('laravel-crm::settings.edit', [
             'organisationName' => $organisationName,
@@ -42,9 +46,13 @@ class SettingController extends Controller
             'currency' => $currency,
             'timezone' => $timezone,
             'logoFile' => $logoFile,
+            'quotePrefix' => $quotePrefix,
+            'orderPrefix' => $orderPrefix,
             'invoicePrefix' => $invoicePrefix,
             'quoteTerms' => $quoteTerms,
             'invoiceTerms' => $invoiceTerms,
+            'dateFormat' => $dateFormat,
+            'timeFormat' => $timeFormat,
         ]);
     }
 
@@ -62,9 +70,20 @@ class SettingController extends Controller
         $this->settingService->set('country', $request->country);
         $this->settingService->set('currency', $request->currency);
         $this->settingService->set('timezone', $request->timezone);
+        $this->settingService->set('quote_prefix', $request->quote_prefix);
+        $this->settingService->set('order_prefix', $request->order_prefix);
         $this->settingService->set('invoice_prefix', $request->invoice_prefix);
-        $this->settingService->set('quote_terms', $request->quote_terms);
-        $this->settingService->set('invoice_terms', $request->invoice_terms);
+        
+        if ($request->quote_terms) {
+            $this->settingService->set('quote_terms', $request->quote_terms);
+        }
+        
+        if ($request->invoice_terms) {
+            $this->settingService->set('invoice_terms', $request->invoice_terms);
+        }
+        
+        $this->settingService->set('date_format', $request->date_format);
+        $this->settingService->set('time_format', $request->time_format);
 
         if ($file = $request->file('logo')) {
             if (config('laravel-crm.teams') && auth()->user()->currentTeam) {
