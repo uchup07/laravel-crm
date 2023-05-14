@@ -279,6 +279,12 @@ class LeadController extends Controller
         }
 
         $params = Lead::filters($request, 'search');
+
+        // check for user hasnt role admin or owner
+        if(!auth()->user()->hasRole('Admin') OR !auth()->user()->hasRole('Owner')) {
+            $userOwners = \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false);
+            $params['user_owner_id'] = array_keys($userOwners);
+        }
         
         $leads = Lead::filter($params)
             ->select(

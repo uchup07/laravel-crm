@@ -284,6 +284,12 @@ class DealController extends Controller
 
         $params = Deal::filters($request, 'search');
 
+        // check for user hasnt role admin or owner
+        if(!auth()->user()->hasRole('Admin') OR !auth()->user()->hasRole('Owner')) {
+            $userOwners = \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false);
+            $params['user_owner_id'] = array_keys($userOwners);
+        }
+
         $deals = Deal::filter($params)
             ->select(
                 config('laravel-crm.db_table_prefix').'deals.*',

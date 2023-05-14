@@ -225,6 +225,12 @@ class PersonController extends Controller
 
         $params = Person::filters($request, 'search');
 
+        // check for user hasnt role admin or owner
+        if(!auth()->user()->hasRole('Admin') OR !auth()->user()->hasRole('Owner')) {
+            $userOwners = \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false);
+            $params['user_owner_id'] = array_keys($userOwners);
+        }
+
         $people = Person::filter($params)->get()->filter(function ($record) use ($searchValue) {
             foreach ($record->getSearchable() as $field) {
                 if (Str::contains(strtolower($record->{$field}), strtolower($searchValue))) {
