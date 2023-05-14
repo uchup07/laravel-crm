@@ -54,7 +54,7 @@ class LaravelCrmTablesSeeder extends Seeder
                 ],
                 [
                     'name' => 'Customer A',
-                    'hex' => 'ffc107',
+                    'hex' => 'E3AB3B',
                     'external_id' => Uuid::uuid4()->toString(),
                 ],
             ],
@@ -64,7 +64,7 @@ class LaravelCrmTablesSeeder extends Seeder
                 ],
                 [
                     'name' => 'Customer B',
-                    'hex' => 'ffc107',
+                    'hex' => '48FB48',
                     'external_id' => Uuid::uuid4()->toString(),
                 ],
             ],
@@ -74,7 +74,47 @@ class LaravelCrmTablesSeeder extends Seeder
                 ],
                 [
                     'name' => 'Customer C',
-                    'hex' => 'ffc107',
+                    'hex' => '1DC0C8',
+                    'external_id' => Uuid::uuid4()->toString(),
+                ],
+            ],
+            [
+                [
+                    'id' => 7,
+                ],
+                [
+                    'name' => 'Not Active A',
+                    'hex' => 'E10505',
+                    'external_id' => Uuid::uuid4()->toString(),
+                ],
+            ],
+            [
+                [
+                    'id' => 8,
+                ],
+                [
+                    'name' => 'Not Active B',
+                    'hex' => 'C61F1F',
+                    'external_id' => Uuid::uuid4()->toString(),
+                ],
+            ],
+            [
+                [
+                    'id' => 9,
+                ],
+                [
+                    'name' => 'Not Active C',
+                    'hex' => 'E31212',
+                    'external_id' => Uuid::uuid4()->toString(),
+                ],
+            ],
+            [
+                [
+                    'id' => 10,
+                ],
+                [
+                    'name' => 'Prospects',
+                    'hex' => '73B619',
                     'external_id' => Uuid::uuid4()->toString(),
                 ],
             ],
