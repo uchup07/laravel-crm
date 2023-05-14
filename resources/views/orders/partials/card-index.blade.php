@@ -24,7 +24,8 @@
             <thead>
             <tr>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.created')) }}</th>
-                <th scope="col">#</th>
+                <th scope="col">{{ ucwords(__('laravel-crm::lang.number')) }}</th>
+                <th scope="col">{{ ucwords(__('laravel-crm::lang.reference')) }}</th>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.labels')) }}</th>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.customer')) }}</th>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.sub_total')) }}</th>
@@ -40,6 +41,7 @@
             @foreach($orders as $order)
                <tr class="has-link" data-url="{{ url(route('laravel-crm.orders.show', $order)) }}">
                    <td>{{ $order->created_at->diffForHumans() }}</td>
+                   <td>{{ $order->order_id }}</td>
                    <td>{{ $order->reference }}</td>
                    <td>@include('laravel-crm::partials.labels',[
                             'labels' => $order->labels,

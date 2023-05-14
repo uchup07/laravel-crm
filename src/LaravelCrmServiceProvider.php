@@ -19,6 +19,7 @@ use VentureDrake\LaravelCrm\Console\LaravelCrmInstall;
 use VentureDrake\LaravelCrm\Console\LaravelCrmLabels;
 use VentureDrake\LaravelCrm\Console\LaravelCrmOrganisationTypes;
 use VentureDrake\LaravelCrm\Console\LaravelCrmPermissions;
+use VentureDrake\LaravelCrm\Console\LaravelCrmUpdate;
 use VentureDrake\LaravelCrm\Console\LaravelCrmXero;
 use VentureDrake\LaravelCrm\Http\Livewire\Components\LiveCall;
 use VentureDrake\LaravelCrm\Http\Livewire\Components\LiveFile;
@@ -398,6 +399,9 @@ class LaravelCrmServiceProvider extends ServiceProvider
                 __DIR__ . '/../database/migrations/add_client_to_laravel_crm_leads_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_client_to_laravel_crm_leads_table.php', 74),
                 __DIR__ . '/../database/migrations/add_client_to_laravel_crm_deals_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_client_to_laravel_crm_deals_table.php', 75),
                 __DIR__ . '/../database/migrations/add_client_to_laravel_crm_quotes_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_client_to_laravel_crm_quotes_table.php', 76),
+                __DIR__ . '/../database/migrations/add_account_codes_to_laravel_crm_products_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_account_codes_to_laravel_crm_products_table.php', 77),
+                __DIR__ . '/../database/migrations/add_prefix_to_laravel_crm_quotes_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_prefix_to_laravel_crm_quotes_table.php', 78),
+                __DIR__ . '/../database/migrations/add_prefix_to_laravel_crm_orders_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_prefix_to_laravel_crm_orders_table.php', 79),
             ], 'migrations');
 
             // Publishing the seeders
@@ -420,6 +424,7 @@ class LaravelCrmServiceProvider extends ServiceProvider
             // Registering package commands.
             $this->commands([
                 LaravelCrmInstall::class,
+                LaravelCrmUpdate::class,
                 LaravelCrmPermissions::class,
                 LaravelCrmLabels::class,
                 LaravelCrmAddressTypes::class,

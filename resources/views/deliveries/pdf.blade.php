@@ -5,20 +5,20 @@
     <table class="table table-sm table-items">
         <tbody>
             <tr>
-                <p width="50%"> 
+                <td width="50%"> 
                     <h1>{{ strtoupper(__('laravel-crm::lang.delivery')) }}</h1>
                     @if($order->reference || $delivery->delivery_expected)
                     <p>
                     @endif    
-                    @if($order->reference)
-                        <strong>{{ ucfirst(__('laravel-crm::lang.reference')) }}</strong> {{ $order->reference }}
-                    @endif
-                    @if($delivery->delivery_expected)
                         @if($order->reference)
-                            <br />
-                        @endif    
-                        <strong>{{ ucwords(__('laravel-crm::lang.delivery_date')) }}</strong> {{ $delivery->delivery_expected }}
-                    @endif
+                            <strong>{{ ucfirst(__('laravel-crm::lang.reference')) }}</strong> {{ $order->reference }}
+                        @endif
+                        @if($delivery->delivery_expected)
+                            @if($order->reference)
+                                <br />
+                            @endif    
+                            <strong>{{ ucwords(__('laravel-crm::lang.delivery_date')) }}</strong> {{ $delivery->delivery_expected }}
+                        @endif
                     @if($order->reference || $delivery->delivery_expected)
                     </p>
                    @endif
@@ -93,7 +93,7 @@
         <thead>
         <tr>
             <th scope="col">{{ ucfirst(__('laravel-crm::lang.item')) }}</th>
-            <th scope="col">{{ ucfirst(__('laravel-crm::lang.quantity')) }}</th>
+            <th scope="col">{{ ucfirst(__('laravel-crm::lang.qty')) }}</th>
             <th scope="col">{{ ucfirst(__('laravel-crm::lang.comments')) }}</th>
         </tr>
         </thead>

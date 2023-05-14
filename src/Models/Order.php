@@ -19,6 +19,8 @@ class Order extends Model
     protected $guarded = ['id'];
 
     protected $searchable = [
+        'reference',
+        'order_id',
         'person.first_name',
         'person.middle_name',
         'person.last_name',
@@ -39,6 +41,15 @@ class Order extends Model
     public function getTable()
     {
         return config('laravel-crm.db_table_prefix').'orders';
+    }
+
+    public function getNumberAttribute($value)
+    {
+        if ($value) {
+            return $value;
+        } else {
+            return 1000 + $this->id;
+        }
     }
 
     public function getTitleAttribute()

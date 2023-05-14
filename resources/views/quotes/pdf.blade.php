@@ -7,14 +7,23 @@
             <tr>
                 <td width="50%"> 
                     <h1>{{ strtoupper(__('laravel-crm::lang.quote')) }}</h1>
-                    @if($quote->reference)
-                        <p><strong>{{ ucfirst(__('laravel-crm::lang.reference')) }}</strong> {{ $quote->reference }}</p>
+                    @if($quote->reference || $quote->issue_at || $quote->expire_at || $quote->quote_id)
+                        <p>
                     @endif
-                    @if($quote->issue_at)
-                        <p><strong>{{ ucfirst(__('laravel-crm::lang.issue_date')) }}</strong> {{ $quote->issue_at->format($dateFormat) }}</p>
-                    @endif
-                    @if($quote->expire_at)
-                        <p><strong>{{ ucfirst(__('laravel-crm::lang.expiry_date')) }}</strong>  {{ $quote->expire_at->format($dateFormat) }}</p>
+                        @if($quote->quote_id)
+                            <strong>{{ ucfirst(__('laravel-crm::lang.number')) }}</strong> {{ $quote->quote_id }}<br />
+                        @endif
+                        @if($quote->reference)
+                            <strong>{{ ucfirst(__('laravel-crm::lang.reference')) }}</strong> {{ $quote->reference }}<br />
+                        @endif
+                        @if($quote->issue_at)
+                            <strong>{{ ucfirst(__('laravel-crm::lang.issue_date')) }}</strong> {{ $quote->issue_at->format($dateFormat) }}<br />
+                        @endif
+                        @if($quote->expire_at)
+                            <strong>{{ ucfirst(__('laravel-crm::lang.expiry_date')) }}</strong>  {{ $quote->expire_at->format($dateFormat) }}
+                        @endif
+                    @if($quote->reference || $quote->issue_at || $quote->expire_at)
+                        </p>
                     @endif
                 </td>
                 <td width="50%" style="text-align: right">
@@ -82,7 +91,7 @@
         <tr>
             <th scope="col">{{ ucfirst(__('laravel-crm::lang.item')) }}</th>
             <th scope="col">{{ ucfirst(__('laravel-crm::lang.price')) }}</th>
-            <th scope="col">{{ ucfirst(__('laravel-crm::lang.quantity')) }}</th>
+            <th scope="col">{{ ucfirst(__('laravel-crm::lang.qty')) }}</th>
             <th scope="col">{{ ucfirst(__('laravel-crm::lang.amount')) }}</th>
             <th scope="col">{{ ucfirst(__('laravel-crm::lang.comments')) }}</th>
         </tr>
@@ -99,10 +108,10 @@
         @endforeach
         </tbody>
         <tfoot>
-        <tr>
+        <tr> 
             <td></td>
             <td></td>
-            <td><strong>{{ ucfirst(__('laravel-crm::lang.sub_total')) }}</strong></td>
+            <td class="strong">{{ ucfirst(__('laravel-crm::lang.sub_total')) }}</td>
             <td>{{ money($quote->subtotal, $quote->currency) }}</td>
             <td></td>
         </tr>
@@ -110,7 +119,7 @@
             <tr>
                 <td></td>
                 <td></td>
-                <td><strong>{{ ucfirst(__('laravel-crm::lang.discount')) }}</strong></td>
+                <td class="strong">{{ ucfirst(__('laravel-crm::lang.discount')) }}</td>
                 <td>{{ money($quote->discount, $quote->currency) }}</td>
                 <td></td>
             </tr>
@@ -118,21 +127,21 @@
         <tr>
             <td></td>
             <td></td>
-            <td><strong>{{ ucfirst(__('laravel-crm::lang.tax')) }}</strong></td>
+            <td class="strong">{{ ucfirst(__('laravel-crm::lang.tax')) }}</td>
             <td>{{ money($quote->tax, $quote->currency) }}</td>
             <td></td>
         </tr>
         {{--<tr>
             <td></td>
             <td></td>
-            <td><strong>{{ ucfirst(__('laravel-crm::lang.adjustment')) }}</strong></td>
+            <td class="strong">{{ ucfirst(__('laravel-crm::lang.adjustment')) }}</td>
             <td>{{ money($quote->adjustments, $quote->currency) }}</td>
             <td></td>
         </tr>--}}
         <tr>
             <td></td>
             <td></td>
-            <td><strong>{{ ucfirst(__('laravel-crm::lang.total')) }}</strong></td>
+            <td class="strong">{{ ucfirst(__('laravel-crm::lang.total')) }}</td>
             <td>{{ money($quote->total, $quote->currency) }}</td>
             <td></td>
         </tr>

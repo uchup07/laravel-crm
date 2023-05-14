@@ -35,19 +35,20 @@
                 ])
             </div>
         </div>
+        
         @include('laravel-crm::partials.form.multiselect',[
             'name' => 'labels',
             'label' => ucfirst(__('laravel-crm::lang.labels')),
             'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\optionsFromModel(\VentureDrake\LaravelCrm\Models\Label::all(), false),
             'value' =>  old('labels', (isset($order)) ? $order->labels->pluck('id')->toArray() : null)
         ])
-
+        
         @include('laravel-crm::partials.form.select',[
-                 'name' => 'user_owner_id',
-                 'label' => ucfirst(__('laravel-crm::lang.owner')),
-                 'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false),
-                 'value' =>  old('user_owner_id', $order->user_owner_id ?? auth()->user()->id),
-              ])
+             'name' => 'user_owner_id',
+             'label' => ucfirst(__('laravel-crm::lang.owner')),
+             'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false),
+             'value' =>  old('user_owner_id', $order->user_owner_id ?? auth()->user()->id),
+          ])
 
         @livewire('address-edit', [
             'addresses' => $addresses ?? null,

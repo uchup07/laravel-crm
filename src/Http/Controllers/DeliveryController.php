@@ -237,17 +237,17 @@ class DeliveryController extends Controller
         if(!File::exists($pdfLocation)){
             Storage::makeDirectory($pdfLocation);
         }*/
-
-        /*return view('laravel-crm::deliveries.pdf', [
-            'delivery' => $delivery,
-            'order' => $delivery->order,
-            'email' => $email ?? null,
-            'phone' => $phone ?? null,
-            'address' => $address ?? null,
-            'organisation_address' => $organisation_address ?? null,
-            'fromName' => $this->settingService->get('organisation_name')->value ?? null,
-            'logo' => $this->settingService->get('logo_file')->value ?? null,
-        ]);*/
+        
+        /*  return view('laravel-crm::deliveries.pdf', [
+              'delivery' => $delivery,
+              'order' => $delivery->order,
+              'email' => $email ?? null,
+              'phone' => $phone ?? null,
+              'address' => $delivery->getShippingAddress() ?? null,
+              'organisation_address' => $delivery->order->getShippingAddress() ?? $organisation_address ?? null,
+              'fromName' => $this->settingService->get('organisation_name')->value ?? null,
+              'logo' => $this->settingService->get('logo_file')->value ?? null,
+          ]);*/
 
         return Pdf::setOption([
             'fontDir' => public_path('vendor/laravel-crm/fonts'),
