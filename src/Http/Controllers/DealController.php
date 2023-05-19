@@ -50,7 +50,7 @@ class DealController extends Controller
         $params = Deal::filters($request);
 
         // check for user hasnt role admin or owner
-        if(!auth()->user()->hasRole('Admin') OR !auth()->user()->hasRole('Owner')) {
+        if(auth()->user()->hasRole('Employee')) {
             $userOwners = \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false);
             $params['user_owner_id'] = array_keys($userOwners);
         }
@@ -285,7 +285,7 @@ class DealController extends Controller
         $params = Deal::filters($request, 'search');
 
         // check for user hasnt role admin or owner
-        if(!auth()->user()->hasRole('Admin') OR !auth()->user()->hasRole('Owner')) {
+        if(auth()->user()->hasRole('Employee')) {
             $userOwners = \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false);
             $params['user_owner_id'] = array_keys($userOwners);
         }
