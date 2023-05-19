@@ -23,6 +23,12 @@ class ClientController extends Controller
     {
         Client::resetSearchValue($request);
         $params = Client::filters($request);
+
+        if(auth()->user()->hasRole('Employee')) {
+            $userOwners = \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false);
+            $params['user_owner_id'] = array_keys($userOwners);
+        }
+
         $clients = Client::filter($params);
 
         // This is  not the best, will refactor. Problem with trying to sort encryoted fields
