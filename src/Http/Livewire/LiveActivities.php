@@ -30,7 +30,11 @@ class LiveActivities extends Component
 
     private function getPeople()
     {
-        $this->people = $this->model->people()->get();
+        if($this->model->people) {
+            $this->people = $this->model->people()->get();
+        } else {
+            $this->people = null;
+        }
     }
 
     public function render()
