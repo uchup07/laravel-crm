@@ -20,6 +20,8 @@ class LiveLunches extends Component
     public $location;
     public $showForm = false;
 
+    public $people;
+
     protected $listeners = [
         'addLunchActivity' => 'addLunchOn',
         'lunchDeleted' => 'getLunches',
@@ -29,6 +31,8 @@ class LiveLunches extends Component
     public function mount($model)
     {
         $this->model = $model;
+
+        $this->getPeople();
         $this->getLunches();
 
         if ($this->lunches->count() < 1) {
@@ -86,6 +90,11 @@ class LiveLunches extends Component
     {
         $this->lunches = $this->model->lunches()->where('user_assigned_id', auth()->user()->id)->latest()->get();
         $this->emit('refreshActivities');
+    }
+
+    private function getPeople()
+    {
+        $this->people = $this->model->people()->get();
     }
 
     public function addLunchToggle()

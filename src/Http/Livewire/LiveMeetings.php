@@ -19,6 +19,8 @@ class LiveMeetings extends Component
     public $guests = [];
     public $location;
     public $showForm = false;
+    
+    public $people;
 
     protected $listeners = [
         'addMeetingActivity' => 'addMeetingOn',
@@ -29,6 +31,9 @@ class LiveMeetings extends Component
     public function mount($model)
     {
         $this->model = $model;
+
+        $this->getPeople();
+
         $this->getMeetings();
 
         if ($this->meetings->count() < 1) {
@@ -86,6 +91,11 @@ class LiveMeetings extends Component
     {
         $this->meetings = $this->model->meetings()->where('user_assigned_id', auth()->user()->id)->latest()->get();
         $this->emit('refreshActivities');
+    }
+
+    private function getPeople()
+    {
+        $this->people = $this->model->people()->get();
     }
 
     public function addMeetingToggle()

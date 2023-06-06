@@ -68,9 +68,9 @@ class LiveNotes extends Component
     public function getNotes()
     {
         if ($this->pinned) {
-            $this->notes = $this->model->notes()->where('pinned', 1)->byOwner(auth()->user()->id)->latest()->get();
+            $this->notes = $this->model->notes()->where('pinned', 1)->latest()->get();
         } else {
-            $this->notes = $this->model->notes()->byOwner(auth()->user()->id)->latest()->get();
+            $this->notes = $this->model->notes()->latest()->get();
         }
 
         $this->emit('refreshActivities');

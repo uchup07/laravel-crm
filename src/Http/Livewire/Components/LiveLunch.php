@@ -23,11 +23,13 @@ class LiveLunch extends Component
     public $location;
     public $view;
 
+    public $people;
+
     protected $listeners = [
         'refreshComponent' => '$refresh',
     ];
 
-    public function mount(Lunch $lunch, $view = 'lunch')
+    public function mount(Lunch $lunch, $people, $view = 'lunch')
     {
         $this->lunch = $lunch;
         $this->name = $lunch->name;
@@ -37,6 +39,8 @@ class LiveLunch extends Component
         $this->guests = $lunch->contacts()->pluck('entityable_id')->toArray();
         $this->location = $lunch->location;
         $this->view = $view;
+
+        $this->people = $people;
     }
 
     /**

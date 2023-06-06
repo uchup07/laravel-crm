@@ -20,6 +20,8 @@ class LiveCalls extends Component
     public $location;
     public $showForm = false;
 
+    public $people;
+
     protected $listeners = [
         'addCallActivity' => 'addCallOn',
         'callDeleted' => 'getCalls',
@@ -29,6 +31,8 @@ class LiveCalls extends Component
     public function mount($model)
     {
         $this->model = $model;
+
+        $this->getPeople();
         $this->getCalls();
 
         if ($this->calls->count() < 1) {
@@ -86,6 +90,11 @@ class LiveCalls extends Component
     {
         $this->calls = $this->model->calls()->where('user_assigned_id', auth()->user()->id)->latest()->get();
         $this->emit('refreshActivities');
+    }
+
+    private function getPeople()
+    {
+        $this->people = $this->model->people()->get();
     }
 
     public function addCallToggle()

@@ -23,11 +23,13 @@ class LiveCall extends Component
     public $location;
     public $view;
 
+    public $people;
+
     protected $listeners = [
         'refreshComponent' => '$refresh',
     ];
 
-    public function mount(Call $call, $view = 'call')
+    public function mount(Call $call, $people, $view = 'call')
     {
         $this->call = $call;
         $this->name = $call->name;
@@ -37,6 +39,8 @@ class LiveCall extends Component
         $this->guests = $call->contacts()->pluck('entityable_id')->toArray();
         $this->location = $call->location;
         $this->view = $view;
+
+        $this->people = $people;
     }
 
     /**

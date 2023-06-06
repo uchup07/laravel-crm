@@ -23,11 +23,13 @@ class LiveMeeting extends Component
     public $location;
     public $view;
 
+    public $people;
+
     protected $listeners = [
         'refreshComponent' => '$refresh',
     ];
 
-    public function mount(Meeting $meeting, $view = 'meeting')
+    public function mount(Meeting $meeting, $people, $view = 'meeting')
     {
         $this->meeting = $meeting;
         $this->name = $meeting->name;
@@ -37,6 +39,8 @@ class LiveMeeting extends Component
         $this->guests = $meeting->contacts()->pluck('entityable_id')->toArray();
         $this->location = $meeting->location;
         $this->view = $view;
+
+        $this->people = $people;
     }
 
     /**
