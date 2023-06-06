@@ -73,4 +73,8 @@ class Note extends Model
     {
         return $this->morphOne(\VentureDrake\LaravelCrm\Models\Activity::class, 'recordable');
     }
+
+    public function scopeByOwner($query, $ownerId) {
+        return $query->where('user_created_id', $ownerId);
+    }
 }
