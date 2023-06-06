@@ -19,13 +19,13 @@
                 @endif
                 @can('edit crm quotes')
                     @if(!$quote->accepted_at && !$quote->rejected_at)
-                        <a href="{{  route('laravel-crm.quotes.accept',$quote) }}" class="btn btn-success btn-sm">{{ ucfirst(__('laravel-crm::lang.mark_as_accepted')) }}</a>
-                        <a href="{{  route('laravel-crm.quotes.reject',$quote) }}" class="btn btn-danger btn-sm">{{ ucfirst(__('laravel-crm::lang.mark_as_rejected')) }}</a>
-                    @elseif($quote->order)
-                        <a href="{{  route('laravel-crm.orders.show',$quote->order) }}" class="btn btn-outline-secondary btn-sm">{{ ucfirst(__('laravel-crm::lang.ordered')) }}</a>
-                    @elseif($quote->accepted_at)
-                        <a href="{{  route('laravel-crm.quotes.unaccept',$quote) }}" class="btn btn-outline-secondary btn-sm">{{ ucfirst(__('laravel-crm::lang.unaccept')) }}</a>
-                        <a href="{{  route('laravel-crm.quotes.create-order',$quote) }}" class="btn btn-success btn-sm">{{ ucfirst(__('laravel-crm::lang.create_order')) }}</a>
+                        <a href="{{ route('laravel-crm.quotes.accept',$quote) }}" class="btn btn-success btn-sm">{{ ucfirst(__('laravel-crm::lang.mark_as_accepted')) }}</a>
+                        <a href="{{ route('laravel-crm.quotes.reject',$quote) }}" class="btn btn-danger btn-sm">{{ ucfirst(__('laravel-crm::lang.mark_as_rejected')) }}</a>
+                    @elseif($quote->accepted_at && $quote->orders()->count() > 0 && ! $quote->orderComplete())
+                        <a href="{{ route('laravel-crm.orders.create',['model' => 'quote', 'id' => $quote->id]) }}" class="btn btn-success btn-sm">{{ ucfirst(__('laravel-crm::lang.create_order')) }}</a>
+                    @elseif($quote->accepted_at && $quote->orders()->count() < 1)
+                        <a href="{{ route('laravel-crm.quotes.unaccept',$quote) }}" class="btn btn-outline-secondary btn-sm">{{ ucfirst(__('laravel-crm::lang.unaccept')) }}</a>
+                        <a href="{{ route('laravel-crm.orders.create',['model' => 'quote', 'id' => $quote->id]) }}" class="btn btn-success btn-sm">{{ ucfirst(__('laravel-crm::lang.create_order')) }}</a>
                     @endif
                 @endcan
                 @can('view crm quotes')
@@ -33,8 +33,8 @@
                 @endcan    
                 @include('laravel-crm::partials.navs.activities') |
                 @can('edit crm quotes')
-                    @if(! $quote->order && ! $quote->accepted_at)
-                        <a href="{{  route('laravel-crm.quotes.edit',$quote) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-edit" aria-hidden="true"></span></a>
+                    @if(! $quote->accepted_at)
+                        <a href="{{ route('laravel-crm.quotes.edit',$quote) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-edit" aria-hidden="true"></span></a>
                     @endif
                 @endcan
                 @can('delete crm quotes')
@@ -111,7 +111,15 @@
                             </td>
                             <td>{{ money($quoteProduct->price ?? null, $quoteProduct->currency) }}</td>
                             <td>{{ $quoteProduct->quantity }}</td>
-                            <td>{{ money($quoteProduct->amount ?? null, $quoteProduct->currency) }}</td>
+                            <td>
+                                @if(! \VentureDrake\LaravelCrm\Http\Helpers\CheckAmount\lineAmount($quoteProduct))
+                                    <span data-toggle="tooltip" data-placement="top" title="Error with amount" class="text-danger">
+                                    {{ money($quoteProduct->amount ?? null, $quoteProduct->currency) }}
+                                    </span>
+                                @else
+                                    {{ money($quoteProduct->amount ?? null, $quoteProduct->currency) }}
+                                @endif
+                            </td>
                         </tr>
                         @if($quoteProduct->comments)
                         <tr>
@@ -128,7 +136,15 @@
                             <td></td>
                             <td></td>
                             <td><strong>{{ ucfirst(__('laravel-crm::lang.sub_total')) }}</strong></td>
-                            <td>{{ money($quote->subtotal, $quote->currency) }}</td>
+                            <td>
+                                @if(! \VentureDrake\LaravelCrm\Http\Helpers\CheckAmount\subTotal($quote))
+                                    <span data-toggle="tooltip" data-placement="top" title="Error with sub total" class="text-danger">
+                                     {{ money($quote->subtotal, $quote->currency) }}
+                                    </span>
+                                @else
+                                    {{ money($quote->subtotal, $quote->currency) }}
+                                @endif
+                            </td>
                         </tr>
                         <tr>
                             <td></td>
@@ -152,7 +168,15 @@
                             <td></td>
                             <td></td>
                             <td><strong>{{ ucfirst(__('laravel-crm::lang.total')) }}</strong></td>
-                            <td>{{ money($quote->total, $quote->currency) }}</td>
+                            <td>
+                                @if(! \VentureDrake\LaravelCrm\Http\Helpers\CheckAmount\total($quote))
+                                    <span data-toggle="tooltip" data-placement="top" title="Error with total" class="text-danger">
+                                    {{ money($quote->total, $quote->currency) }}
+                                    </span>
+                                @else
+                                    {{ money($quote->total, $quote->currency) }}
+                                @endif
+                            </td>
                         </tr>
                     </tfoot>
                 </table>

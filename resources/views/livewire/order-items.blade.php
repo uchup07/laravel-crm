@@ -1,5 +1,5 @@
 <div>
-    <h6 class="text-uppercase section-h6-title"><span class="fa fa-cart-arrow-down" aria-hidden="true"></span> {{ ucfirst(__('laravel-crm::lang.order_items')) }} <span class="float-right"><button class="btn btn-outline-secondary btn-sm" wire:click.prevent="add({{ $i }})"><span class="fa fa-plus" aria-hidden="true"></span></button></span></h6>
+    <h6 class="text-uppercase section-h6-title"><span class="fa fa-cart-arrow-down" aria-hidden="true"></span> {{ ucfirst(__('laravel-crm::lang.order_items')) }} @if(!isset($fromQuote))<span class="float-right"><button class="btn btn-outline-secondary btn-sm" wire:click.prevent="add({{ $i }})"><span class="fa fa-plus" aria-hidden="true"></span></button></span>@endif</h6>
     <hr class="mb-0" />
     <script type="text/javascript">
         let products =  {!! \VentureDrake\LaravelCrm\Http\Helpers\AutoComplete\productsSelect2() !!}
@@ -21,6 +21,7 @@
                 @endforeach
                 </tbody>
                 <tfoot id="orderProductsTotals" class="tfoot">
+                    @if(!isset($fromQuote))
                     <tr>
                         <td></td>
                         <td></td>
@@ -30,6 +31,7 @@
                             <button class="btn btn-outline-secondary btn-sm" wire:click.prevent="add({{ $i }})"><span class="fa fa-plus" aria-hidden="true"></span></button>
                         </td>
                     </tr>
+                    @endif
                     <tr>
                         <td></td>
                         <td></td>
@@ -152,7 +154,7 @@
                 })*/
 
                 window.addEventListener('addedItem', event => {
-                    $("tr[data-number='" + event.detail.id + "'] select[name^='products']").select2({
+                    $("tr[data-number='" + event.detail.id + "'] td.bind-select2 select[name^='products']").select2({
                         data: products,
                     }).select2('open')
                         .on('change', function (e) {
@@ -166,7 +168,7 @@
                      $("tr[data-number='" + event.detail.id + "']").remove()
                 });*/
 
-                $("select[name^='products']").on('change', function (e) {
+                $("td.bind-select2 select[name^='products']").on('change', function (e) {
                     @this.set('product_id.' + $(this).data('value'), $(this).val());
                     @this.set('name.' + $(this).data('value'), $(this).find("option:selected").text());
                     Livewire.emit('loadItemDefault', $(this).data('value'))

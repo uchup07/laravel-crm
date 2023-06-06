@@ -18,10 +18,8 @@
                     @else
                         <a href="{{ route('laravel-crm.invoices.show',$order->invoices()->first()) }}" class="btn btn-outline-secondary btn-sm">{{ ucwords(__('laravel-crm::lang.invoiced')) }}</a>
                     @endif
-                    @if($order->deliveries()->count() < 1)
-                        <a href="{{ route('laravel-crm.orders.create-delivery',$order) }}" class="btn btn-success btn-sm">{{ ucwords(__('laravel-crm::lang.create_delivery')) }}</a>
-                    @else
-                        <a href="{{ route('laravel-crm.deliveries.show',$order->deliveries()->first()) }}" class="btn btn-outline-secondary btn-sm">{{ ucwords(__('laravel-crm::lang.delivered')) }}</a>
+                    @if(! $order->deliveryComplete())
+                        <a href="{{ route('laravel-crm.deliveries.create',['model' => 'order', 'id' => $order->id]) }}" class="btn btn-success btn-sm">{{ ucwords(__('laravel-crm::lang.create_delivery')) }}</a>
                     @endif
                 @endcan
                 @can('view crm orders')
@@ -50,6 +48,10 @@
                 <h6 class="text-uppercase">{{ ucfirst(__('laravel-crm::lang.details')) }}</h6>
                 <hr />
                 <dl class="row">
+                    @if($order->quote)
+                        <dt class="col-sm-4 text-right">{{ ucfirst(__('laravel-crm::lang.quote')) }}</dt>
+                        <dd class="col-sm-8"><a href="{{ route('laravel-crm.quotes.show', $order->quote) }}">{{ $order->quote->quote_id }}</a></dd>
+                    @endif
                     <dt class="col-sm-4 text-right">{{ ucfirst(__('laravel-crm::lang.number')) }}</dt>
                     <dd class="col-sm-8">{{ $order->order_id }}</dd>
                     <dt class="col-sm-4 text-right">Reference</dt>
@@ -107,7 +109,15 @@
                             </td>
                             <td>{{ money($orderProduct->price ?? null, $orderProduct->currency) }}</td>
                             <td>{{ $orderProduct->quantity }}</td>
-                            <td>{{ money($orderProduct->amount ?? null, $orderProduct->currency) }}</td>
+                            <td>
+                                @if(! \VentureDrake\LaravelCrm\Http\Helpers\CheckAmount\lineAmount($orderProduct))
+                                    <span data-toggle="tooltip" data-placement="top" title="Error with amount" class="text-danger">
+                                    {{ money($orderProduct->amount ?? null, $orderProduct->currency) }}
+                                    </span>
+                                @else
+                                    {{ money($orderProduct->amount ?? null, $orderProduct->currency) }}
+                                @endif
+                            </td>
                         </tr>
                         @if($orderProduct->comments)
                             <tr>
@@ -124,7 +134,15 @@
                         <td></td>
                         <td></td>
                         <td><strong>{{ ucfirst(__('laravel-crm::lang.sub_total')) }}</strong></td>
-                        <td>{{ money($order->subtotal, $order->currency) }}</td>
+                        <td>
+                            @if(! \VentureDrake\LaravelCrm\Http\Helpers\CheckAmount\subTotal($order))
+                                <span data-toggle="tooltip" data-placement="top" title="Error with sub total" class="text-danger">
+                                    {{ money($order->subtotal, $order->currency) }}
+                                </span>
+                            @else
+                                {{ money($order->subtotal, $order->currency) }}
+                            @endif
+                        </td>
                     </tr>
                     <tr>
                         <td></td>
@@ -148,7 +166,15 @@
                         <td></td>
                         <td></td>
                         <td><strong>{{ ucfirst(__('laravel-crm::lang.total')) }}</strong></td>
-                        <td>{{ money($order->total, $order->currency) }}</td>
+                        <td>
+                            @if(! \VentureDrake\LaravelCrm\Http\Helpers\CheckAmount\total($order))
+                                <span data-toggle="tooltip" data-placement="top" title="Error with total" class="text-danger">
+                                 {{ money($order->total, $order->currency) }}
+                                </span>
+                            @else
+                                {{ money($order->total, $order->currency) }}
+                            @endif
+                        </td>
                     </tr>
                     </tfoot>
                 </table>

@@ -33,6 +33,7 @@ use VentureDrake\LaravelCrm\Http\Livewire\LiveActivityMenu;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveAddressEdit;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveCalls;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveDealForm;
+use VentureDrake\LaravelCrm\Http\Livewire\LiveDeliveryItems;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveEmailEdit;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveFiles;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveInvoiceLines;
@@ -396,6 +397,8 @@ class LaravelCrmServiceProvider extends ServiceProvider
                 __DIR__ . '/../database/migrations/add_account_codes_to_laravel_crm_products_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_account_codes_to_laravel_crm_products_table.php', 75),
                 __DIR__ . '/../database/migrations/add_prefix_to_laravel_crm_quotes_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_prefix_to_laravel_crm_quotes_table.php', 76),
                 __DIR__ . '/../database/migrations/add_prefix_to_laravel_crm_orders_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_prefix_to_laravel_crm_orders_table.php', 77),
+                __DIR__ . '/../database/migrations/add_quote_product_id_to_laravel_crm_order_products_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_quote_product_id_to_laravel_crm_order_products_table.php', 78),
+                __DIR__ . '/../database/migrations/add_quantity_to_laravel_crm_delivery_products_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_quantity_to_laravel_crm_delivery_products_table.php', 79),
             ], 'migrations');
 
             // Publishing the seeders
@@ -459,6 +462,7 @@ class LaravelCrmServiceProvider extends ServiceProvider
         Livewire::component('quote-items', LiveQuoteItems::class);
         Livewire::component('order-form', LiveOrderForm::class);
         Livewire::component('order-items', LiveOrderItems::class);
+        Livewire::component('delivery-items', LiveDeliveryItems::class);
         Livewire::component('activity-menu', LiveActivityMenu::class);
         Livewire::component('xero-connect', XeroConnect::class);
         Livewire::component('activities', LiveActivities::class);
