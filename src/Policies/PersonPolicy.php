@@ -33,7 +33,7 @@ class PersonPolicy
      */
     public function view(User $user, Person $person)
     {
-        if (($user->hasPermissionTo('view crm people') && $person->user_owner_id == auth()->user()->id) || (auth()->user()->hasRole(['Owner','Admin']))) {
+        if (($user->hasPermissionTo('view crm people') && $person->user_owner_id == auth()->user()->id) || (auth()->user()->hasRole(['Owner','Admin','Manager']))) {
             return true;
         }
     }
