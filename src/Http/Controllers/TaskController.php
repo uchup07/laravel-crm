@@ -15,7 +15,12 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::where('user_assigned_id', auth()->user()->id)->latest();
+        if(auth()->user()->hasRole('Employee')) {
+            $tasks = Task::where('user_assigned_id', auth()->user()->id)->latest();
+        } else {
+            $tasks = Task::latest();
+        }
+        
 
         if ($tasks->count() < 30) {
             $tasks = $tasks->get();

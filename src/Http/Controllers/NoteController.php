@@ -14,7 +14,12 @@ class NoteController extends Controller
      */
     public function index()
     {
-        $notes = Note::where('user_created_id', auth()->user()->id)->latest();
+        if(auth()->user()->hasRole('Employee')) {
+            $notes = Note::where('user_created_id', auth()->user()->id)->latest();
+        } else {
+            $notes = Note::latest();
+        }
+        
 
         if ($notes->count() < 30) {
             $notes = $notes->get();

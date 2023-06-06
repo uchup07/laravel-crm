@@ -14,7 +14,12 @@ class FileController extends Controller
      */
     public function index()
     {
-        $files = File::where('user_created_id', auth()->user()->id)->latest();
+        if(auth()->user()->hasRole('Employee')) {
+            $files = File::where('user_created_id', auth()->user()->id)->latest();
+        } else {
+            $files = File::latest();
+        }
+        
 
         if ($files->count() < 30) {
             $files = $files->get();

@@ -14,7 +14,12 @@ class MeetingController extends Controller
      */
     public function index()
     {
-        $meetings = Meeting::where('user_created_id', auth()->user()->id)->latest();
+        if(auth()->user()->hasRole('Employee')) {
+            $meetings = Meeting::where('user_created_id', auth()->user()->id)->latest();
+        } else {
+            $meetings = Meeting::latest();
+        }
+        
 
         if ($meetings->count() < 30) {
             $meetings = $meetings->get();

@@ -14,7 +14,12 @@ class LunchController extends Controller
      */
     public function index()
     {
-        $lunches = Lunch::where('user_created_id', auth()->user()->id)->latest();
+        if(auth()->user()->hasRole('Employee')) {
+            $lunches = Lunch::where('user_created_id', auth()->user()->id)->latest();
+        } else {
+            $lunches = Lunch::latest();
+        }
+        
 
         if ($lunches->count() < 30) {
             $lunches = $lunches->get();

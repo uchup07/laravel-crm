@@ -14,7 +14,12 @@ class CallController extends Controller
      */
     public function index()
     {
-        $calls = Call::where('user_created_id', auth()->user()->id)->latest();
+        if(auth()->user()->hasRole('Employee')) {
+            $calls = Call::where('user_created_id', auth()->user()->id)->latest();
+        } else {
+            $calls = Call::latest();
+        }
+        
 
         if ($calls->count() < 30) {
             $calls = $calls->get();
