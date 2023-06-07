@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Ramsey\Uuid\Uuid;
+use VentureDrake\LaravelCrm\Models\File;
 use VentureDrake\LaravelCrm\Traits\NotifyToast;
 
 class LiveFiles extends Component
@@ -38,7 +39,7 @@ class LiveFiles extends Component
 
     public function upload()
     {
-        $this->authorize('create', $this->model->files());
+        $this->authorize('create', new File());
         $data = $this->validate([
             'file' => 'required',
         ]);
@@ -98,7 +99,7 @@ class LiveFiles extends Component
     
     public function render()
     {
-        $this->authorize('viewAny', $this->model->files());
+        $this->authorize('viewAny', new File());
         return view('laravel-crm::livewire.files');
     }
 }

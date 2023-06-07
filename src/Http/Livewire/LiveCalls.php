@@ -4,6 +4,7 @@ namespace VentureDrake\LaravelCrm\Http\Livewire;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
+use VentureDrake\LaravelCrm\Models\Call;
 use VentureDrake\LaravelCrm\Models\Person;
 use VentureDrake\LaravelCrm\Traits\NotifyToast;
 
@@ -44,7 +45,7 @@ class LiveCalls extends Component
 
     public function create()
     {
-        $this->authorize('create', $this->model->calls());
+        $this->authorize('create', new Call());
         $data = $this->validate([
             'name' => "required",
             'description' => "nullable",
@@ -131,7 +132,7 @@ class LiveCalls extends Component
 
     public function render()
     {
-        $this->authorize('viewAny', $this->model->calls());
+        $this->authorize('viewAny', new Call());
         return view('laravel-crm::livewire.calls');
     }
 }

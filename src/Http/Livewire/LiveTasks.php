@@ -4,6 +4,7 @@ namespace VentureDrake\LaravelCrm\Http\Livewire;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
+use VentureDrake\LaravelCrm\Models\Task;
 use VentureDrake\LaravelCrm\Traits\NotifyToast;
 
 class LiveTasks extends Component
@@ -36,7 +37,7 @@ class LiveTasks extends Component
 
     public function create()
     {
-        $this->authorize('create', $this->model->tasks());
+        $this->authorize('create', new Task());
         $data = $this->validate([
             'name' => 'required',
             'description' => 'nullable',
@@ -95,7 +96,7 @@ class LiveTasks extends Component
     
     public function render()
     {
-        $this->authorize('viewAny', $this->model->tasks());
+        $this->authorize('viewAny', new Task());
         return view('laravel-crm::livewire.tasks');
     }
 }

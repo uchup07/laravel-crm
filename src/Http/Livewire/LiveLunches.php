@@ -4,6 +4,7 @@ namespace VentureDrake\LaravelCrm\Http\Livewire;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
+use VentureDrake\LaravelCrm\Models\Lunch;
 use VentureDrake\LaravelCrm\Models\Person;
 use VentureDrake\LaravelCrm\Traits\NotifyToast;
 
@@ -44,7 +45,7 @@ class LiveLunches extends Component
 
     public function create()
     {
-        $this->authorize('create', $this->model->lunches());
+        $this->authorize('create', new Lunch());
         $data = $this->validate([
             'name' => 'required',
             'description' => 'nullable',
@@ -131,7 +132,7 @@ class LiveLunches extends Component
 
     public function render()
     {
-        $this->authorize('viewAny', $this->model->lunches());
+        $this->authorize('viewAny', new Lunch());
         return view('laravel-crm::livewire.lunches');
     }
 }

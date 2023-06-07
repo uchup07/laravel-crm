@@ -4,6 +4,7 @@ namespace VentureDrake\LaravelCrm\Http\Livewire;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
+use VentureDrake\LaravelCrm\Models\Meeting;
 use VentureDrake\LaravelCrm\Models\Person;
 use VentureDrake\LaravelCrm\Traits\NotifyToast;
 
@@ -45,7 +46,7 @@ class LiveMeetings extends Component
 
     public function create()
     {
-        $this->authorize('create', $this->model->meetings());
+        $this->authorize('create', new Meeting());
         $data = $this->validate([
             'name' => "required",
             'description' => "nullable",
@@ -132,7 +133,7 @@ class LiveMeetings extends Component
 
     public function render()
     {
-        $this->authorize('viewAny', $this->model->meetings());
+        $this->authorize('viewAny', new Meeting());
         return view('laravel-crm::livewire.meetings');
     }
 }
