@@ -2,6 +2,7 @@
 
 namespace VentureDrake\LaravelCrm\Http\Livewire\Components;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use VentureDrake\LaravelCrm\Models\Lunch;
 use VentureDrake\LaravelCrm\Models\Person;
@@ -12,6 +13,7 @@ class LiveLunch extends Component
 {
     use NotifyToast;
     use HasGlobalSettings;
+    use AuthorizesRequests;
 
     public $lunch;
     public $editMode = false;
@@ -62,6 +64,7 @@ class LiveLunch extends Component
 
     public function update()
     {
+        $this->authorize('update',$this->lunch);
         $this->validate();
         $this->lunch->update([
             'name' => $this->name,
@@ -95,6 +98,7 @@ class LiveLunch extends Component
 
     public function delete()
     {
+        $this->authorize('delete', $this->lunch);
         $this->lunch->delete();
 
         $this->emit('lunchDeleted');
@@ -112,6 +116,7 @@ class LiveLunch extends Component
 
     public function render()
     {
+        $this->authorize('view', $this->lunch);
         return view('laravel-crm::livewire.components.'.$this->view);
     }
 }

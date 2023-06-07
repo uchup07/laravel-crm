@@ -2,6 +2,7 @@
 
 namespace VentureDrake\LaravelCrm\Http\Livewire\Components;
 
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use VentureDrake\LaravelCrm\Models\Call;
 use VentureDrake\LaravelCrm\Models\Person;
@@ -12,6 +13,7 @@ class LiveCall extends Component
 {
     use NotifyToast;
     use HasGlobalSettings;
+    use AuthorizesRequests;
 
     public $call;
     public $editMode = false;
@@ -62,6 +64,7 @@ class LiveCall extends Component
 
     public function update()
     {
+        $this->authorize('update', $this->call);
         $this->validate();
         $this->call->update([
             'name' => $this->name,
@@ -95,6 +98,7 @@ class LiveCall extends Component
 
     public function delete()
     {
+        $this->authorize('delete', $this->call);
         $this->call->delete();
 
         $this->emit('callDeleted');
@@ -112,6 +116,7 @@ class LiveCall extends Component
 
     public function render()
     {
+        $this->authorize('view', $this->call);
         return view('laravel-crm::livewire.components.'.$this->view);
     }
 }

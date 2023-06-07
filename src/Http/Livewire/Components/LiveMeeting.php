@@ -7,11 +7,13 @@ use VentureDrake\LaravelCrm\Models\Meeting;
 use VentureDrake\LaravelCrm\Models\Person;
 use VentureDrake\LaravelCrm\Traits\HasGlobalSettings;
 use VentureDrake\LaravelCrm\Traits\NotifyToast;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class LiveMeeting extends Component
 {
     use NotifyToast;
     use HasGlobalSettings;
+    use AuthorizesRequests;
 
     public $meeting;
     public $editMode = false;
@@ -62,6 +64,7 @@ class LiveMeeting extends Component
 
     public function update()
     {
+        $this->authorize('update', $this->meeting);
         $this->validate();
         $this->meeting->update([
             'name' => $this->name,
@@ -95,6 +98,7 @@ class LiveMeeting extends Component
 
     public function delete()
     {
+        $this->authorize('delete', $this->meeting);
         $this->meeting->delete();
 
         $this->emit('meetingDeleted');
@@ -112,6 +116,7 @@ class LiveMeeting extends Component
 
     public function render()
     {
+        $this->authorize('view', $this->meeting);
         return view('laravel-crm::livewire.components.'.$this->view);
     }
 }

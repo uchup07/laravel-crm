@@ -3,6 +3,7 @@
 namespace VentureDrake\LaravelCrm\Http\Livewire\Components;
 
 use Carbon\Carbon;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use VentureDrake\LaravelCrm\Models\Task;
 use VentureDrake\LaravelCrm\Traits\HasGlobalSettings;
@@ -12,6 +13,7 @@ class LiveTask extends Component
 {
     use NotifyToast;
     use HasGlobalSettings;
+    use AuthorizesRequests;
     
     public $task;
     public $editMode = false;
@@ -49,6 +51,7 @@ class LiveTask extends Component
 
     public function update()
     {
+        $this->authorize('update', $this->task);
         $this->validate();
         $this->task->update([
             'name' => $this->name,
@@ -64,6 +67,7 @@ class LiveTask extends Component
 
     public function complete()
     {
+        $this->authorize('update', $this->task);
         $this->task->update([
             'completed_at' => Carbon::now(),
         ]);
@@ -76,6 +80,7 @@ class LiveTask extends Component
 
     public function delete()
     {
+        $this->authorize('delete', $this->task);
         $this->task->delete();
 
         $this->emit('taskDeleted');
@@ -93,6 +98,7 @@ class LiveTask extends Component
     
     public function render()
     {
+        $this->authorize('view', $this->task);
         return view('laravel-crm::livewire.components.'.$this->view);
     }
 }
