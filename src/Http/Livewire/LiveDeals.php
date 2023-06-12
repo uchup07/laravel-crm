@@ -6,13 +6,14 @@ use Illuminate\Support\Facades\Log;
 use Livewire\Component;
 use VentureDrake\LaravelCrm\Models\Deal;
 use VentureDrake\LaravelCrm\Traits\NotifyToast;
+use Illuminate\Database\Eloquent\Collection;
 
 class LiveDeals extends Component
 {
     use NotifyToast;
 
     public $model;
-    public Deal $deals;
+    public Collection $deals;
     public $reason;
     public $closed_status;
     public $closed_at;
