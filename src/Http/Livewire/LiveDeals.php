@@ -12,7 +12,7 @@ class LiveDeals extends Component
     use NotifyToast;
 
     public $model;
-    public $deals;
+    public Deal $deals;
     public $reason;
     public $closed_status;
     public $closed_at;
