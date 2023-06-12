@@ -174,6 +174,10 @@ class Person extends Model
         return $this->morphMany(\VentureDrake\LaravelCrm\Models\Contact::class, 'contactable');
     }
 
+    public function scopeByOwner($query, $ownerId) {
+        return $query->where('user_owner_id'. $ownerId);
+    }
+
     /**
      * Get the xero person associated with the person.
      */
