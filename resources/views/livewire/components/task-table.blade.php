@@ -1,5 +1,5 @@
 <tr>
-    <td>{{ $task->created_at->diffForHumans() }}</td>
+    <td>{{ $task->created_at->toDayDateTimeString() }}</td>
     <td>
         @include('laravel-crm::livewire.components.partials.task.status', ['task' => $task])
     </td>

@@ -1,6 +1,6 @@
 <tr>
     <td>
-        {{ $note->created_at->diffForHumans() }}
+        {{ $note->created_at->toDayDateTimeString() }}
     </td>
     <td>{{ $note->content }}<br />
         @include('laravel-crm::notes.partials.note-model', ['note' => $note]) 
