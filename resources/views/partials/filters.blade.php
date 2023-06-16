@@ -31,6 +31,15 @@
                             'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\optionsFromModel(\VentureDrake\LaravelCrm\Models\Label::all(), false) + [0 => '(Blank)'],
                             'value' => request()->input('label_id') ?? $model::filterValue('label_id')  ?? array_keys(\VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\optionsFromModel(\VentureDrake\LaravelCrm\Models\Label::all(), false) + [0 => '(Blank)'])
                         ])
+                        @include('laravel-crm::partials.form.hidden',[
+                            'name' => 'created_from',
+                            'value' => request()->input('created_from') ?? $model::filterValue('created_from') ?? null,
+                       ])
+   
+                       @include('laravel-crm::partials.form.hidden',[
+                            'name' => 'created_to',
+                            'value' => request()->input('created_to') ?? $model::filterValue('created_to') ?? null,
+                       ])
                     </div>      
                 </div>
                 <div class="modal-footer">
