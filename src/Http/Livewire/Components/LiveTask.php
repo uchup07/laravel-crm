@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use VentureDrake\LaravelCrm\Models\Task;
+use VentureDrake\LaravelCrm\Services\SettingService;
 use VentureDrake\LaravelCrm\Traits\HasGlobalSettings;
 use VentureDrake\LaravelCrm\Traits\NotifyToast;
 
@@ -13,6 +14,8 @@ class LiveTask extends Component
 {
     use NotifyToast;
     use HasGlobalSettings;
+
+    private $settingService;
     use AuthorizesRequests;
     
     public $task;
@@ -20,11 +23,17 @@ class LiveTask extends Component
     public $name;
     public $description;
     public $due_at;
+    public $showRelated = false;
     public $view;
 
     protected $listeners = [
         'refreshComponent' => '$refresh',
     ];
+
+    public function boot(SettingService $settingService)
+    {
+        $this->settingService = $settingService;
+    }
     
     public function mount(Task $task, $view = 'task')
     {
@@ -32,6 +41,11 @@ class LiveTask extends Component
         $this->name = $task->name;
         $this->description = $task->description;
         $this->due_at = ($task->due_at) ? $task->due_at->format($this->dateFormat().' H:i') : null;
+
+        if($this->settingService->get('show_related_activity')->value == 1){
+            $this->showRelated = true;
+        }
+        
         $this->view = $view;
     }
 

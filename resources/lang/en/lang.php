@@ -413,6 +413,16 @@ return [
     'date_format' => 'date format',
     'time_format' => 'time format',
     'invoice_date' => 'invoice date',
+    'purchase_account' => 'purchase account',
+    'sales_account' => 'sales account',
+    'qty' => 'qty',
+    'quote_prefix' => 'quote prefix',
+    'order_prefix' => 'order prefix',
+    'order_number' => 'order number',
+    'quote_number' => 'quote number',
+    'from_quote' => 'from quote',
+    'from_order' => 'from order',
+    'show_related_contact_activity' => 'show related contact activity'
 	'closed_at' => 'closed at',
     'reason' => 'reason',
     'reports' => 'reports'

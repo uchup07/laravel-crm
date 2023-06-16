@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use VentureDrake\LaravelCrm\Models\Lunch;
 use VentureDrake\LaravelCrm\Models\Person;
+use VentureDrake\LaravelCrm\Services\SettingService;
 use VentureDrake\LaravelCrm\Traits\NotifyToast;
 
 class LiveLunches extends Component
@@ -13,6 +14,7 @@ class LiveLunches extends Component
     use NotifyToast;
     use AuthorizesRequests;
 
+    private $settingService;
     public $model;
     public $lunches;
     public $name;
@@ -31,6 +33,11 @@ class LiveLunches extends Component
         'lunchCompleted' => 'getLunches',
      ];
 
+    public function boot(SettingService $settingService)
+    {
+        $this->settingService = $settingService;
+    }
+
     public function mount($model)
     {
         $this->model = $model;
@@ -38,7 +45,7 @@ class LiveLunches extends Component
         $this->getPeople();
         $this->getLunches();
 
-        if ($this->lunches->count() < 1) {
+        if (!$this->lunches || ($this->lunches && $this->lunches->count() < 1)) {
             $this->showForm = true;
         }
     }
@@ -92,7 +99,24 @@ class LiveLunches extends Component
 
     public function getLunches()
     {
-        $this->lunches = $this->model->lunches()->where('user_assigned_id', auth()->user()->id)->latest()->get();
+        $lunchIds = [];
+
+        foreach($this->model->lunches()->where('user_assigned_id', auth()->user()->id)->latest()->get() as $lunch){
+            $lunchIds[] =  $lunch->id;
+        }
+
+        if($this->settingService->get('show_related_activity')->value == 1 && method_exists($this->model, 'contacts')){
+            foreach($this->model->contacts as $contact) {
+                foreach ($contact->entityable->lunches()->where('user_assigned_id', auth()->user()->id)->latest()->get() as $lunch) {
+                    $lunchIds[] = $lunch->id;
+                }
+            }
+        }
+
+        if(count($lunchIds) > 0){
+            $this->lunches = Lunch::whereIn('id', $lunchIds)->latest()->get();
+        }
+        
         $this->emit('refreshActivities');
     }
 

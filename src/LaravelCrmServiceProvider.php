@@ -9,6 +9,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
@@ -33,6 +34,7 @@ use VentureDrake\LaravelCrm\Http\Livewire\LiveActivityMenu;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveAddressEdit;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveCalls;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveDealForm;
+use VentureDrake\LaravelCrm\Http\Livewire\LiveDeliveryItems;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveDealReason;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveDeals;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveEmailEdit;
@@ -389,6 +391,19 @@ class LaravelCrmServiceProvider extends ServiceProvider
                 __DIR__ . '/../database/migrations/alter_url_on_laravel_crm_usage_requests_table.php.stub' => $this->getMigrationFileName($filesystem, 'alter_url_on_laravel_crm_usage_requests_table.php', 64),
                 __DIR__ . '/../database/migrations/create_laravel_crm_clients_table.php.stub' => $this->getMigrationFileName($filesystem, 'create_laravel_crm_clients_table.php', 65),
                 __DIR__ . '/../database/migrations/create_laravel_crm_xero_invoices_table.php.stub' => $this->getMigrationFileName($filesystem, 'create_laravel_crm_xero_invoices_table.php', 66),
+                __DIR__ . '/../database/migrations/add_contact_to_laravel_crm_addresses_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_contact_to_laravel_crm_addresses_table.php', 67),
+                __DIR__ . '/../database/migrations/add_phone_to_laravel_crm_addresses_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_phone_to_laravel_crm_addresses_table.php', 68),
+                __DIR__ . '/../database/migrations/add_name_to_laravel_crm_clients_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_name_to_laravel_crm_clients_table.php', 69),
+                __DIR__ . '/../database/migrations/add_delivery_dates_to_laravel_crm_deliveries_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_delivery_dates_to_laravel_crm_deliveries_table.php', 70),
+                __DIR__ . '/../database/migrations/add_client_to_laravel_crm_orders_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_client_to_laravel_crm_orders_table.php', 71),
+                __DIR__ . '/../database/migrations/add_client_to_laravel_crm_leads_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_client_to_laravel_crm_leads_table.php', 72),
+                __DIR__ . '/../database/migrations/add_client_to_laravel_crm_deals_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_client_to_laravel_crm_deals_table.php', 73),
+                __DIR__ . '/../database/migrations/add_client_to_laravel_crm_quotes_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_client_to_laravel_crm_quotes_table.php', 74),
+                __DIR__ . '/../database/migrations/add_account_codes_to_laravel_crm_products_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_account_codes_to_laravel_crm_products_table.php', 75),
+                __DIR__ . '/../database/migrations/add_prefix_to_laravel_crm_quotes_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_prefix_to_laravel_crm_quotes_table.php', 76),
+                __DIR__ . '/../database/migrations/add_prefix_to_laravel_crm_orders_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_prefix_to_laravel_crm_orders_table.php', 77),
+                __DIR__ . '/../database/migrations/add_quote_product_id_to_laravel_crm_order_products_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_quote_product_id_to_laravel_crm_order_products_table.php', 78),
+                __DIR__ . '/../database/migrations/add_quantity_to_laravel_crm_delivery_products_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_quantity_to_laravel_crm_delivery_products_table.php', 79),
                 __DIR__ . '/../database/migrations/create_laravel_crm_invites_table.php.stub' => $this->getMigrationFileName($filesystem, 'create_laravel_crm_invites_table.php', 67),
                 __DIR__ . '/../database/migrations/change_laravel_crm_column_amount.php.stub' => $this->getMigrationFileName($filesystem, 'change_laravel_crm_column_amount.php', 68),
                 __DIR__ . '/../database/migrations/add_contact_to_laravel_crm_addresses_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_contact_to_laravel_crm_addresses_table.php', 69),
@@ -465,6 +480,7 @@ class LaravelCrmServiceProvider extends ServiceProvider
         Livewire::component('quote-items', LiveQuoteItems::class);
         Livewire::component('order-form', LiveOrderForm::class);
         Livewire::component('order-items', LiveOrderItems::class);
+        Livewire::component('delivery-items', LiveDeliveryItems::class);
         Livewire::component('activity-menu', LiveActivityMenu::class);
         Livewire::component('xero-connect', XeroConnect::class);
         Livewire::component('activities', LiveActivities::class);
@@ -505,6 +521,62 @@ class LaravelCrmServiceProvider extends ServiceProvider
                 view()->share('timeFormat', 'H:i');
             }
         }
+        
+        Blade::if('hasleadsenabled', function () {
+            if(is_array(config('laravel-crm.modules')) && in_array('leads', config('laravel-crm.modules'))){
+                return true;
+            }elseif(! config('laravel-crm.modules')){
+                return true;
+            }
+        });
+
+        Blade::if('hasdealsenabled', function () {
+            if(is_array(config('laravel-crm.modules')) && in_array('deals', config('laravel-crm.modules'))){
+                return true;
+            }elseif(! config('laravel-crm.modules')){
+                return true;
+            }
+        });
+
+        Blade::if('hasquotesenabled', function () {
+            if(is_array(config('laravel-crm.modules')) && in_array('quotes', config('laravel-crm.modules'))){
+                return true;
+            }elseif(! config('laravel-crm.modules')){
+                return true;
+            }
+        });
+
+        Blade::if('hasordersenabled', function () {
+            if(is_array(config('laravel-crm.modules')) && in_array('orders', config('laravel-crm.modules'))){
+                return true;
+            }elseif(! config('laravel-crm.modules')){
+                return true;
+            }
+        });
+
+        Blade::if('hasinvoicesenabled', function () {
+            if(is_array(config('laravel-crm.modules')) && in_array('invoices', config('laravel-crm.modules'))){
+                return true;
+            }elseif(! config('laravel-crm.modules')){
+                return true;
+            }
+        });
+
+        Blade::if('hasdeliveriesenabled', function () {
+            if(is_array(config('laravel-crm.modules')) && in_array('deliveries', config('laravel-crm.modules'))){
+                return true;
+            }elseif(! config('laravel-crm.modules')){
+                return true;
+            }
+        });
+
+        Blade::if('hasteamsenabled', function () {
+            if(is_array(config('laravel-crm.modules')) && in_array('teams', config('laravel-crm.modules'))){
+                return true;
+            }elseif(! config('laravel-crm.modules')){
+                return true;
+            }
+        });
     }
 
     /**

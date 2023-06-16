@@ -5,6 +5,7 @@ namespace VentureDrake\LaravelCrm\Http\Livewire\Components;
 use Livewire\Component;
 use VentureDrake\LaravelCrm\Models\Meeting;
 use VentureDrake\LaravelCrm\Models\Person;
+use VentureDrake\LaravelCrm\Services\SettingService;
 use VentureDrake\LaravelCrm\Traits\HasGlobalSettings;
 use VentureDrake\LaravelCrm\Traits\NotifyToast;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -15,6 +16,7 @@ class LiveMeeting extends Component
     use HasGlobalSettings;
     use AuthorizesRequests;
 
+    private $settingService;
     public $meeting;
     public $editMode = false;
     public $name;
@@ -23,6 +25,7 @@ class LiveMeeting extends Component
     public $finish_at;
     public $guests = [];
     public $location;
+    public $showRelated = false;
     public $view;
 
     public $people;
@@ -31,7 +34,12 @@ class LiveMeeting extends Component
         'refreshComponent' => '$refresh',
     ];
 
-    public function mount(Meeting $meeting, $people, $view = 'meeting')
+    public function boot(SettingService $settingService)
+    {
+        $this->settingService = $settingService;
+    }
+
+    public function mount(Meeting $meeting, $view = 'meeting')
     {
         $this->meeting = $meeting;
         $this->name = $meeting->name;
@@ -40,6 +48,11 @@ class LiveMeeting extends Component
         $this->finish_at = ($meeting->finish_at) ? $meeting->finish_at->format($this->dateFormat().' H:i') : null;
         $this->guests = $meeting->contacts()->pluck('entityable_id')->toArray();
         $this->location = $meeting->location;
+
+        if($this->settingService->get('show_related_activity')->value == 1){
+            $this->showRelated = true;
+        }
+        
         $this->view = $view;
 
         $this->people = $people;

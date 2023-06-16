@@ -38,18 +38,20 @@
                 <h6 class="text-uppercase">{{ ucfirst(__('laravel-crm::lang.details')) }}</h6>
                 <hr />
                 <dl class="row">
-                    <dt class="col-sm-4 text-right">{{ ucfirst(__('laravel-crm::lang.order')) }}</dt>
-                    <dd class="col-sm-8">
-                        @if($delivery->order)
-                            <a href="{{ route('laravel-crm.orders.show', $delivery->order) }}">{{ $delivery->order->order_id }}</a>
-                        @endif
-                    </dd>
                     <dt class="col-sm-4 text-right">{{ ucfirst(__('laravel-crm::lang.reference')) }}</dt>
                     <dd class="col-sm-8">
                         @if($delivery->order)
                             <a href="{{ route('laravel-crm.orders.show', $delivery->order) }}">{{ $delivery->order->reference }}</a>
                         @endif
                     </dd>
+                    @hasordersenabled
+                    <dt class="col-sm-4 text-right">{{ ucfirst(__('laravel-crm::lang.order')) }}</dt>
+                    <dd class="col-sm-8">
+                        @if($delivery->order)
+                            <a href="{{ route('laravel-crm.orders.show', $delivery->order) }}">{{ $delivery->order->order_id }}</a>
+                        @endif
+                    </dd>
+                    @endhasordersenabled
                     <dt class="col-sm-4 text-right">{{ ucfirst(__('laravel-crm::lang.delivery_expected')) }}</dt>
                     <dd class="col-sm-8">
                         {{ $delivery->delivery_expected  ?? null }}
@@ -77,19 +79,13 @@
                     <thead>
                     <tr>
                         <th scope="col">{{ ucfirst(__('laravel-crm::lang.item')) }}</th>
-                        <th scope="col">{{ ucfirst(__('laravel-crm::lang.price')) }}</th>
-                        <th scope="col">{{ ucfirst(__('laravel-crm::lang.quantity')) }}</th>
-                        <th scope="col">{{ ucfirst(__('laravel-crm::lang.amount')) }}</th>
-                    </tr>
+                        <th scope="col">{{ ucfirst(__('laravel-crm::lang.quantity')) }}</th></tr>
                     </thead>
                     <tbody>
                     @foreach($delivery->deliveryProducts()->get() as $deliveryProduct)
                         <tr>
                             <td>{{ $deliveryProduct->orderProduct->product->name }}</td>
-                            <td>{{ money($deliveryProduct->orderProduct->price ?? null, $deliveryProduct->orderProduct->currency) }}</td>
-                            <td>{{ $deliveryProduct->orderProduct->quantity }}</td>
-                            <td>{{ money($deliveryProduct->orderProduct->amount ?? null, $deliveryProduct->orderProduct->currency) }}</td>
-                        </tr>
+                            <td>{{ $deliveryProduct->quantity }}</td></tr>
                         @if($deliveryProduct->orderProduct->comments)
                             <tr>
                                 <td colspan="4" class="b-0 pt-0">

@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
 use VentureDrake\LaravelCrm\Models\Call;
 use VentureDrake\LaravelCrm\Models\Person;
+use VentureDrake\LaravelCrm\Services\SettingService;
 use VentureDrake\LaravelCrm\Traits\NotifyToast;
 
 class LiveCalls extends Component
@@ -13,6 +14,7 @@ class LiveCalls extends Component
     use NotifyToast;
     use AuthorizesRequests;
 
+    private $settingService;
     public $model;
     public $calls;
     public $name;
@@ -31,6 +33,11 @@ class LiveCalls extends Component
         'callCompleted' => 'getCalls',
      ];
 
+    public function boot(SettingService $settingService)
+    {
+        $this->settingService = $settingService;
+    }
+
     public function mount($model)
     {
         $this->model = $model;
@@ -38,7 +45,7 @@ class LiveCalls extends Component
         $this->getPeople();
         $this->getCalls();
 
-        if ($this->calls->count() < 1) {
+        if (! $this->calls || ($this->calls && $this->calls->count() < 1)) {
             $this->showForm = true;
         }
     }
@@ -92,7 +99,24 @@ class LiveCalls extends Component
 
     public function getCalls()
     {
-        $this->calls = $this->model->calls()->where('user_assigned_id', auth()->user()->id)->latest()->get();
+        $callIds = [];
+
+        foreach($this->model->calls()->where('user_assigned_id', auth()->user()->id)->latest()->get() as $call){
+            $callIds[] =  $call->id;
+        }
+
+        if($this->settingService->get('show_related_activity')->value == 1 && method_exists($this->model, 'contacts')){
+            foreach($this->model->contacts as $contact) {
+                foreach ($contact->entityable->calls()->where('user_assigned_id', auth()->user()->id)->latest()->get() as $call) {
+                    $callIds[] = $call->id;
+                }
+            }
+        }
+
+        if(count($callIds) > 0){
+            $this->calls = Call::whereIn('id', $callIds)->latest()->get();
+        }
+        
         $this->emit('refreshActivities');
     }
 

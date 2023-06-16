@@ -8,6 +8,7 @@ use Closure;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Schema;
 use VentureDrake\LaravelCrm\Models\Setting;
+use Illuminate\Support\Str;
 
 class Settings
 {
@@ -89,6 +90,30 @@ class Settings
                 'value' => 'INV-',
             ]);
 
+            Setting::firstOrCreate([
+                'name' => 'show_related_activity',
+            ], [
+                'value' => '0',
+            ]);
+            
+            if((int) Str::replace('.', '', config('laravel-crm.version')) >= 180){
+                Setting::firstOrCreate([
+                    'global' => 1,
+                    'name' => 'db_update_0180',
+                ], [
+                    'value' => 0,
+                ]);
+            }
+
+            if((int) Str::replace('.', '', config('laravel-crm.version')) >= 181){
+                Setting::firstOrCreate([
+                    'global' => 1,
+                    'name' => 'db_update_0181',
+                ], [
+                    'value' => 0,
+                ]);
+            }
+
             $installIdSetting = Setting::where([
                 'name' => 'install_id',
             ])->first();
@@ -96,7 +121,7 @@ class Settings
             if ($versionSetting && ($versionSetting->updated_at < Carbon::now()->subDays(3) || ! $installIdSetting)) {
                 try {
                     $client = new Client();
-                    $url = "https://beta.laravelcrm.com/api/public/version";
+                    $url = "https://api.laravelcrm.com/api/v1/public/version";
 
                     if (Schema::hasColumn('users', 'crm_access')) {
                         $userCount = User::where('crm_access', 1)->count();

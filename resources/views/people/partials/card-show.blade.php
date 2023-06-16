@@ -14,18 +14,26 @@
                     'model' => $person,
                     'route' => 'people'
                 ]) | 
+                @hasleadsenabled
                 @can('create crm leads')
                     <a href="{{ route('laravel-crm.leads.create', ['model' => 'person', 'id' => $person->id]) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-arrow-right" aria-hidden="true"></span> <span class="fa fa-crosshairs" aria-hidden="true"></span></a>
                 @endcan
+                @endhasleadsenabled
+                @hasdealsenabled
                 @can('create crm deals')
                     <a href="{{ route('laravel-crm.deals.create', ['model' => 'person', 'id' => $person->id]) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-arrow-right" aria-hidden="true"></span> <span class="fa fa-dollar" aria-hidden="true"></span></a>
                 @endcan
+                @endhasdealsenabled
+                @hasquotesenabled
                 @can('create crm quotes')
                     <a href="{{ route('laravel-crm.quotes.create', ['model' => 'person', 'id' => $person->id]) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-arrow-right" aria-hidden="true"></span> <span class="fa fa-file-text" aria-hidden="true"></span></a>
                 @endcan
+                @endhasquotesenabled
+                @hasordersenabled
                 @can('create crm orders')
                     <a href="{{ route('laravel-crm.orders.create', ['model' => 'person', 'id' => $person->id]) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-arrow-right" aria-hidden="true"></span> <span class="fa fa-shopping-cart" aria-hidden="true"></span></a>
                 @endcan
+                @endhasordersenabled
                 @include('laravel-crm::partials.navs.activities') |
                 @can('edit crm people')
                 <a href="{{ url(route('laravel-crm.people.edit', $person)) }}" type="button" class="btn btn-outline-secondary btn-sm"><span class="fa fa-edit" aria-hidden="true"></span></a>
@@ -86,19 +94,10 @@
                     <dt class="col-sm-3 text-right">{{ ucfirst(__('laravel-crm::lang.name')) }}</dt>
                     <dd class="col-sm-9"><a href="{{ route('laravel-crm.users.show', $person->ownerUser) }}">{{ $person->ownerUser->name }}</a></dd>
                 </dl>
-                <h6 class="mt-4 text-uppercase"> {{ ucfirst(__('laravel-crm::lang.organization')) }}</h6>
-                <hr />
-                <dl class="row">
-                    <dt class="col-sm-3 text-right"><span class="fa fa-building" aria-hidden="true"></span></dt>
-                    <dd class="col-sm-9">
-                        @isset($organisation)
-                            <a href="{{ route('laravel-crm.organisations.show', $organisation) }}">{{ $organisation->name }}</a>
-                        @endisset    
-                    </dd>
-                    <dt class="col-sm-3 text-right">{{ ucfirst(__('laravel-crm::lang.address')) }}</dt>
-                    <dd class="col-sm-9">{{ ($organisation_address) ? \VentureDrake\LaravelCrm\Http\Helpers\AddressLine\addressSingleLine($organisation_address) : null }}</dd>
-                </dl>
                 @livewire('related-contact-people',[
+                    'model' => $person
+                ])
+                @livewire('related-contact-organisations',[
                     'model' => $person
                 ])
                 @can('view crm deals')

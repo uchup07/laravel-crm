@@ -260,10 +260,6 @@ Route::group(['prefix' => 'quotes', 'middleware' => 'auth.laravel-crm'], functio
         ->name('laravel-crm.quotes.send')
         ->middleware(['can:update,quote']);
 
-    Route::get('{quote}/create-order', 'VentureDrake\LaravelCrm\Http\Controllers\QuoteController@createOrder')
-        ->name('laravel-crm.quotes.create-order')
-        ->middleware(['can:update,quote', 'can:create,VentureDrake\LaravelCrm\Models\Order']);
-
     Route::get('{quote}/download', 'VentureDrake\LaravelCrm\Http\Controllers\QuoteController@download')
         ->name('laravel-crm.quotes.download')
         ->middleware(['can:view,quote']);
@@ -434,7 +430,7 @@ Route::group(['prefix' => 'deliveries', 'middleware' => 'auth.laravel-crm'], fun
         ->name('laravel-crm.deliveries.index')
         ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Delivery']);
 
-    Route::get('create/{model?}/{id?}', 'VentureDrake\LaravelCrm\Http\Controllers\DeliveryController@create')
+    Route::get('create', 'VentureDrake\LaravelCrm\Http\Controllers\DeliveryController@create')
         ->name('laravel-crm.deliveries.create')
         ->middleware(['can:create,VentureDrake\LaravelCrm\Models\Delivery']);
 

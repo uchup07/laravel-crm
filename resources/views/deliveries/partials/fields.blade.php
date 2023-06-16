@@ -1,5 +1,10 @@
 <div class="row">
     <div class="col-sm-5 border-right">
+        @include('laravel-crm::partials.form.hidden',[
+             'name' => 'order_id',
+             'value' => old('order_id', $delivery->order->id ?? $order->id ?? null),
+        ])
+        
         <div class="row">
             <div class="col-sm-6">
                 @include('laravel-crm::partials.form.text',[
@@ -24,11 +29,11 @@
         ])
     </div>
     <div class="col-sm-7">
-     {{--   
         @livewire('delivery-items',[
-            'order' => $order ?? null,
-            'products' => $order->orderProducts ?? null,
-            'old' => old('products')
-        ])--}}
+            'delivery' => $delivery ?? null,
+            'products' => $delivery->deliveryProducts ?? $order->orderProducts ?? null,
+            'old' => old('deliveries'),
+            'fromOrder' => (isset($order)) ? $order : false
+        ])
     </div>
 </div>
