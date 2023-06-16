@@ -21,8 +21,8 @@
                 @include('laravel-crm::partials.form.text',[
                       'name' => 'amount',
                       'label' => ucfirst(__('laravel-crm::lang.value')),
-                      'prepend' => '<span class="fa fa-dollar" aria-hidden="true"></span>',
-                      'value' => old('amount', ((isset($lead->amount)) ? ($lead->amount / 100) : null) ?? null) 
+                      'prepend' => old('currency', $lead->currency ?? \VentureDrake\LaravelCrm\Models\Setting::currency()->value ?? 'IDR'),
+                      'value' => old('amount', ((isset($lead->amount)) ? ($lead->amount) : null) ?? null) 
                   ])
             </div>
             <div class="col-sm-6">

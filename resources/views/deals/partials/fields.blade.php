@@ -24,8 +24,8 @@
                 @include('laravel-crm::partials.form.text',[
                       'name' => 'amount',
                       'label' => ucfirst(__('laravel-crm::lang.value')),
-                      'prepend' => '<span class="fa fa-dollar" aria-hidden="true"></span>',
-                      'value' => old('amount', ((isset($deal->amount)) ? ($deal->amount / 100) : null) ?? null) 
+                      'prepend' => old('currency', $lead->currency ?? \VentureDrake\LaravelCrm\Models\Setting::currency()->value ?? 'IDR'),
+                      'value' => old('amount', ((isset($deal->amount)) ? ($deal->amount) : null) ?? null) 
                   ])
             </div>
             <div class="col-sm-6">
@@ -33,7 +33,7 @@
                     'name' => 'currency',
                     'label' => ucfirst(__('laravel-crm::lang.currency')),
                     'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\currencies(),
-                    'value' => old('currency', $deal->currency ?? \VentureDrake\LaravelCrm\Models\Setting::currency()->value ?? 'USD')
+                    'value' => old('currency', $deal->currency ?? \VentureDrake\LaravelCrm\Models\Setting::currency()->value ?? 'IDR')
                 ])
             </div>
         </div>
@@ -181,7 +181,7 @@
                      'name' => 'country',
                      'label' => ucfirst(__('laravel-crm::lang.country')),
                      'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\countries(),
-                     'value' => old('country', $address->country ?? 'United States'),
+                     'value' => old('country', $address->country ?? \VentureDrake\LaravelCrm\Models\Setting::country()->value ?? 'Indonesia'),
                      'attributes' => [
                             'disabled' => 'disabled'
                        ]

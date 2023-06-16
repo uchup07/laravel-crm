@@ -5,6 +5,6 @@
     <h6 class="text-uppercase mt-4">{{ ucfirst(__('laravel-crm::lang.complete')) }}</h6>
     <hr />--}}
     @foreach($activities as $activity)
-        @include('laravel-crm::activities.partials.activity', $activity)
+        @include('laravel-crm::activities.partials.activity', ['activity' => $activity, 'people' => $people])
     @endforeach
 </div>
