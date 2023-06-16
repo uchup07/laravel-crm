@@ -11,11 +11,17 @@ const mix = require('laravel-mix');
  |
  */
 
+ mix.setPublicPath('resources');
+
 mix.copy(
     'node_modules/bootstrap-multiselect/dist/js/bootstrap-multiselect.min.js',
     'resources/assets/libs/bootstrap-multiselect/bootstrap-multiselect.min.js'
 )
 
-mix.js('resources/js/app.js', 'resources/assets/js')
-    .sass('resources/sass/app.scss', 'resources/assets/css')
-    .sass('resources/sass/document.scss', 'resources/assets/css');
+mix.js('resources/js/app.js', 'assets/js')
+    .sass('resources/sass/app.scss', 'assets/css')
+    .sass('resources/sass/document.scss', 'assets/css')
+    
+if(mix.inProduction()) {
+    mix.version();
+}
