@@ -422,7 +422,7 @@ return [
     'quote_number' => 'quote number',
     'from_quote' => 'from quote',
     'from_order' => 'from order',
-    'show_related_contact_activity' => 'show related contact activity'
+    'show_related_contact_activity' => 'show related contact activity',
 	'closed_at' => 'closed at',
     'reason' => 'reason',
     'reports' => 'reports'
