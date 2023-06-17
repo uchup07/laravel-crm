@@ -39,7 +39,7 @@ class LiveLunch extends Component
         $this->settingService = $settingService;
     }
 
-    public function mount(Lunch $lunch, $people, $view = 'lunch')
+    public function mount(Lunch $lunch, $people = null, $view = 'lunch')
     {
         $this->lunch = $lunch;
         $this->name = $lunch->name;

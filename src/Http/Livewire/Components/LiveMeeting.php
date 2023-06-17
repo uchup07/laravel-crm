@@ -39,7 +39,7 @@ class LiveMeeting extends Component
         $this->settingService = $settingService;
     }
 
-    public function mount(Meeting $meeting, $people, $view = 'meeting')
+    public function mount(Meeting $meeting, $people = null, $view = 'meeting')
     {
         $this->meeting = $meeting;
         $this->name = $meeting->name;

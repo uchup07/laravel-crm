@@ -39,7 +39,7 @@ class LiveCall extends Component
         $this->settingService = $settingService;
     }
 
-    public function mount(Call $call, $people, $view = 'call')
+    public function mount(Call $call, $people = null, $view = 'call')
     {
         $this->call = $call;
         $this->name = $call->name;
