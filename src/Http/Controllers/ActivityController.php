@@ -16,6 +16,10 @@ class ActivityController extends Controller
     {
         $activities = Activity::latest();
 
+        if(!auth()->user()->hasRole(['Admin','Owner','Manager'])) {
+            $activities = Activity::where('causeable_id', auth()->user()->id)->latest();
+        }
+
         if ($activities->count() < 30) {
             $activities = $activities->get();
         } else {
