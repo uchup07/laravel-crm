@@ -27,4 +27,9 @@
         <h6><strong>Description</strong></h6>
         {{ $meeting->description }}
     @endif
+    @if(auth()->user()->id != $call->user_owner_id)
+        <hr/>
+        <h6><strong>Owner</strong></h6>
+        {{ $call->ownerUser->name }}
+    @endif
 @endif

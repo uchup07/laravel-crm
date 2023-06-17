@@ -12,4 +12,10 @@
         <br />
         @include('laravel-crm::livewire.components.partials.task.status') <span class="badge badge-secondary">{{ ucfirst(__('laravel-crm::lang.due')) }} {{ $task->due_at->format('h:i A') }} on {{ $task->due_at->toFormattedDateString() }}</span>
     @endif
+    @if(auth()->user()->id != $call->user_owner_id)
+        <hr/>
+        <h6><strong>Owner</strong></h6>
+        {{ $call->ownerUser->name }}
+    @endif
 @endif
+
