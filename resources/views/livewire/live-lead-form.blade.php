@@ -116,6 +116,10 @@
     @push('livewire-js')
         <script>
             $(document).ready(function () {
+                if(typeof people === 'undefined') {
+                    let people = {};
+                }
+                
                 bindClientAutocomplete();
                 bindPersonAutocomplete();
                 bindOrganisationAutocomplete();
