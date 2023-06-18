@@ -22,7 +22,7 @@ function people()
 {
     $data = [];
 
-    $peoples = (auth()->user()->hasRole('Admin') OR auth()->user()->hasRole('Owner')) ? Person::all() : Person::where('user_owner_id', auth()->user()->id)->get();
+    $peoples = (auth()->user()->hasRole(['Admin','Owner','Manager'])) ? Person::all() : Person::where('user_owner_id', auth()->user()->id)->get();
     
     foreach ($peoples as $person) {
         $data[$person->name] = $person->id;
@@ -35,7 +35,7 @@ function organisations()
 {
     $data = [];
 
-    $organisations = (auth()->user()->hasRole('Admin') OR auth()->user()->hasRole('Owner')) ? Organisation::all() : Organisation::where('user_owner_id', auth()->user()->id)->get();
+    $organisations = (auth()->user()->hasRole(['Admin','Owner','Manager'])) ? Organisation::all() : Organisation::where('user_owner_id', auth()->user()->id)->get();
 
     foreach ($organisations as $organisation) {
         $data[$organisation->name] = $organisation->id;
