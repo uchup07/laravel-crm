@@ -165,7 +165,11 @@ class OrganisationController extends Controller
      */
     public function destroy(Organisation $organisation)
     {
+        // delete related first
+        $organisation->people()->delete();
         $organisation->contacts()->delete();
+        //-----------------------
+
         $organisation->delete();
 
         flash(ucfirst(trans('laravel-crm::lang.organization_deleted')))->success()->important();
@@ -212,6 +216,14 @@ class OrganisationController extends Controller
         if($persons) {
             foreach($persons as $person) {
                 $data[$person->name] = $person->id;
+            }
+        } else { // check for releated contacts person
+            $contacts = $organisation->contacts()->where('entityable_type', 'LIKE', '%Person%')->get();
+
+            if($contacts) {
+                foreach($contacts as $contact) {
+                    $data[$contact->entityable->name] = $contact->entityable->id;
+                }
             }
         }
         
