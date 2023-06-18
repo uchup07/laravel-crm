@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Composer;
 use Ramsey\Uuid\Uuid;
 use VentureDrake\LaravelCrm\Models\Order;
+use VentureDrake\LaravelCrm\Models\Organisation;
 use VentureDrake\LaravelCrm\Models\Person;
 use VentureDrake\LaravelCrm\Models\Quote;
 use VentureDrake\LaravelCrm\Services\SettingService;
@@ -93,17 +94,39 @@ class LaravelCrmUpdate extends Command
         if($this->settingService->get('db_update_0181')->value == 0){
             $this->info('Updating Laravel CRM organisation linked to person...');
 
-            foreach (Person::whereNotNull('organisation_id')->get() as $person) {
-                if($contact = $person->contacts()->create([
-                    'team_id' => $person->team_id,
-                    'entityable_type' => $person->organisation->getMorphClass(),
-                    'entityable_id' => $person->organisation->id,
-                ])){
+            try {
+                foreach (Person::whereNotNull('organisation_id')->get() as $person) {
+                    /* if($contact = $person->contacts()->create([
+                        'team_id' => $person->team_id,
+                        'entityable_type' => $person->organisation->getMorphClass(),
+                        'entityable_id' => $person->organisation->id,
+                    ])){
+                        $person->update([
+                            'organisation_id' => null
+                        ]);
+                    } */
+                    $person->contacts()->create([
+                        'team_id' => $person->team_id,
+                        'entityable_type' => $person->organisation->getMorphClass(),
+                        'entityable_id' => $person->organisation->id,
+                    ]);
+
+                    $person->organisation->contacts()->create([
+                        'team_id' => $person->team_id,
+                        'entityable_type' => $person->getMorphClass(),
+                        'entityable_id' => $person->id,
+                    ]);
+
                     $person->update([
                         'organisation_id' => null
                     ]);
+
                 }
+            } catch(\Exception $e) {
+                $this->alert($e->getMessage());
             }
+
+            
 
             $this->settingService->set('db_update_0181', 1);
             $this->info('Updating Laravel CRM organisation linked to person complete.');
