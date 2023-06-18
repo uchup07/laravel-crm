@@ -23,6 +23,8 @@ class LiveLeadForm extends Component
     public $title;
     public $generateTitle;
 
+    public $organisationHasPeople = false;
+
     public function mount($lead, $generateTitle = true, $client = null, $organisation = null, $person = null)
     {
         $this->client_id = old('client_id') ?? $lead->client->id ?? $client->id ?? null;
@@ -85,6 +87,16 @@ class LiveLeadForm extends Component
                 foreach($people as $p) {
                     $peopleOrganisation[$p->name] = $p->id;
                 }
+            } else {
+                // check related contacts
+                /* $contacts = $organisation->contacts()->where('entityable_type', 'LIKE', '%Person%')->get();
+
+                if($contacts) {
+                    foreach($contacts as $contact) {
+                        $peopleOrganisation[$contact->entityable->name] = $contact->entityable->id;
+                    }
+                } */
+                $this->getOrganisationPeople();
             }
             $this->dispatchBrowserEvent('selectedOrganisation', [
                 'id' => $value,
@@ -174,7 +186,7 @@ class LiveLeadForm extends Component
                      ->where('entityable_type', 'LIKE', '%Person%')
                      ->get() as $contact) {
             $this->people[$contact->entityable_id] = $contact->entityable->name;
-            $this->clientHasPeople = true;
+            $this->organisationHasPeople = true;
         }
     }
     

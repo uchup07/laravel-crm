@@ -22,6 +22,8 @@ class LiveDealForm extends Component
     public $title;
     public $generateTitle;
 
+    public $organisationHasPeople = false;
+
     public function mount($deal, $generateTitle = true, $client = null, $organisation = null, $person = null)
     {
         $this->client_id = old('client_id') ?? $deal->client->id ?? $client->id ?? null;
@@ -84,6 +86,16 @@ class LiveDealForm extends Component
                 foreach($people as $p) {
                     $peopleOrganisation[$p->name] = $p->id;
                 }
+            } else {
+                // check related contacts
+                /* $contacts = $organisation->contacts()->where('entityable_type', 'LIKE', '%Person%')->get();
+
+                if($contacts) {
+                    foreach($contacts as $contact) {
+                        $peopleOrganisation[$contact->entityable->name] = $contact->entityable->id;
+                    }
+                } */
+                $this->getOrganisationPeople();
             }
             $this->dispatchBrowserEvent('selectedOrganisation', [
                 'id' => $value,
@@ -173,7 +185,7 @@ class LiveDealForm extends Component
                      ->where('entityable_type', 'LIKE', '%Person%')
                      ->get() as $contact) {
             $this->people[$contact->entityable_id] = $contact->entityable->name;
-            $this->clientHasPeople = true;
+            $this->organisationHasPeople = true;
         }
     }
     

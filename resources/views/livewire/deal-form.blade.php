@@ -63,7 +63,7 @@
         
     @endif
 
-    @if($clientHasPeople)
+    @if($clientHasPeople || $organisationHasPeople)
 
         @include('laravel-crm::partials.form.select',[
             'name' => 'person_id',
@@ -258,6 +258,29 @@
                     if($('input[name="person_name"]').closest('.autocomplete').find('input[name="person_id"]').val() == ''){
                         $('.autocomplete-person').find('input,select').removeAttr('disabled');
                     }
+
+                    // check for select[name="person_id"]
+                    $('select[name="person_id"]').on('change', function() {
+                        if($(this).val() == ''){
+                            $('.autocomplete-person').find('input,select').removeAttr('disabled');
+                        }else{
+                            $('.autocomplete-person').find('input,select').attr('disabled','disabled');
+                        }
+                        var itemVal = $(this).val();
+                        @this.set('person_id', itemVal);
+
+                        $.ajax({
+                            url: "/crm/people/" +  itemVal + "/autocomplete",
+                            cache: false
+                        }).done(function( data ) {
+
+                            $('.autocomplete-person').find('input[name="phone"]').val(data.phone);
+                            $('.autocomplete-person').find('select[name="phone_type"]').val(data.phone_type);
+                            $('.autocomplete-person').find('input[name="email"]').val(data.email);
+                            $('.autocomplete-person').find('select[name="email_type"]').val(data.email_type);
+
+                        });
+                    });
                 }
 
                 function bindOrganisationAutocomplete(){
@@ -274,7 +297,7 @@
                                 url: "/crm/organisations/" +  item.value + "/autocomplete",
                                 cache: false
                             }).done(function( data ) {
-
+                                people = data.people;
                                 $('.autocomplete-organisation').find('input[name="line1"]').val(data.address_line1);
                                 $('.autocomplete-organisation').find('input[name="line2"]').val(data.address_line2);
                                 $('.autocomplete-organisation').find('input[name="line3"]').val(data.address_line3);
