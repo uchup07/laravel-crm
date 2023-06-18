@@ -105,21 +105,24 @@ class LaravelCrmUpdate extends Command
                             'organisation_id' => null
                         ]);
                     } */
-                    $person->contacts()->create([
-                        'team_id' => $person->team_id,
-                        'entityable_type' => $person->organisation->getMorphClass(),
-                        'entityable_id' => $person->organisation->id,
-                    ]);
-
-                    $person->organisation->contacts()->create([
-                        'team_id' => $person->team_id,
-                        'entityable_type' => $person->getMorphClass(),
-                        'entityable_id' => $person->id,
-                    ]);
-
-                    $person->update([
-                        'organisation_id' => null
-                    ]);
+                    if($person->organisation) {
+                        $person->contacts()->create([
+                            'team_id' => $person->team_id,
+                            'entityable_type' => $person->organisation->getMorphClass(),
+                            'entityable_id' => $person->organisation->id,
+                        ]);
+    
+                        $person->organisation->contacts()->create([
+                            'team_id' => $person->team_id,
+                            'entityable_type' => $person->getMorphClass(),
+                            'entityable_id' => $person->id,
+                        ]);
+    
+                        $person->update([
+                            'organisation_id' => null
+                        ]);
+                    }
+                    
 
                 }
             } catch(\Exception $e) {

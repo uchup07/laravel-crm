@@ -165,6 +165,7 @@ class OrganisationController extends Controller
      */
     public function destroy(Organisation $organisation)
     {
+        $organisation->contacts()->delete();
         $organisation->delete();
 
         flash(ucfirst(trans('laravel-crm::lang.organization_deleted')))->success()->important();
