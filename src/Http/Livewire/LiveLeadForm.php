@@ -36,6 +36,8 @@ class LiveLeadForm extends Component
             $this->getClientOrganisations();
 
             $this->getClientPeople();
+        } elseif($this->organisation_id) {
+            $this->getOrganisationPeople();
         }
         
         $this->title = old('title') ?? $lead->title ?? null;
@@ -159,6 +161,16 @@ class LiveLeadForm extends Component
     public function getClientPeople()
     {
         foreach (Client::find($this->client_id)->contacts()
+                     ->where('entityable_type', 'LIKE', '%Person%')
+                     ->get() as $contact) {
+            $this->people[$contact->entityable_id] = $contact->entityable->name;
+            $this->clientHasPeople = true;
+        }
+    }
+
+    public function getOrganisationPeople()
+    {
+        foreach (Organisation::find($this->organisation_id)->contacts()
                      ->where('entityable_type', 'LIKE', '%Person%')
                      ->get() as $contact) {
             $this->people[$contact->entityable_id] = $contact->entityable->name;
