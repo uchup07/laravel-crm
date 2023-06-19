@@ -88,13 +88,13 @@ class LiveDealForm extends Component
                 }
             } else {
                 // check related contacts
-                /* $contacts = $organisation->contacts()->where('entityable_type', 'LIKE', '%Person%')->get();
+                $contacts = $organisation->contacts()->where('entityable_type', 'LIKE', '%Person%')->get();
 
                 if($contacts) {
                     foreach($contacts as $contact) {
                         $peopleOrganisation[$contact->entityable->name] = $contact->entityable->id;
                     }
-                } */
+                }
                 $this->getOrganisationPeople();
             }
             $this->dispatchBrowserEvent('selectedOrganisation', [

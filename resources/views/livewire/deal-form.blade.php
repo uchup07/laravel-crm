@@ -130,6 +130,10 @@
                 });
 
                 window.addEventListener('selectedOrganisation', event => {
+                    people = event.detail.people ?? {};
+
+                    bindPersonAutocomplete();
+                    
                     if(event.detail.id){
                         $('.autocomplete-organisation').find('input[name="line1"]').val(event.detail.address_line1);
                         $('.autocomplete-organisation').find('input[name="line2"]').val(event.detail.address_line2);
