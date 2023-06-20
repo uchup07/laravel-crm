@@ -63,7 +63,7 @@
         
     @endif
 
-    @if($clientHasPeople || $organisationHasPeople)
+    @if($clientHasPeople)
 
         @include('laravel-crm::partials.form.select',[
             'name' => 'person_id',
@@ -86,7 +86,7 @@
                 ]   
             ])
            <script type="text/javascript">
-            let people =  {!! \VentureDrake\LaravelCrm\Http\Helpers\AutoComplete\people() !!}
+            let people =  {!! \VentureDrake\LaravelCrm\Http\Helpers\AutoComplete\people($this->organisation_id ?? null) !!}
            </script>
             <span wire:ignore>
              @include('laravel-crm::partials.form.text',[
@@ -116,9 +116,6 @@
     @push('livewire-js')
         <script>
             $(document).ready(function () {
-                if(typeof people === 'undefined') {
-                    let people = {};
-                }
 
                 bindClientAutocomplete();
                 bindPersonAutocomplete();
@@ -305,11 +302,9 @@
                                 url: "/crm/organisations/" +  item.value + "/autocomplete",
                                 cache: false
                             }).done(function( data ) {
-                                if(typeof people ==='undefined') {
-                                    let people = data.people;
-                                } else {
-                                    people = data.people;
-                                }
+                                
+                                people = data.people;
+                                
                                 $('.autocomplete-organisation').find('input[name="line1"]').val(data.address_line1);
                                 $('.autocomplete-organisation').find('input[name="line2"]').val(data.address_line2);
                                 $('.autocomplete-organisation').find('input[name="line3"]').val(data.address_line3);

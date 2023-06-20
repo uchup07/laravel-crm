@@ -82,7 +82,7 @@ class LiveDealForm extends Component
             $address = $organisation->getPrimaryAddress();
             $peopleOrganisation = [];
             $people = $organisation->people;
-            if($people) {
+            if($people->count() > 0) {
                 foreach($people as $p) {
                     $peopleOrganisation[$p->name] = $p->id;
                 }
