@@ -83,7 +83,7 @@ class LiveLeadForm extends Component
             $address = $organisation->getPrimaryAddress();
             $peopleOrganisation = [];
             $people = $organisation->people;
-            if($people) {
+            if($people->count() > 0) {
                 foreach($people as $p) {
                     $peopleOrganisation[$p->name] = $p->id;
                 }
@@ -96,9 +96,9 @@ class LiveLeadForm extends Component
                         $peopleOrganisation[$contact->entityable->name] = $contact->entityable->id;
                     }
                 }
-                
                 $this->getOrganisationPeople();
             }
+
             $this->dispatchBrowserEvent('selectedOrganisation', [
                 'id' => $value,
                 'address_line1' => $address->line1 ?? null,

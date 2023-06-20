@@ -18,16 +18,29 @@ function clients()
     return json_encode($data);
 }
 
-function people()
+function people($organisationId = null)
 {
     $data = [];
 
-    $peoples = (auth()->user()->hasRole(['Admin','Owner','Manager'])) ? Person::all() : Person::where('user_owner_id', auth()->user()->id)->get();
-    
+    if(is_null($organisationId)) {
+        $peoples = (auth()->user()->hasRole(['Admin','Owner','Manager'])) ? Person::all() : Person::where('user_owner_id', auth()->user()->id)->get();
+    } else {
+        $organisation = Organisation::find($organisationId);
+        if($organisation) {
+            $contacts = $organisation->contacts()->where('entityable_type', 'LIKE', '%Person%')->get();
+            $peoples = $contacts->map(function($item, $key) {
+                $item->id = $item->entityable->id;
+                $item->name = $item->entityable->name;
+                return $item;
+            });
+
+        }
+    }
+        
     foreach ($peoples as $person) {
         $data[$person->name] = $person->id;
     }
-
+    
     return json_encode($data);
 }
 
