@@ -21,6 +21,7 @@ function clients()
 function people($organisationId = null)
 {
     $data = [];
+    $peoples = [];
 
     if(is_null($organisationId)) {
         $peoples = (auth()->user()->hasRole(['Admin','Owner','Manager'])) ? Person::all() : Person::where('user_owner_id', auth()->user()->id)->get();
