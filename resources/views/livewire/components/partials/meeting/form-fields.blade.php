@@ -96,12 +96,14 @@
         </div>
     </div>
     <span wire:ignore>
-        @php
-            $personOptions = (auth()->user()->hasRole(['Admin','Owner','Manager'])) ? \VentureDrake\LaravelCrm\Models\Person::all() : \VentureDrake\LaravelCrm\Models\Person::where('user_owner_id', auth()->user()->id)->get();
-            if(!is_null($people)) {
-                $personOptions = $people;
-            }
-        @endphp
+    @php
+        $personOptions = collect();
+        if(!is_null($people)) {
+            $personOptions = $people;
+        } else {
+            $personOptions = auth()->user()->hasRole(['Admin','Owner','Manager']) ? \VentureDrake\LaravelCrm\Models\Person::all() : \VentureDrake\LaravelCrm\Models\Person::where('user_owner_id', auth()->user()->id)->get();
+        }
+    @endphp
     @include('laravel-crm::partials.form.multiselect',[
       'name' => 'guests',
       'label' => ucfirst(__('laravel-crm::lang.guests')),

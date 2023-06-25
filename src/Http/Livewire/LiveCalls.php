@@ -122,10 +122,19 @@ class LiveCalls extends Component
 
     private function getPeople()
     {
+        $this->people = null;
         if($this->model->people) {
-            $this->people = $this->model->people()->get();
-        } else {
-            $this->people = null;
+            $peoples = $this->model->people()->get();
+            if($peoples->count() > 0 ) {
+                $this->people = $peoples;
+            } else {
+                $contacts = $this->model->contacts()->where('entityable_type', 'LIKE', '%Person%')->get();
+                if($contacts) {
+                    $this->people = $contacts->map(function($item) {
+                       return $item->entityable;
+                    });
+                }
+            }
         }
     }
 
