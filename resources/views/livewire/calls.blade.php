@@ -14,7 +14,8 @@
     <ul class="list-unstyled">
         @foreach($calls as $call)
             @livewire('call',[
-                'call' => $call
+                'call' => $call,
+                'people' => $people,
             ], key($call->id))
         @endforeach
     </ul>
