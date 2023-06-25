@@ -69,6 +69,7 @@
             'name' => 'person_id',
             'label' => ucfirst(__('laravel-crm::lang.contact_person')),
             'prepend' => '<span class="fa fa-user" aria-hidden="true"></span>',
+            'loading' => '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
             'options' => ['' => ''] + $people,
             'attributes' => [
                 'wire:model' => 'person_id'        

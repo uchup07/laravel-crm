@@ -16,6 +16,11 @@
                     <span class="input-group-text" id="inputGroupPrepend">{!! $append !!}</span>
                 </div>
             @endisset
+            @isset($loading)
+            <div wire:loading wire:target="{{ $name }}" class="input-group-append">
+                {!! $loading !!}
+            </div>
+            @endisset
         </div>
         @endif
         <span class="badge badge-primary autocomplete-new" @if((isset($new) && $new)) style="display: inline" @endif>New</span>
