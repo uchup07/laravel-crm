@@ -14,9 +14,10 @@
                 'name' => 'client_name',
                 'label' => ucfirst(__('laravel-crm::lang.client')),
                 'prepend' => '<span class="fa fa-address-card" aria-hidden="true"></span>',
+                'loading' => '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
                 'attributes' => [
                     'autocomplete' => \Illuminate\Support\Str::random(),
-                    'wire:model' => 'client_name'  
+                    'wire:model.lazy' => 'client_name'  
                ]
             ])  
         </span>    
@@ -52,9 +53,10 @@
                     'name' => 'organisation_name',
                     'label' => ucfirst(__('laravel-crm::lang.organization')),
                     'prepend' => '<span class="fa fa-building" aria-hidden="true"></span>',
+                    'loading' => '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
                     'attributes' => [
                         'autocomplete' => \Illuminate\Support\Str::random(),
-                        'wire:model' => 'organisation_name'  
+                        'wire:model.lazy' => 'organisation_name'  
                    ],
                    'required' => 'true'
                 ])      
@@ -69,7 +71,6 @@
             'name' => 'person_id',
             'label' => ucfirst(__('laravel-crm::lang.contact_person')),
             'prepend' => '<span class="fa fa-user" aria-hidden="true"></span>',
-            'loading' => '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
             'options' => ['' => ''] + $people,
             'attributes' => [
                 'wire:model' => 'person_id'        
@@ -94,9 +95,10 @@
                 'name' => 'person_name',
                 'label' => ucfirst(__('laravel-crm::lang.contact_person')),
                 'prepend' => '<span class="fa fa-user" aria-hidden="true"></span>',
+                'loading' => '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
                 'attributes' => [
                    'autocomplete' => \Illuminate\Support\Str::random(),
-                   'wire:model' => 'person_name'        
+                   'wire:model.lazy' => 'person_name'        
                 ],
                 'required' => 'true'
             ])
@@ -108,6 +110,7 @@
     @include('laravel-crm::partials.form.text',[
         'name' => 'title',
         'label' => ucfirst(__('laravel-crm::lang.title')),
+        'loading' => '<div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>',
         'attributes' => [
             'wire:model' => 'title'        
         ],
