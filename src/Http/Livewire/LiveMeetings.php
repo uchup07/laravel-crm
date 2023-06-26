@@ -137,6 +137,16 @@ class LiveMeetings extends Component
                     });
                 }
             }
+        } elseif($this->model->person) {
+            if(class_basename($this->model->getMorphClass()) == 'Lead' OR class_basename($this->model->getMorphClass()) == 'Deal') {
+
+                $contacts = $this->model->organisation->contacts()->where('entityable_type', 'LIKE', '%Person%')->get();
+                if($contacts) {
+                    $this->people = $contacts->map(function($item) {
+                        return $item->entityable;
+                    });
+                }
+            }
         }
     }
 
