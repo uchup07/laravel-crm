@@ -7,8 +7,8 @@ use Carbon\Carbon;
 use Closure;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Schema;
-use VentureDrake\LaravelCrm\Models\Setting;
 use Illuminate\Support\Str;
+use VentureDrake\LaravelCrm\Models\Setting;
 
 class Settings
 {
@@ -55,9 +55,9 @@ class Settings
             }
 
             Setting::firstOrCreate([
-                'name' => 'language',
+                'name' => 'currency',
             ], [
-                'value' => config('laravel-crm.language') ?? 'english',
+                'value' => config('laravel-crm.currency') ?? 'USD',
             ]);
 
             Setting::firstOrCreate([
@@ -67,9 +67,39 @@ class Settings
             ]);
 
             Setting::firstOrCreate([
-                'name' => 'currency',
+                'name' => 'language',
             ], [
-                'value' => config('laravel-crm.currency') ?? 'USD',
+                'value' => config('laravel-crm.language') ?? 'english',
+            ]);
+
+            Setting::firstOrCreate([
+                'name' => 'timezone',
+            ], [
+                'value' => config('laravel-crm.timezone') ?? 'UTC',
+            ]);
+
+            Setting::firstOrCreate([
+                'name' => 'date_format',
+            ], [
+                'value' => config('laravel-crm.date_format') ?? 'Y-m-d',
+            ]);
+
+            Setting::firstOrCreate([
+                'name' => 'time_format',
+            ], [
+                'value' => config('laravel-crm.time_format') ?? 'g:i A',
+            ]);
+
+            Setting::firstOrCreate([
+                'name' => 'tax_name',
+            ], [
+                'value' => config('laravel-crm.tax_name') ?? 'Tax',
+            ]);
+
+            Setting::firstOrCreate([
+                'name' => 'tax_rate',
+            ], [
+                'value' => config('laravel-crm.tax_rate') ?? 0,
             ]);
 
             Setting::firstOrCreate([
@@ -91,12 +121,18 @@ class Settings
             ]);
 
             Setting::firstOrCreate([
+                'name' => 'dynamic_products',
+            ], [
+                'value' => '1',
+            ]);
+
+            Setting::firstOrCreate([
                 'name' => 'show_related_activity',
             ], [
                 'value' => '0',
             ]);
-            
-            if((int) Str::replace('.', '', config('laravel-crm.version')) >= 180){
+
+            if((int) Str::replace('.', '', config('laravel-crm.version')) >= 180) {
                 Setting::firstOrCreate([
                     'global' => 1,
                     'name' => 'db_update_0180',
@@ -105,7 +141,7 @@ class Settings
                 ]);
             }
 
-            if((int) Str::replace('.', '', config('laravel-crm.version')) >= 181){
+            if((int) Str::replace('.', '', config('laravel-crm.version')) >= 181) {
                 Setting::firstOrCreate([
                     'global' => 1,
                     'name' => 'db_update_0181',

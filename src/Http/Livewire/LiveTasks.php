@@ -34,7 +34,7 @@ class LiveTasks extends Component
     {
         $this->model = $model;
         $this->getTasks();
-        
+
         if (! $this->tasks || ($this->tasks && $this->tasks->count() < 1)) {
             $this->showForm = true;
         }
@@ -47,7 +47,7 @@ class LiveTasks extends Component
             'description' => 'nullable',
             'due_at' => 'nullable',
         ]);
-        
+
         $task = $this->model->tasks()->create([
             'name' => $data['name'],
             'description' => $data['description'],
@@ -55,7 +55,7 @@ class LiveTasks extends Component
             'user_owner_id' => auth()->user()->id,
             'user_assigned_id' => auth()->user()->id,
         ]);
-        
+
         $this->model->activities()->create([
             'causable_type' => auth()->user()->getMorphClass(),
             'causable_id' => auth()->user()->id,
@@ -73,16 +73,16 @@ class LiveTasks extends Component
 
         $this->resetFields();
     }
-    
+
     public function getTasks()
     {
         $taskIds = [];
-        
-        foreach($this->model->tasks()->where('user_assigned_id', auth()->user()->id)->latest()->get() as $task){
-            $taskIds[] =  $task->id;
+
+        foreach($this->model->tasks()->where('user_assigned_id', auth()->user()->id)->latest()->get() as $task) {
+            $taskIds[] = $task->id;
         }
 
-        if($this->settingService->get('show_related_activity')->value == 1 && method_exists($this->model, 'contacts')){
+        if($this->settingService->get('show_related_activity')->value == 1 && method_exists($this->model, 'contacts')) {
             foreach($this->model->contacts as $contact) {
                 foreach ($contact->entityable->tasks()->where('user_assigned_id', auth()->user()->id)->latest()->get() as $task) {
                     $taskIds[] = $task->id;
@@ -90,20 +90,20 @@ class LiveTasks extends Component
             }
         }
 
-        if(count($taskIds) > 0){
+        if(count($taskIds) > 0) {
             $this->tasks = Task::whereIn('id', $taskIds)->latest()->get();
         }
-        
+
         $this->emit('refreshActivities');
     }
-    
+
     public function addTaskToggle()
     {
         $this->showForm = ! $this->showForm;
 
         $this->dispatchBrowserEvent('taskEditModeToggled');
     }
-    
+
     public function addTaskOn()
     {
         $this->showForm = true;
@@ -116,7 +116,7 @@ class LiveTasks extends Component
         $this->reset('name', 'description', 'due_at');
         $this->getTasks();
     }
-    
+
     public function render()
     {
         return view('laravel-crm::livewire.tasks');

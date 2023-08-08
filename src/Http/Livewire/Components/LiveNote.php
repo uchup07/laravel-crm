@@ -31,17 +31,17 @@ class LiveNote extends Component
     {
         $this->settingService = $settingService;
     }
-    
+
     public function mount(Note $note, $view = 'note')
     {
         $this->note = $note;
         $this->content = $note->content;
         $this->noted_at = ($note->noted_at) ? $note->noted_at->format($this->dateFormat().' H:i') : null;
 
-        if($this->settingService->get('show_related_activity')->value == 1){
+        if($this->settingService->get('show_related_activity')->value == 1) {
             $this->showRelated = true;
         }
-        
+
         $this->view = $view;
     }
 
@@ -109,10 +109,10 @@ class LiveNote extends Component
     public function toggleEditMode()
     {
         $this->editMode = ! $this->editMode;
-        
+
         $this->dispatchBrowserEvent('noteEditModeToggled');
     }
-    
+
     public function render()
     {
         return view('laravel-crm::livewire.components.'.$this->view);

@@ -1,4 +1,5 @@
 <?php
+
 namespace VentureDrake\LaravelCrm\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class ClientController extends Controller
     {
         //
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -51,7 +52,7 @@ class ClientController extends Controller
                 $clients = $clients->sortable(['created_at' => 'desc'])->paginate(30);
             }
         }
-        
+
         return view('laravel-crm::clients.index', [
             'clients' => $clients,
         ]);
@@ -151,38 +152,38 @@ class ClientController extends Controller
 
     public function search(Request $request)
     {
-         $searchValue = Client::searchValue($request);
+        $searchValue = Client::searchValue($request);
 
-         if (! $searchValue || trim($searchValue) == '') {
-             return redirect(route('laravel-crm.clients.index'));
-         }
+        if (! $searchValue || trim($searchValue) == '') {
+            return redirect(route('laravel-crm.clients.index'));
+        }
 
-         $params = Client::filters($request, 'search');
+        $params = Client::filters($request, 'search');
 
-         $clients = Client::filter($params)->get()->filter(function ($record) use ($searchValue) {
-             foreach ($record->getSearchable() as $field) {
-                 if (Str::contains(strtolower($record->{$field}), strtolower($searchValue))) {
-                     return $record;
-                 }
-             }
-         });
+        $clients = Client::filter($params)->get()->filter(function ($record) use ($searchValue) {
+            foreach ($record->getSearchable() as $field) {
+                if (Str::contains(strtolower($record->{$field}), strtolower($searchValue))) {
+                    return $record;
+                }
+            }
+        });
 
-         return view('laravel-crm::clients.index', [
-             'clients' => $clients,
-             'searchValue' => $searchValue ?? null,
-         ]);
+        return view('laravel-crm::clients.index', [
+            'clients' => $clients,
+            'searchValue' => $searchValue ?? null,
+        ]);
     }
 
     public function autocomplete(Client $client)
     {
-         /*$email = $person->getPrimaryEmail();
-         $phone = $person->getPrimaryPhone();
+        /*$email = $person->getPrimaryEmail();
+        $phone = $person->getPrimaryPhone();
 
-         return response()->json([
-             'email' => $email->address ?? null,
-             'email_type' => $email->type ?? null,
-             'phone' => $phone->number ?? null,
-             'phone_type' => $phone->type ?? null,
-         ]);*/
+        return response()->json([
+            'email' => $email->address ?? null,
+            'email_type' => $email->type ?? null,
+            'phone' => $phone->number ?? null,
+            'phone_type' => $phone->type ?? null,
+        ]);*/
     }
 }

@@ -5,7 +5,6 @@ namespace VentureDrake\LaravelCrm\Http\Controllers;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use VentureDrake\LaravelCrm\Http\Requests\StoreQuoteRequest;
 use VentureDrake\LaravelCrm\Http\Requests\UpdateQuoteRequest;
@@ -391,7 +390,7 @@ class QuoteController extends Controller
         if ($quote->organisation) {
             $organisation_address = $quote->organisation->getPrimaryAddress();
         }
-        
+
         return Pdf::setOption([
             'fontDir' => public_path('vendor/laravel-crm/fonts'),
         ])
@@ -403,6 +402,6 @@ class QuoteController extends Controller
             'organisation_address' => $organisation_address ?? null,
             'fromName' => $this->settingService->get('organisation_name')->value ?? null,
             'logo' => $this->settingService->get('logo_file')->value ?? null,
-        ])->download('quote-'.$quote->id.'.pdf');
+        ])->download('quote-'.strtolower($quote->quote_id).'.pdf');
     }
 }

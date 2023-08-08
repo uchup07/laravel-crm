@@ -20,6 +20,7 @@ use VentureDrake\LaravelCrm\Console\LaravelCrmInstall;
 use VentureDrake\LaravelCrm\Console\LaravelCrmLabels;
 use VentureDrake\LaravelCrm\Console\LaravelCrmOrganisationTypes;
 use VentureDrake\LaravelCrm\Console\LaravelCrmPermissions;
+use VentureDrake\LaravelCrm\Console\LaravelCrmReminders;
 use VentureDrake\LaravelCrm\Console\LaravelCrmUpdate;
 use VentureDrake\LaravelCrm\Console\LaravelCrmXero;
 use VentureDrake\LaravelCrm\Http\Livewire\Components\LiveCall;
@@ -60,6 +61,7 @@ use VentureDrake\LaravelCrm\Http\Middleware\FormComponentsConfig;
 use VentureDrake\LaravelCrm\Http\Middleware\HasCrmAccess;
 use VentureDrake\LaravelCrm\Http\Middleware\LastOnlineAt;
 use VentureDrake\LaravelCrm\Http\Middleware\LogUsage;
+use VentureDrake\LaravelCrm\Http\Middleware\RouteSubdomain;
 use VentureDrake\LaravelCrm\Http\Middleware\Settings;
 use VentureDrake\LaravelCrm\Http\Middleware\SystemCheck;
 use VentureDrake\LaravelCrm\Http\Middleware\TeamsPermission;
@@ -206,6 +208,10 @@ class LaravelCrmServiceProvider extends ServiceProvider
             $router->pushMiddlewareToGroup('crm-api', TeamsPermission::class);
             $router->pushMiddlewareToGroup('web', XeroTenant::class);
             $router->pushMiddlewareToGroup('crm-api', XeroTenant::class);
+        }
+
+        if(config('laravel-crm.route_subdomain')) {
+            $router->pushMiddlewareToGroup('crm', RouteSubdomain::class);
         }
 
         $router->pushMiddlewareToGroup('crm', Settings::class);
@@ -428,6 +434,7 @@ class LaravelCrmServiceProvider extends ServiceProvider
                 LaravelCrmAddressTypes::class,
                 LaravelCrmOrganisationTypes::class,
                 LaravelCrmXero::class,
+                LaravelCrmReminders::class
             ]);
 
             // Register the model factories
@@ -475,14 +482,22 @@ class LaravelCrmServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->app->booted(function () {
                 $schedule = $this->app->make(Schedule::class);
-                
+
+                $schedule->command('laravelcrm:reminders')
+                    ->name('laravelCrmReminders')
+                    ->everyMinute()
+                    ->withoutOverlapping();
+
                 if (config('xero.clientId') && config('xero.clientSecret')) {
                     $schedule->command('xero:keep-alive')
+                        ->name('laravelCrmXeroKeepAlive')
                         ->everyFiveMinutes();
                     $schedule->command('laravelcrm:xero contacts')
+                        ->name('laravelCrmXeroContacts')
                         ->everyTenMinutes()
                         ->withoutOverlapping();
                     $schedule->command('laravelcrm:xero products')
+                        ->name('laravelCrmXeroProducts')
                         ->everyTenMinutes()
                         ->withoutOverlapping();
                 }
@@ -494,64 +509,78 @@ class LaravelCrmServiceProvider extends ServiceProvider
             if (Schema::hasTable(config('laravel-crm.db_table_prefix').'settings')) {
                 view()->share('dateFormat', Setting::where('name', 'date_format')->first()->value ?? 'Y/m/d');
                 view()->share('timeFormat', Setting::where('name', 'time_format')->first()->value ?? 'H:i');
+                view()->share('timezone', Setting::where('name', 'timezone')->first()->value ?? 'UTC');
+                view()->share('taxName', Setting::where('name', 'tax_name')->first()->value ?? 'Tax');
+
+                if($setting = Setting::where('name', 'dynamic_products')->first()) {
+                    if($setting->value == 1) {
+                        view()->share('dynamicProducts', 'true');
+                    } else {
+                        view()->share('dynamicProducts', 'false');
+                    }
+                } else {
+                    view()->share('dynamicProducts', 'true');
+                }
             } else {
                 view()->share('dateFormat', 'Y/m/d');
                 view()->share('timeFormat', 'H:i');
+                view()->share('timezone', 'UTC');
+                view()->share('taxName', 'Tax');
             }
         }
-        
+
         Blade::if('hasleadsenabled', function () {
-            if(is_array(config('laravel-crm.modules')) && in_array('leads', config('laravel-crm.modules'))){
+            if(is_array(config('laravel-crm.modules')) && in_array('leads', config('laravel-crm.modules'))) {
                 return true;
-            }elseif(! config('laravel-crm.modules')){
+            } elseif(! config('laravel-crm.modules')) {
                 return true;
             }
         });
 
         Blade::if('hasdealsenabled', function () {
-            if(is_array(config('laravel-crm.modules')) && in_array('deals', config('laravel-crm.modules'))){
+            if(is_array(config('laravel-crm.modules')) && in_array('deals', config('laravel-crm.modules'))) {
                 return true;
-            }elseif(! config('laravel-crm.modules')){
+            } elseif(! config('laravel-crm.modules')) {
                 return true;
             }
         });
 
         Blade::if('hasquotesenabled', function () {
-            if(is_array(config('laravel-crm.modules')) && in_array('quotes', config('laravel-crm.modules'))){
+            if(is_array(config('laravel-crm.modules')) && in_array('quotes', config('laravel-crm.modules'))) {
                 return true;
-            }elseif(! config('laravel-crm.modules')){
+            } elseif(! config('laravel-crm.modules')) {
                 return true;
             }
         });
 
         Blade::if('hasordersenabled', function () {
-            if(is_array(config('laravel-crm.modules')) && in_array('orders', config('laravel-crm.modules'))){
+            if(is_array(config('laravel-crm.modules')) && in_array('orders', config('laravel-crm.modules'))) {
                 return true;
-            }elseif(! config('laravel-crm.modules')){
+            } elseif(! config('laravel-crm.modules')) {
                 return true;
             }
         });
 
         Blade::if('hasinvoicesenabled', function () {
-            if(is_array(config('laravel-crm.modules')) && in_array('invoices', config('laravel-crm.modules'))){
+            if(is_array(config('laravel-crm.modules')) && in_array('invoices', config('laravel-crm.modules'))) {
                 return true;
-            }elseif(! config('laravel-crm.modules')){
+            } elseif(! config('laravel-crm.modules')) {
                 return true;
             }
         });
 
         Blade::if('hasdeliveriesenabled', function () {
-            if(is_array(config('laravel-crm.modules')) && in_array('deliveries', config('laravel-crm.modules'))){
+            if(is_array(config('laravel-crm.modules')) && in_array('deliveries', config('laravel-crm.modules'))) {
                 return true;
-            }elseif(! config('laravel-crm.modules')){
+            } elseif(! config('laravel-crm.modules')) {
                 return true;
             }
         });
 
         Blade::if('hasteamsenabled', function () {
-            if(is_array(config('laravel-crm.modules')) && in_array('teams', config('laravel-crm.modules'))){
+            if(is_array(config('laravel-crm.modules')) && in_array('teams', config('laravel-crm.modules'))) {
                 return true;
-            }elseif(! config('laravel-crm.modules')){
+            } elseif(! config('laravel-crm.modules')) {
                 return true;
             }
         });
@@ -568,7 +597,7 @@ class LaravelCrmServiceProvider extends ServiceProvider
 
         // Register the main class to use with the facade
         $this->app->singleton('laravel-crm', function () {
-            return new LaravelCrm;
+            return new LaravelCrm();
         });
 
         $this->app->register(LaravelCrmEventServiceProvider::class);
@@ -596,7 +625,7 @@ class LaravelCrmServiceProvider extends ServiceProvider
 
         return [
             'domain' => $domain ?? null,
-            'prefix' => (config('laravel-crm.user_interface')) ? config('laravel-crm.route_prefix') : 'laravel-crm',
+            'prefix' => (config('laravel-crm.route_prefix')) ? config('laravel-crm.route_prefix') : null,
             'middleware' => array_unique(array_merge(['web','crm','crm-api'], config('laravel-crm.route_middleware') ?? [])),
         ];
     }

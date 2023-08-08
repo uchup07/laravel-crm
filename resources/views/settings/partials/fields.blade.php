@@ -48,6 +48,12 @@
         @endhasquotesenabled
         @hasinvoicesenabled
         @include('laravel-crm::partials.form.textarea',[
+         'name' => 'invoice_contact_details',
+         'label' => ucfirst(trans('laravel-crm::lang.invoice_contact_details')),
+         'rows' => 5,
+         'value' => old('invoice_contact_details', $invoiceContactDetails->value ?? null)
+        ])
+        @include('laravel-crm::partials.form.textarea',[
          'name' => 'invoice_terms',
          'label' => ucfirst(trans('laravel-crm::lang.invoice_terms')),
          'rows' => 5,
@@ -98,8 +104,25 @@
             'value' => old('time_format', $timeFormat->value ?? null),
             'required' => 'true'
        ])
+        @include('laravel-crm::partials.form.text',[
+            'name' => 'tax_name',
+            'label' => ucfirst(trans('laravel-crm::lang.tax_name')),
+            'value' => old('tax_name', $taxName->value ?? null)
+       ])
+        @include('laravel-crm::partials.form.text',[
+            'name' => 'tax_rate',
+            'label' => ucfirst(trans('laravel-crm::lang.tax_rate')),
+            'value' => old('tax_rate', $taxRate->value ?? null),
+            'append' => '%'
+       ])
         <div class="form-group">
-            <label for="crm_access">{{ ucfirst(__('laravel-crm::lang.show_related_contact_activity')) }}</label>
+            <label for="dynamic_products">{{ ucfirst(__('laravel-crm::lang.allow_creating_products_when_creating_quotes_orders_and_invoices')) }}</label>
+            <span class="form-control-toggle">
+                 <input id="dynamic_products" type="checkbox" name="dynamic_products" {{ (isset($dynamicProducts->value) && ($dynamicProducts->value == 1)) ? 'checked' : null }} data-toggle="toggle" data-size="sm" data-on="Yes" data-off="No" data-onstyle="success" data-offstyle="danger">
+            </span>
+        </div>
+        <div class="form-group">
+            <label for="show_related_activity">{{ ucfirst(__('laravel-crm::lang.show_related_contact_activity')) }}</label>
             <span class="form-control-toggle">
                  <input id="show_related_activity" type="checkbox" name="show_related_activity" {{ (isset($showRelatedActivity->value) && ($showRelatedActivity->value == 1)) ? 'checked' : null }} data-toggle="toggle" data-size="sm" data-on="Yes" data-off="No" data-onstyle="success" data-offstyle="danger">
             </span>

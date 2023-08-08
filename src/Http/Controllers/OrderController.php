@@ -122,7 +122,7 @@ class OrderController extends Controller
                 if ($address = $quote->organisation->getShippingAddress()) {
                     $addressIds[] = $address->id;
                 }
-                
+
                 $addresses = Address::whereIn('id', $addressIds)->get();
 
                 break;
@@ -161,7 +161,7 @@ class OrderController extends Controller
         } elseif ($request->organisation_id) {
             $organisation = Organisation::find($request->organisation_id);
         }
-        
+
         if ($request->client_name && ! $request->client_id) {
             $client = Client::create([
                 'name' => $request->client_name,
@@ -455,6 +455,6 @@ class OrderController extends Controller
                 'organisation_address' => $organisation_address ?? null,
                 'fromName' => $this->settingService->get('organisation_name')->value ?? null,
                 'logo' => $this->settingService->get('logo_file')->value ?? null,
-            ])->download('order-'.$order->id.'.pdf');
+            ])->download('order-'.strtolower($order->order_id).'.pdf');
     }
 }

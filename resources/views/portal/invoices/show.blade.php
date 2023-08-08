@@ -9,10 +9,12 @@
                     {{ money($invoice->total, $invoice->currency) }} <small>{{ $invoice->currency }}</small>
                     @if($invoice->fully_paid_at)
                         <small><span class="badge badge-success">{{ ucfirst(__('laravel-crm::lang.paid')) }}</span></small>
-                    @elseif(! $invoice->fully_paid_at && $invoice->due_date >= \Carbon\Carbon::now())
-                        <small><span class="badge badge-secondary">{{ ucfirst(__('laravel-crm::lang.due_in')) }} {{ $invoice->due_date->diffForHumans() }} </span></small>
-                    @elseif(! $invoice->fully_paid_at && $invoice->due_date < \Carbon\Carbon::now())
-                        <small><span class="badge badge-danger">{{ $invoice->due_date->diffForHumans() }} {{ ucfirst(__('laravel-crm::lang.overdue')) }} </span></small>
+                    @elseif(! $invoice->fully_paid_at && $invoice->due_date->diffinDays() > 0  && $invoice->due_date >= \Carbon\Carbon::now()->timezone($timezone))
+                        <small><span class="badge badge-secondary">{{ ucfirst(__('laravel-crm::lang.due_in')) }} {{ $invoice->due_date->diffForHumans(false, true) }} </span></small>
+                    @elseif(! $invoice->fully_paid_at && $invoice->due_date->diffinDays() <= 0  && $invoice->due_date >= \Carbon\Carbon::now()->timezone($timezone))
+                        <small><span class="badge badge-secondary">{{ ucfirst(__('laravel-crm::lang.due_tomorrow')) }}</span></small>
+                    @elseif(! $invoice->fully_paid_at && $invoice->due_date->diffinDays() > 0  && $invoice->due_date < \Carbon\Carbon::now()->timezone($timezone))
+                        <small><span class="badge badge-danger">{{ $invoice->due_date->diffForHumans(false, true) }} {{ ucfirst(__('laravel-crm::lang.overdue')) }} </span></small>
                     @endif
                 </h1>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -65,7 +67,12 @@
                                     <strong>{{ ucfirst(__('laravel-crm::lang.to')) }}</strong>
                                 </div>
                                 <div class="col">
-                                    {{ $invoice->organisation->name ?? $invoice->organisation->person->name ?? null }}<br />
+                                    @if($invoice->organisation)
+                                        {{ $invoice->organisation->name }}<br />
+                                        {{ $invoice->person->name ?? null }}<br />
+                                    @else
+                                        {{ $invoice->person->name ?? null }}<br />
+                                    @endif
                                     @if(isset($organisation_address))
                                         @if($organisation_address->line2)
                                         {{ $organisation_address->line1 }}<br />
@@ -120,10 +127,12 @@
                                 </div>
                                 <div class="col">
                                     {{ $invoice->due_date->format($dateFormat) }}
-                                    @if(! $invoice->fully_paid_at && $invoice->due_date >= \Carbon\Carbon::now())
-                                        <small class="text-secondary"> ({{ ucfirst(__('laravel-crm::lang.due_in')) }} {{ $invoice->due_date->diffForHumans() }})</small>
-                                    @elseif(! $invoice->fully_paid_at && $invoice->due_date < \Carbon\Carbon::now())
-                                        <small class="text-danger"> ({{ $invoice->due_date->diffForHumans() }} {{ ucfirst(__('laravel-crm::lang.overdue')) }})</small>
+                                    @if(! $invoice->fully_paid_at && $invoice->due_date->diffinDays() > 0 && $invoice->due_date >= \Carbon\Carbon::now()->timezone($timezone))
+                                        <small class="text-secondary"> ({{ ucfirst(__('laravel-crm::lang.due_in')) }} {{ $invoice->due_date->diffForHumans(false, true) }})</small>
+                                    @elseif(! $invoice->fully_paid_at && $invoice->due_date->diffinDays() <= 0  && $invoice->due_date >= \Carbon\Carbon::now()->timezone($timezone))
+                                        <small class="text-secondary"> ({{ ucfirst(__('laravel-crm::lang.due_tomorrow')) }}</small>
+                                    @elseif(! $invoice->fully_paid_at && $invoice->due_date < \Carbon\Carbon::now()->timezone($timezone))
+                                        <small class="text-danger"> ({{ $invoice->due_date->diffForHumans(false, true) }} {{ __('laravel-crm::lang.overdue') }})</small>
                                     @endif
                                 </div>
                             </div>
@@ -135,10 +144,11 @@
                                     <strong>{{ ucfirst(__('laravel-crm::lang.from')) }}</strong>
                                 </div>
                                 <div class="col">
-                                    {{ $fromName }}<br />
-                                   {{-- 19-21 South Steyne<br />
-                                    MANLY NSW 2095<br />
-                                    Australia--}}
+                                    @if($contactDetails)
+                                        {!! nl2br($contactDetails) !!}
+                                    @else
+                                        {{ $fromName }}
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -152,21 +162,24 @@
                                     <th scope="col">{{ ucfirst(__('laravel-crm::lang.item')) }}</th>
                                     <th scope="col">{{ ucfirst(__('laravel-crm::lang.price')) }}</th>
                                     <th scope="col">{{ ucfirst(__('laravel-crm::lang.quantity')) }}</th>
+                                    <th scope="col">{{ $taxName }}</th>
                                     <th scope="col">{{ ucfirst(__('laravel-crm::lang.amount')) }}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
                                 @foreach($invoice->invoiceLines()->whereNotNull('product_id')->get() as $invoiceLine)
                                     <tr>
-                                        <td>{{ $invoiceLine->product->name }}</td>
+                                        <td>{{ $invoiceLine->product->name ?? null }}</td>
                                         <td>{{ money($invoiceLine->price ?? null, $invoiceLine->currency) }}</td>
                                         <td>{{ $invoiceLine->quantity }}</td>
+                                        <td>{{ money($invoiceLine->tax_amount ?? null, $invoiceLine->currency) }}</td>
                                         <td>{{ money($invoiceLine->amount ?? null, $invoiceLine->currency) }}</td>
                                     </tr>
                                 @endforeach
                                 </tbody>
                                 <tfoot>
                                 <tr>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td><strong>{{ ucfirst(__('laravel-crm::lang.sub_total')) }}</strong></td>
@@ -176,6 +189,7 @@
                                 <tr>
                                     <td></td>
                                     <td></td>
+                                    <td></td>
                                     <td><strong>{{ ucfirst(__('laravel-crm::lang.discount')) }}</strong></td>
                                     <td>{{ money($invoice->discount, $invoice->currency) }}</td>
                                 </tr>
@@ -183,16 +197,19 @@
                                 <tr>
                                     <td></td>
                                     <td></td>
-                                    <td><strong>{{ ucfirst(__('laravel-crm::lang.tax')) }}</strong></td>
+                                    <td></td>
+                                    <td><strong>{{ $taxName }}</strong></td>
                                     <td>{{ money($invoice->tax, $invoice->currency) }}</td>
                                 </tr>
                                 {{--<tr>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td><strong>{{ ucfirst(__('laravel-crm::lang.adjustment')) }}</strong></td>
                                     <td>{{ money($invoice->adjustments, $invoice->currency) }}</td>
                                 </tr>--}}
                                 <tr>
+                                    <td></td>
                                     <td></td>
                                     <td></td>
                                     <td><strong>{{ ucfirst(__('laravel-crm::lang.total')) }}</strong></td>

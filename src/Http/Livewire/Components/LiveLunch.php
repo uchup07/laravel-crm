@@ -45,10 +45,10 @@ class LiveLunch extends Component
         $this->guests = $lunch->contacts()->pluck('entityable_id')->toArray();
         $this->location = $lunch->location;
 
-        if($this->settingService->get('show_related_activity')->value == 1){
+        if($this->settingService->get('show_related_activity')->value == 1) {
             $this->showRelated = true;
         }
-        
+
         $this->view = $view;
     }
 
@@ -94,7 +94,7 @@ class LiveLunch extends Component
                 }
             }
         }
-        
+
         $this->toggleEditMode();
         $this->emit('refreshComponent');
         $this->notify(
