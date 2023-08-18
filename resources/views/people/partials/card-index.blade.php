@@ -24,6 +24,7 @@
             <thead>
             <tr>
                 <th scope="col">@sortablelink('first_name', ucwords(__('laravel-crm::lang.name')))</th>
+                <th scope="col">{{ ucwords(__('laravel-crm::lang.organizations')) }}</th>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.labels')) }}</th>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.email')) }}</th>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.phone')) }}</th>
@@ -39,6 +40,9 @@
             @foreach($people as $person)
                 <tr class="has-link" data-url="{{ url(route('laravel-crm.people.show',$person)) }}">
                     <td>{{ $person->name }}</td>
+                    <td>@include('laravel-crm::partials.contacts', [
+                            'contacts' => $person->contacts()->where('entityable_type','LIKE','%Organisation%')->get(),
+                        ])</td>
                     <td>@include('laravel-crm::partials.labels',[
                             'labels' => $person->labels,
                             'limit' => 3
