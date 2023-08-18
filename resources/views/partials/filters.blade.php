@@ -1,4 +1,34 @@
 <form method="post" action="{{ $action }}" class="form-inline float-left mr-1">
+    @if(request()->session()->has(class_basename(request()->route()->getController()).'.params'))
+        @if(!request()->session()->has(class_basename(request()->route()->getController()).'.params.select-all-label'))
+            <span class="mr-1">Label: </span>
+            @if(request()->session()->has(class_basename(request()->route()->getController()).'.params.label_id'))
+                @php
+                    $FlabelIds = request()->session()->get(class_basename(request()->route()->getController()).'.params.label_id');
+                    $FilterLabels = \VentureDrake\LaravelCrm\Models\Label::whereIn('id',$FlabelIds)->get();
+                @endphp
+                @if(isset($FilterLabels))
+                    @foreach($FilterLabels as $flabel)
+                        <span class="badge badge-primary mr-1" style="background-color: #{{ $flabel->hex }}">{{ $flabel->name }}</span>
+                    @endforeach
+                @endif
+            @endif
+        @endif
+        @if(!request()->session()->has(class_basename(request()->route()->getController()).'.params.select-all-owner'))
+            <span class="mr-1">Owner:</span>
+            @if(request()->session()->has(class_basename(request()->route()->getController()).'.params.user_owner_id'))
+                @php
+                    $FOwnerIds = request()->session()->get(class_basename(request()->route()->getController()).'.params.user_owner_id');
+                    $FilterOwners = \App\Models\User::whereIn('id',$FOwnerIds)->get();
+                @endphp
+                @if(isset($FilterOwners))
+                    @foreach($FilterOwners as $fowner)
+                        <span class="mr-1">{{ $fowner->name }}</span>
+                    @endforeach
+                @endif
+            @endif
+        @endif
+    @endif
     @csrf
     <a class="btn btn-sm {{ ($model::anyFilterActive([
     'user_owner_id' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false) + [0 => '(Blank)'],
@@ -52,5 +82,3 @@
     </div>
     
 </form>
-
-
