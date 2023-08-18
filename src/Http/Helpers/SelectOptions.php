@@ -40,7 +40,7 @@ function users($null = true)
             $users = auth()->user()->currentTeam->allUsers();
         }
     } else {
-        if(auth()->user()->hasRole('Admin') OR auth()->user()->hasRole('Owner')) {
+        if(auth()->user()->hasRole(['Admin','Manager','Owner'])) {
             $users = User::all();
         } else {
             $users = User::where('id', auth()->user()->id)->get();
