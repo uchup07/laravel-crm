@@ -23,7 +23,7 @@ class LaravelCrmUpdate extends Command
      *
      * @var string
      */
-    protected $signature = 'laravelcrm:update';
+    protected $signature = 'laravelcrm:update {--update-organisation-linked-person}';
 
     /**
      * The console command description.
@@ -133,6 +133,45 @@ class LaravelCrmUpdate extends Command
 
             $this->settingService->set('db_update_0181', 1);
             $this->info('Updating Laravel CRM organisation linked to person complete.');
+        }
+
+        if($this->option('update-organisation-linked-person')) {
+            $this->info('Updating Laravel CRM organisation linked to person...');
+
+            try {
+                foreach (Person::whereNotNull('organisation_id')->get() as $person) {
+                    /* if($contact = $person->contacts()->create([
+                        'team_id' => $person->team_id,
+                        'entityable_type' => $person->organisation->getMorphClass(),
+                        'entityable_id' => $person->organisation->id,
+                    ])){
+                        $person->update([
+                            'organisation_id' => null
+                        ]);
+                    } */
+                    if($person->organisation) {
+                        $person->contacts()->create([
+                            'team_id' => $person->team_id,
+                            'entityable_type' => $person->organisation->getMorphClass(),
+                            'entityable_id' => $person->organisation->id,
+                        ]);
+
+                        $person->organisation->contacts()->create([
+                            'team_id' => $person->team_id,
+                            'entityable_type' => $person->getMorphClass(),
+                            'entityable_id' => $person->id,
+                        ]);
+
+                        $person->update([
+                            'organisation_id' => null
+                        ]);
+                    }
+
+
+                }
+            } catch(\Exception $e) {
+                $this->alert($e->getMessage());
+            }
         }
         
         $this->info('Laravel CRM is now updated.');
