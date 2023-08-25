@@ -14,6 +14,10 @@ class Activity extends Model
 
     protected $guarded = ['id'];
 
+    protected $filterable = [
+        'causeable_id'
+    ];
+
     public function getTable()
     {
         return config('laravel-crm.db_table_prefix').'activities';
