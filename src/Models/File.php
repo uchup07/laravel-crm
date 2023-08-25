@@ -14,6 +14,10 @@ class File extends Model
     
     protected $guarded = ['id'];
 
+    protected $filterable = [
+        'user_created_id'
+    ];
+
     public function getTable()
     {
         return config('laravel-crm.db_table_prefix').'files';
