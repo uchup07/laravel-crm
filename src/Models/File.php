@@ -4,11 +4,13 @@ namespace VentureDrake\LaravelCrm\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use VentureDrake\LaravelCrm\Traits\BelongsToTeams;
+use VentureDrake\LaravelCrm\Traits\SearchFilters;
 
 class File extends Model
 {
     use SoftDeletes;
     use BelongsToTeams;
+    use SearchFilters;
     
     protected $guarded = ['id'];
 
