@@ -464,8 +464,7 @@ Route::group(['prefix' => 'deliveries', 'middleware' => 'auth.laravel-crm'], fun
 Route::group(['prefix' => 'activities', 'middleware' => 'auth.laravel-crm'], function () {
 
     Route::any('filter', 'VentureDrake\LaravelCrm\Http\Controllers\ActivityController@index')
-        ->name('laravel-crm.activities.filter')
-        ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Activity']);
+        ->name('laravel-crm.activities.filter');
 
     Route::get('', 'VentureDrake\LaravelCrm\Http\Controllers\ActivityController@index')
         ->name('laravel-crm.activities.index');
