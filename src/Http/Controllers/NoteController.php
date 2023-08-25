@@ -17,6 +17,10 @@ class NoteController extends Controller
         Note::resetSearchValue($request);
         $params = Note::filters($request);
 
+        if(isset($params['user_owner_id'])) {
+            $params['user_created_id'] = $params['user_owner_id'];
+        }
+
         if(auth()->user()->hasRole('Employee')) {
             $userOwners = \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false);
             $params['user_created_id'] = array_keys($userOwners);
