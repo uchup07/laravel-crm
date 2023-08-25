@@ -29,6 +29,10 @@ class Task extends Model
         'description',
     ];
 
+    protected $filterable = [
+        'user_owner_id'
+    ];
+
     public function getSearchable()
     {
         return $this->searchable;
