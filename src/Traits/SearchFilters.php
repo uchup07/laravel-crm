@@ -92,6 +92,15 @@ trait SearchFilters
                 if($arrField[0] == 'created') {
                     $createdAt[$count] = $params[$field] . (Str::contains($field, 'from') ? ' 00:00:00' : ' 23:59:59');
                     $count++;
+                } elseif($arrField[0] == 'user') { // examp: user_created_id
+                    if(is_array($params[$field])) {
+                        $query->where(function ($query) use ($params, $field) {
+                            $query->orWhereIn($this->getTable().'.'.$field, $params[$field]);
+                            if (in_array(0, $params[$field])) {
+                                $query->orWhereNull($this->getTable().'.'.$field);
+                            }
+                        });
+                    }
                 }
             } elseif (isset($params[$field]) && is_array($params[$field])) {
                 $query->where(function ($query) use ($params, $field) {
