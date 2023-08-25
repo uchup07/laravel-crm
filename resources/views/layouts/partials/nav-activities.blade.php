@@ -35,3 +35,8 @@
         </li>
     @endcan
 </ul>
+
+@include('laravel-crm::partials.filters', [
+    'action' => $action,
+    'model' => $model
+])

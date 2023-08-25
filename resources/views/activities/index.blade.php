@@ -3,8 +3,11 @@
 @section('content')
 
     <div class="card">
-        <div class="card-header">
-            @include('laravel-crm::layouts.partials.nav-activities')
+        <div class="card-header d-flex justify-content-between">
+            @include('laravel-crm::layouts.partials.nav-activities', [
+                'action' => route('laravel-crm.activities.filter'),
+                'model' => '\VentureDrake\LaravelCrm\Models\Activity'
+            ])
         </div>
         <div class="card-body">
             @if($activities && $activities->count() > 0)
