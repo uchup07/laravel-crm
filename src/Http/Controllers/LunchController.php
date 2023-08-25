@@ -12,19 +12,20 @@ class LunchController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        if(auth()->user()->hasRole('Employee')) {
-            $lunches = Lunch::where('user_created_id', auth()->user()->id)->latest();
-        } else {
-            $lunches = Lunch::latest();
-        }
-        
+        Lunch::resetSearchValue($request);
+        $params = Lunch::filters($request);
 
-        if ($lunches->count() < 30) {
-            $lunches = $lunches->get();
+        if(auth()->user()->hasRole('Employee')) {
+            $userOwners = \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false);
+            $params['user_owner_id'] = array_keys($userOwners);
+        }
+
+        if (Lunch::filter($params)->get()->count() < 30) {
+            $lunches = Lunch::filter($params)->latest()->get();
         } else {
-            $lunches = $lunches->paginate(30);
+            $lunches = Lunch::filter($params)->latest()->paginate(30);
         }
 
         return view('laravel-crm::lunches.index', [

@@ -13,19 +13,20 @@ class TaskController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        if(auth()->user()->hasRole('Employee')) {
-            $tasks = Task::where('user_assigned_id', auth()->user()->id)->latest();
-        } else {
-            $tasks = Task::latest();
-        }
-        
+        Task::resetSearchValue($request);
+        $params = Task::filters($request);
 
-        if ($tasks->count() < 30) {
-            $tasks = $tasks->get();
+        if(auth()->user()->hasRole('Employee')) {
+            $userOwners = \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false);
+            $params['user_owner_id'] = array_keys($userOwners);
+        }
+
+        if (Task::filter($params)->get()->count() < 30) {
+            $tasks = Task::filter($params)->latest()->get();
         } else {
-            $tasks = $tasks->paginate(30);
+            $tasks = Task::filter($params)->latest()->paginate(30);
         }
         
         return view('laravel-crm::tasks.index', [

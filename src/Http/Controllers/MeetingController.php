@@ -12,19 +12,20 @@ class MeetingController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        if(auth()->user()->hasRole('Employee')) {
-            $meetings = Meeting::where('user_created_id', auth()->user()->id)->latest();
-        } else {
-            $meetings = Meeting::latest();
-        }
-        
+        Meeting::resetSearchValue($request);
+        $params = Meeting::filters($request);
 
-        if ($meetings->count() < 30) {
-            $meetings = $meetings->get();
+        if(auth()->user()->hasRole('Employee')) {
+            $userOwners = \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false);
+            $params['user_owner_id'] = array_keys($userOwners);
+        }
+
+        if (Meeting::filter($params)->get()->count() < 30) {
+            $meetings = Meeting::filter($params)->latest()->get();
         } else {
-            $meetings = $meetings->paginate(30);
+            $meetings = Meeting::filter($params)->latest()->paginate(30);
         }
 
         return view('laravel-crm::meetings.index', [
