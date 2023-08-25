@@ -46,6 +46,7 @@ use VentureDrake\LaravelCrm\Http\Livewire\LiveNotes;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveOrderForm;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveOrderItems;
 use VentureDrake\LaravelCrm\Http\Livewire\LivePhoneEdit;
+use VentureDrake\LaravelCrm\Http\Livewire\LiveProductForm;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveQuoteForm;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveQuoteItems;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveRelatedContactOrganisation;
@@ -165,6 +166,7 @@ class LaravelCrmServiceProvider extends ServiceProvider
         'VentureDrake\LaravelCrm\Models\Contact' => \VentureDrake\LaravelCrm\Policies\ContactPolicy::class,
         'VentureDrake\LaravelCrm\Models\Product' => \VentureDrake\LaravelCrm\Policies\ProductPolicy::class,
         'VentureDrake\LaravelCrm\Models\ProductCategory' => \VentureDrake\LaravelCrm\Policies\ProductCategoryPolicy::class,
+        'VentureDrake\LaravelCrm\Models\TaxRate' => \VentureDrake\LaravelCrm\Policies\TaxRatePolicy::class,
         'VentureDrake\LaravelCrm\Models\Label' => \VentureDrake\LaravelCrm\Policies\LabelPolicy::class,
         'VentureDrake\LaravelCrm\Models\Task' => \VentureDrake\LaravelCrm\Policies\TaskPolicy::class,
         'VentureDrake\LaravelCrm\Models\Note' => \VentureDrake\LaravelCrm\Policies\NotePolicy::class,
@@ -406,6 +408,7 @@ class LaravelCrmServiceProvider extends ServiceProvider
                 __DIR__ . '/../database/migrations/add_prefix_to_laravel_crm_orders_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_prefix_to_laravel_crm_orders_table.php', 77),
                 __DIR__ . '/../database/migrations/add_quote_product_id_to_laravel_crm_order_products_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_quote_product_id_to_laravel_crm_order_products_table.php', 78),
                 __DIR__ . '/../database/migrations/add_quantity_to_laravel_crm_delivery_products_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_quantity_to_laravel_crm_delivery_products_table.php', 79),
+                __DIR__ . '/../database/migrations/create_laravel_crm_tax_rates_table.php.stub' => $this->getMigrationFileName($filesystem, 'create_laravel_crm_tax_rates_table.php', 80),
             ], 'migrations');
 
             // Publishing the seeders
@@ -478,6 +481,7 @@ class LaravelCrmServiceProvider extends ServiceProvider
         Livewire::component('invoice-lines', LiveInvoiceLines::class);
         Livewire::component('send-invoice', SendInvoice::class);
         Livewire::component('pay-invoice', PayInvoice::class);
+        Livewire::component('product-form', LiveProductForm::class);
 
         if ($this->app->runningInConsole()) {
             $this->app->booted(function () {
