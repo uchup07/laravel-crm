@@ -12,19 +12,20 @@ class NoteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        if(auth()->user()->hasRole('Employee')) {
-            $notes = Note::where('user_created_id', auth()->user()->id)->latest();
-        } else {
-            $notes = Note::latest();
-        }
-        
+        Note::resetSearchValue($request);
+        $params = Note::filters($request);
 
-        if ($notes->count() < 30) {
-            $notes = $notes->get();
+        if(auth()->user()->hasRole('Employee')) {
+            $userOwners = \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false);
+            $params['user_created_id'] = array_keys($userOwners);
+        }
+
+        if (Note::filter($params)->get()->count() < 30) {
+            $notes = Note::filter($params)->latest()->get();
         } else {
-            $notes = $notes->paginate(30);
+            $notes = Note::filter($params)->latest()->paginate(30);
         }
 
         return view('laravel-crm::notes.index', [

@@ -12,19 +12,20 @@ class CallController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        if(auth()->user()->hasRole('Employee')) {
-            $calls = Call::where('user_created_id', auth()->user()->id)->latest();
-        } else {
-            $calls = Call::latest();
-        }
-        
+        Call::resetSearchValue($request);
+        $params = Call::filters($request);
 
-        if ($calls->count() < 30) {
-            $calls = $calls->get();
+        if(auth()->user()->hasRole('Employee')) {
+            $userOwners = \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false);
+            $params['user_owner_id'] = array_keys($userOwners);
+        }
+
+        if (Call::filter($params)->get()->count() < 30) {
+            $calls = Call::filter($params)->latest()->get();
         } else {
-            $calls = $calls->paginate(30);
+            $calls = Call::filter($params)->latest()->paginate(30);
         }
 
         return view('laravel-crm::calls.index', [
