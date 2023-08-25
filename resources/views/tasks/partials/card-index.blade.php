@@ -1,7 +1,10 @@
 @component('laravel-crm::components.card')
 
-    <div class="card-header">
-        @include('laravel-crm::layouts.partials.nav-activities')
+    <div class="card-header d-flex justify-content-between">
+        @include('laravel-crm::layouts.partials.nav-activities', [
+            'action' => route('laravel-crm.tasks.filter'),
+            'model' => '\VentureDrake\LaravelCrm\Models\Task'
+        ])
     </div>
 
     <div class="card-body p-0">

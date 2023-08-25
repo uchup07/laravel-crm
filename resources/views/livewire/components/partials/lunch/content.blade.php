@@ -30,6 +30,6 @@
     @if(auth()->user()->id != $lunch->user_owner_id)
         <hr/>
         <h6><strong>Owner</strong></h6>
-        {{ $meeting->ownerUser->name }}
+        {{ $lunch->ownerUser->name }}
     @endif
 @endif
