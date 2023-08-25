@@ -462,6 +462,11 @@ Route::group(['prefix' => 'deliveries', 'middleware' => 'auth.laravel-crm'], fun
 /* Activities */
 
 Route::group(['prefix' => 'activities', 'middleware' => 'auth.laravel-crm'], function () {
+
+    Route::any('filter', 'VentureDrake\LaravelCrm\Http\Controllers\ActivityController@index')
+        ->name('laravel-crm.activities.filter')
+        ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Activity']);
+
     Route::get('', 'VentureDrake\LaravelCrm\Http\Controllers\ActivityController@index')
         ->name('laravel-crm.activities.index');
 
@@ -487,6 +492,10 @@ Route::group(['prefix' => 'activities', 'middleware' => 'auth.laravel-crm'], fun
 /* Tasks */
 
 Route::group(['prefix' => 'tasks', 'middleware' => 'auth.laravel-crm'], function () {
+    Route::any('filter', 'VentureDrake\LaravelCrm\Http\Controllers\TaskController@index')
+        ->name('laravel-crm.tasks.filter')
+        ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Task']);
+        
     Route::get('', 'VentureDrake\LaravelCrm\Http\Controllers\TaskController@index')
         ->name('laravel-crm.tasks.index')
         ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Task']);
@@ -527,6 +536,10 @@ Route::group(['prefix' => 'tasks', 'middleware' => 'auth.laravel-crm'], function
 /* Notes */
 
 Route::group(['prefix' => 'notes', 'middleware' => 'auth.laravel-crm'], function () {
+    Route::any('filter', 'VentureDrake\LaravelCrm\Http\Controllers\NoteController@index')
+        ->name('laravel-crm.notes.filter')
+        ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Note']);
+
     Route::get('', 'VentureDrake\LaravelCrm\Http\Controllers\NoteController@index')
         ->name('laravel-crm.notes.index')
         ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Note']);
@@ -559,6 +572,11 @@ Route::group(['prefix' => 'notes', 'middleware' => 'auth.laravel-crm'], function
 /* Calls */
 
 Route::group(['prefix' => 'calls', 'middleware' => 'auth.laravel-crm'], function () {
+
+    Route::any('filter', 'VentureDrake\LaravelCrm\Http\Controllers\CallController@index')
+        ->name('laravel-crm.calls.filter')
+        ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Call']);
+    
     Route::get('', 'VentureDrake\LaravelCrm\Http\Controllers\CallController@index')
         ->name('laravel-crm.calls.index')
         ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Call']);
@@ -599,6 +617,11 @@ Route::group(['prefix' => 'calls', 'middleware' => 'auth.laravel-crm'], function
 /* Meetings */
 
 Route::group(['prefix' => 'meetings', 'middleware' => 'auth.laravel-crm'], function () {
+
+    Route::any('filter', 'VentureDrake\LaravelCrm\Http\Controllers\MeetingController@index')
+        ->name('laravel-crm.meetings.filter')
+        ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Meeting']);
+
     Route::get('', 'VentureDrake\LaravelCrm\Http\Controllers\MeetingController@index')
         ->name('laravel-crm.meetings.index')
         ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Meeting']);
@@ -639,6 +662,10 @@ Route::group(['prefix' => 'meetings', 'middleware' => 'auth.laravel-crm'], funct
 /* Lunches */
 
 Route::group(['prefix' => 'lunches', 'middleware' => 'auth.laravel-crm'], function () {
+    Route::any('filter', 'VentureDrake\LaravelCrm\Http\Controllers\LunchController@index')
+        ->name('laravel-crm.lunches.filter')
+        ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Lunch']);
+
     Route::get('', 'VentureDrake\LaravelCrm\Http\Controllers\LunchController@index')
         ->name('laravel-crm.lunches.index')
         ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\Lunch']);
@@ -679,6 +706,10 @@ Route::group(['prefix' => 'lunches', 'middleware' => 'auth.laravel-crm'], functi
 /* Files */
 
 Route::group(['prefix' => 'files', 'middleware' => 'auth.laravel-crm'], function () {
+    Route::any('filter', 'VentureDrake\LaravelCrm\Http\Controllers\FileController@index')
+        ->name('laravel-crm.files.filter')
+        ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\File']);
+
     Route::get('', 'VentureDrake\LaravelCrm\Http\Controllers\FileController@index')
         ->name('laravel-crm.files.index')
         ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\File']);
