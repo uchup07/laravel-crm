@@ -12,18 +12,24 @@ class ActivityController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $activities = Activity::latest();
+        Activity::resetSearchValue($request);
+        $params = Activity::filters($request);
 
-        if(!auth()->user()->hasRole(['Admin','Owner','Manager'])) {
-            $activities = Activity::where('causeable_id', auth()->user()->id)->latest();
+        if(isset($params['user_owner_id'])) {
+            $params['causeable_id'] = $params['user_owner_id'];
         }
 
-        if ($activities->count() < 30) {
-            $activities = $activities->get();
+        if(auth()->user()->hasRole('Employee')) {
+            $userOwners = \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false);
+            $params['causeable_id'] = array_keys($userOwners);
+        }
+
+        if (Activity::filter($params)->get()->count() < 30) {
+            $activities = Activity::filter($params)->latest()->get();
         } else {
-            $activities = $activities->paginate(30);
+            $activities = Activity::filter($params)->latest()->paginate(30);
         }
 
         return view('laravel-crm::activities.index', [
