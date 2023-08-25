@@ -6,12 +6,14 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use VentureDrake\LaravelCrm\Traits\BelongsToTeams;
 use VentureDrake\LaravelCrm\Traits\HasGlobalSettings;
+use VentureDrake\LaravelCrm\Traits\SearchFilters;
 
 class Note extends Model
 {
     use SoftDeletes;
     use BelongsToTeams;
     use HasGlobalSettings;
+    use SearchFilters;
     
     protected $guarded = ['id'];
 
