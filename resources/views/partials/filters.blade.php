@@ -23,7 +23,7 @@
                 @endphp
                 @if(isset($FilterOwners))
                     @foreach($FilterOwners as $fowner)
-                        <span class="mr-1">{{ $fowner->name }}</span>
+                        <span class="mr-1">{{ ((!$loop->last) ? $fowner->name . ','  : $fowner->name) }}</span>
                     @endforeach
                 @endif
             @endif
