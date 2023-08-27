@@ -468,7 +468,6 @@ const appJquery = function() {
                 cache: false
             }).done(function( data ) {
                 people = data.people;
-                console.log(people);
                 $('.autocomplete-organisation').find('input[name="line1"]').val(data.address_line1);
                 $('.autocomplete-organisation').find('input[name="line2"]').val(data.address_line2);
                 $('.autocomplete-organisation').find('input[name="line3"]').val(data.address_line3);
