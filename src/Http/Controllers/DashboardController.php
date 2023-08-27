@@ -4,10 +4,14 @@ namespace VentureDrake\LaravelCrm\Http\Controllers;
 
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use VentureDrake\LaravelCrm\Models\Client;
 use VentureDrake\LaravelCrm\Models\Deal;
+use VentureDrake\LaravelCrm\Models\Invoice;
 use VentureDrake\LaravelCrm\Models\Lead;
+use VentureDrake\LaravelCrm\Models\Order;
 use VentureDrake\LaravelCrm\Models\Organisation;
 use VentureDrake\LaravelCrm\Models\Person;
+use VentureDrake\LaravelCrm\Models\Quote;
 
 class DashboardController extends Controller
 {
@@ -32,7 +36,7 @@ class DashboardController extends Controller
         } else {
             $usersOnline = \App\User::whereDate('last_online_at', '>=', Carbon::now()->subMinutes(20)->toDateString())->get();
         }
-        
+
 
         $today = today();
         $startDate = today()->subdays(14);
@@ -47,7 +51,7 @@ class DashboardController extends Controller
             $datasheet[$date->format('d/m/Y')]["daily"]["leads"] = 0;
             $datasheet[$date->format('d/m/Y')]["daily"]["deals"] = 0;
         }
-        
+
         $leads = Lead::whereBetween('created_at', [$startDate, now()])->get();
 
         foreach ($leads as $lead) {
@@ -59,12 +63,16 @@ class DashboardController extends Controller
         foreach ($deals as $deal) {
             $datasheet[$deal->created_at->format('d/m/Y')]["daily"]["deals"]++;
         }
-        
+
         return view('laravel-crm::index', [
             'totalLeadsCount' => Lead::count(),
             'totalDealsCount' => Deal::count(),
-            'totalPeopleCount' => Person::count(),
+            'totalQuotesCount' => Quote::count(),
+            'totalOrdersCount' => Order::count(),
+            'totalInvoicesCount' => Invoice::count(),
+            'totalClientsCount' => Client::count(),
             'totalOrganisationsCount' => Organisation::count(),
+            'totalPeopleCount' => Person::count(),
             'usersOnline' => $usersOnline,
             'createdLast14Days' => json_encode($datasheet),
         ]);

@@ -35,10 +35,14 @@ class SettingController extends Controller
         $orderPrefix = $this->settingService->get('order_prefix');
         $invoicePrefix = $this->settingService->get('invoice_prefix');
         $quoteTerms = $this->settingService->get('quote_terms');
+        $invoiceContactDetails = $this->settingService->get('invoice_contact_details');
         $invoiceTerms = $this->settingService->get('invoice_terms');
         $dateFormat = $this->settingService->get('date_format');
         $timeFormat = $this->settingService->get('time_format');
         $showRelatedActivity = $this->settingService->get('show_related_activity');
+        $dynamicProducts = $this->settingService->get('dynamic_products');
+        $taxName = $this->settingService->get('tax_name');
+        $taxRate = $this->settingService->get('tax_rate');
 
         return view('laravel-crm::settings.edit', [
             'organisationName' => $organisationName,
@@ -51,10 +55,14 @@ class SettingController extends Controller
             'orderPrefix' => $orderPrefix,
             'invoicePrefix' => $invoicePrefix,
             'quoteTerms' => $quoteTerms,
+            'invoiceContactDetails' => $invoiceContactDetails,
             'invoiceTerms' => $invoiceTerms,
             'dateFormat' => $dateFormat,
             'timeFormat' => $timeFormat,
-            'showRelatedActivity' => $showRelatedActivity
+            'showRelatedActivity' => $showRelatedActivity,
+            'dynamicProducts' => $dynamicProducts,
+            'taxName' => $taxName,
+            'taxRate' => $taxRate
         ]);
     }
 
@@ -72,27 +80,33 @@ class SettingController extends Controller
         $this->settingService->set('country', $request->country);
         $this->settingService->set('currency', $request->currency);
         $this->settingService->set('timezone', $request->timezone);
-        
-        if($request->quote_prefix){
+        $this->settingService->set('tax_name', $request->tax_name);
+        $this->settingService->set('tax_rate', $request->tax_rate);
+
+        if($request->quote_prefix) {
             $this->settingService->set('quote_prefix', $request->quote_prefix);
         }
-        
-        if($request->order_prefix){
+
+        if($request->order_prefix) {
             $this->settingService->set('order_prefix', $request->order_prefix);
         }
-        
-        if($request->invoice_prefix){
+
+        if($request->invoice_prefix) {
             $this->settingService->set('invoice_prefix', $request->invoice_prefix);
         }
-        
+
         if ($request->quote_terms) {
             $this->settingService->set('quote_terms', $request->quote_terms);
         }
-        
+
+        if ($request->invoice_contact_details) {
+            $this->settingService->set('invoice_contact_details', $request->invoice_contact_details);
+        }
+
         if ($request->invoice_terms) {
             $this->settingService->set('invoice_terms', $request->invoice_terms);
         }
-        
+
         $this->settingService->set('date_format', $request->date_format);
         $this->settingService->set('time_format', $request->time_format);
 
@@ -114,6 +128,7 @@ class SettingController extends Controller
                 ->update(["name" => $request->organisation_name]);
         }
 
+        $this->settingService->set('dynamic_products', (($request->dynamic_products == 'on') ? 1 : 0));
         $this->settingService->set('show_related_activity', (($request->show_related_activity == 'on') ? 1 : 0));
 
         flash(ucfirst(trans('laravel-crm::lang.settings_updated')))->success()->important();

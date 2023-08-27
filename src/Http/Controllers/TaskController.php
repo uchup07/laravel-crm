@@ -28,7 +28,7 @@ class TaskController extends Controller
         } else {
             $tasks = Task::filter($params)->latest()->paginate(30);
         }
-        
+
         return view('laravel-crm::tasks.index', [
             'tasks' => $tasks ?? [],
         ]);

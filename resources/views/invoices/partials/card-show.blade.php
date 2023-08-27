@@ -4,6 +4,18 @@
 
         @slot('title')
             {{ $invoice->title }}
+            @if($invoice->sent == 1)
+                <small><span class="badge badge-success">{{ ucfirst(__('laravel-crm::lang.sent')) }}</span></small>
+            @endif
+            @if($invoice->fully_paid_at)
+                <small><span class="badge badge-success">{{ ucfirst(__('laravel-crm::lang.paid')) }}</span></small>
+            @elseif(! $invoice->fully_paid_at && $invoice->due_date->diffinDays() > 0  && $invoice->due_date >= \Carbon\Carbon::now()->timezone($timezone))
+                <small><span class="badge badge-secondary">{{ ucfirst(__('laravel-crm::lang.due_in')) }} {{ $invoice->due_date->diffForHumans(false, true) }} </span></small>
+            @elseif(! $invoice->fully_paid_at && $invoice->due_date->diffinDays() <= 0  && $invoice->due_date >= \Carbon\Carbon::now()->timezone($timezone))
+                <small><span class="badge badge-secondary">{{ ucfirst(__('laravel-crm::lang.due_tomorrow')) }}</span></small>
+            @elseif(! $invoice->fully_paid_at && $invoice->due_date->diffinDays() > 0  && $invoice->due_date < \Carbon\Carbon::now()->timezone($timezone))
+                <small><span class="badge badge-danger">{{ $invoice->due_date->diffForHumans(false, true) }} {{ ucfirst(__('laravel-crm::lang.overdue')) }} </span></small>
+            @endif
         @endslot
 
         @slot('actions')
@@ -45,10 +57,10 @@
                 <h6 class="text-uppercase">{{ ucfirst(__('laravel-crm::lang.details')) }}</h6>
                 <hr />
                 <dl class="row">
-                    <dt class="col-sm-3 text-right">Reference</dt>
-                    <dd class="col-sm-9">{{ $invoice->reference }}</dd>
                     <dt class="col-sm-3 text-right">Number</dt>
                     <dd class="col-sm-9">{{ $invoice->invoice_id }}</dd>
+                    <dt class="col-sm-3 text-right">Reference</dt>
+                    <dd class="col-sm-9">{{ $invoice->reference }}</dd>
                     @hasordersenabled
                         @if($invoice->order)
                             <dt class="col-sm-3 text-right">Order</dt>
@@ -85,6 +97,7 @@
                         <th scope="col">{{ ucfirst(__('laravel-crm::lang.item')) }}</th>
                         <th scope="col">{{ ucfirst(__('laravel-crm::lang.price')) }}</th>
                         <th scope="col">{{ ucfirst(__('laravel-crm::lang.quantity')) }}</th>
+                        <th scope="col">{{ $taxName }}</th>
                         <th scope="col">{{ ucfirst(__('laravel-crm::lang.amount')) }}</th>
                     </tr>
                     </thead>
@@ -99,6 +112,7 @@
                             </td>
                             <td>{{ money($invoiceLine->price ?? null, $invoiceLine->currency) }}</td>
                             <td>{{ $invoiceLine->quantity }}</td>
+                            <td>{{ money($invoiceLine->tax_amount ?? null, $invoiceLine->currency) }}</td>
                             <td>{{ money($invoiceLine->amount ?? null, $invoiceLine->currency) }}</td>
                         </tr>
                     @endforeach
@@ -107,16 +121,19 @@
                     <tr>
                         <td></td>
                         <td></td>
+                        <td></td>
                         <td><strong>{{ ucfirst(__('laravel-crm::lang.sub_total')) }}</strong></td>
                         <td>{{ money($invoice->subtotal, $invoice->currency) }}</td>
                     </tr>
                     <tr>
                         <td></td>
                         <td></td>
-                        <td><strong>{{ ucfirst(__('laravel-crm::lang.tax')) }}</strong></td>
+                        <td></td>
+                        <td><strong>{{ $taxName }}</strong></td>
                         <td>{{ money($invoice->tax, $invoice->currency) }}</td>
                     </tr>
                     <tr>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td><strong>{{ ucfirst(__('laravel-crm::lang.total')) }}</strong></td>

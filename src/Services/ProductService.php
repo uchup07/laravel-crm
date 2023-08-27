@@ -31,6 +31,7 @@ class ProductService
             'sales_account' => $request->sales_account ?? null,
             'product_category_id' => $request->product_category,
             'unit' => $request->unit ?? null,
+            'tax_rate_id' => $request->tax_rate_id ?? null,
             'tax_rate' => $request->tax_rate ?? null,
             'description' => $request->description ?? null,
             'user_owner_id' => $request->user_owner_id,
@@ -70,7 +71,7 @@ class ProductService
                 'purchase_description' => $item['PurchaseDescription'] ?? null,
             ]);
         }
-        
+
         return $product;
     }
 
@@ -83,6 +84,7 @@ class ProductService
             'sales_account' => $request->sales_account ?? null,
             'product_category_id' => $request->product_category,
             'unit' => $request->unit ?? null,
+            'tax_rate_id' => $request->tax_rate_id ?? null,
             'tax_rate' => $request->tax_rate ?? null,
             'description' => $request->description ?? null,
             'user_owner_id' => $request->user_owner_id,
@@ -131,7 +133,7 @@ class ProductService
                 'purchase_description' => $item['PurchaseDescription'] ?? null,
             ]);
         }
-        
+
         return $product;
     }
 }

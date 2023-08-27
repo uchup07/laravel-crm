@@ -52,7 +52,11 @@ function organisations()
     $organisations = (auth()->user()->hasRole(['Admin','Owner','Manager'])) ? Organisation::all() : Organisation::where('user_owner_id', auth()->user()->id)->get();
 
     foreach ($organisations as $organisation) {
-        $data[$organisation->name] = $organisation->id;
+		if($organisation->xeroContact) {
+			$data[$organisation->name . ' (xero contact)'] = $organisation->id;
+		} else {
+        	$data[$organisation->name] = $organisation->id;
+		}
     }
 
     return json_encode($data);
@@ -77,7 +81,7 @@ function productsSelect2()
         'id' => -1,
         'text' => null,
     ];*/
-    
+
     foreach (Product::all() as $product) {
         $data[] = [
             'id' => $product->id,

@@ -25,7 +25,9 @@
             <tr>
                 <td>
                     <strong>{{ ucfirst(__('laravel-crm::lang.to')) }}</strong><br />
-                    {{ $invoice->organisation->name ?? $invoice->organisation->person->name }}<br />
+                    @if($invoice->organisation)
+                        {{ $invoice->organisation->name }}<br />
+                    @endif
                     @isset($invoice->person)
                         {{ $invoice->person->name }}<br />
                     @endisset
@@ -58,10 +60,11 @@
                 
                 <td>
                     <strong>{{ ucfirst(__('laravel-crm::lang.from')) }}</strong><br />
-                    {{ $fromName }}<br />
-                    {{-- 19-21 South Steyne<br />
-                     MANLY NSW 2095<br />
-                     Australia--}}
+                    @if($contactDetails)
+                        {!! nl2br($contactDetails) !!}
+                    @else
+                        {{ $fromName }}
+                    @endif
                 </td>
             </tr>
         </tbody>
@@ -82,6 +85,7 @@
             <th scope="col">{{ ucfirst(__('laravel-crm::lang.item')) }}</th>
             <th scope="col">{{ ucfirst(__('laravel-crm::lang.price')) }}</th>
             <th scope="col">{{ ucfirst(__('laravel-crm::lang.quantity')) }}</th>
+            <th scope="col">{{ $taxName }}</th>
             <th scope="col">{{ ucfirst(__('laravel-crm::lang.amount')) }}</th>
             <th scope="col">{{ ucfirst(__('laravel-crm::lang.comments')) }}</th>
         </tr>
@@ -89,9 +93,10 @@
         <tbody>
         @foreach($invoice->invoiceLInes()->whereNotNull('product_id')->get() as $invoiceLine)
             <tr>
-                <td>{{ $invoiceLine->product->name }}</td>
+                <td>{{ $invoiceLine->product->name ?? null}}</td>
                 <td>{{ money($invoiceLine->price ?? null, $invoiceLine->currency) }}</td>
                 <td>{{ $invoiceLine->quantity }}</td>
+                <td>{{ money($invoiceLine->tax_amount ?? null, $invoiceLine->currency) }}</td>
                 <td>{{ money($invoiceLine->amount ?? null, $invoiceLine->currency) }}</td>
                 <td>{{ $invoiceLine->comments }}</td>
             </tr>
@@ -99,6 +104,7 @@
         </tbody>
         <tfoot>
         <tr>
+            <td></td>
             <td></td>
             <td></td>
             <td><strong>{{ ucfirst(__('laravel-crm::lang.sub_total')) }}</strong></td>
@@ -109,6 +115,7 @@
             <tr>
                 <td></td>
                 <td></td>
+                <td></td>
                 <td><strong>{{ ucfirst(__('laravel-crm::lang.discount')) }}</strong></td>
                 <td>{{ money($invoice->discount, $invoice->currency) }}</td>
                 <td></td>
@@ -117,11 +124,13 @@
         <tr>
             <td></td>
             <td></td>
-            <td><strong>{{ ucfirst(__('laravel-crm::lang.tax')) }}</strong></td>
+            <td></td>
+            <td><strong>{{ $taxName }}</strong></td>
             <td>{{ money($invoice->tax, $invoice->currency) }}</td>
             <td></td>
         </tr>
         {{--<tr>
+            <td></td>
             <td></td>
             <td></td>
             <td><strong>{{ ucfirst(__('laravel-crm::lang.adjustment')) }}</strong></td>
@@ -129,6 +138,7 @@
             <td></td>
         </tr>--}}
         <tr>
+            <td></td>
             <td></td>
             <td></td>
             <td><strong>{{ ucfirst(__('laravel-crm::lang.total')) }}</strong></td>

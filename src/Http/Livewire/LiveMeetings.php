@@ -4,7 +4,6 @@ namespace VentureDrake\LaravelCrm\Http\Livewire;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
-use VentureDrake\LaravelCrm\Models\Call;
 use VentureDrake\LaravelCrm\Models\Meeting;
 use VentureDrake\LaravelCrm\Models\Person;
 use VentureDrake\LaravelCrm\Services\SettingService;
@@ -47,7 +46,7 @@ class LiveMeetings extends Component
 
         $this->getMeetings();
 
-        if (!$this->meetings || ($this->meetings && $this->meetings->count() < 1)) {
+        if (! $this->meetings || ($this->meetings && $this->meetings->count() < 1)) {
             $this->showForm = true;
         }
     }
@@ -103,11 +102,11 @@ class LiveMeetings extends Component
     {
         $meetingIds = [];
 
-        foreach($this->model->meetings()->where('user_assigned_id', auth()->user()->id)->latest()->get() as $meeting){
-            $meetingIds[] =  $meeting->id;
+        foreach($this->model->meetings()->where('user_assigned_id', auth()->user()->id)->latest()->get() as $meeting) {
+            $meetingIds[] = $meeting->id;
         }
 
-        if($this->settingService->get('show_related_activity')->value == 1 && method_exists($this->model, 'contacts')){
+        if($this->settingService->get('show_related_activity')->value == 1 && method_exists($this->model, 'contacts')) {
             foreach($this->model->contacts as $contact) {
                 foreach ($contact->entityable->meetings()->where('user_assigned_id', auth()->user()->id)->latest()->get() as $meeting) {
                     $meetingIds[] = $meeting->id;
@@ -115,10 +114,10 @@ class LiveMeetings extends Component
             }
         }
 
-        if(count($meetingIds) > 0){
+        if(count($meetingIds) > 0) {
             $this->meetings = Meeting::whereIn('id', $meetingIds)->latest()->get();
         }
-        
+
         $this->emit('refreshActivities');
     }
 
@@ -152,7 +151,7 @@ class LiveMeetings extends Component
         $this->dispatchBrowserEvent('meetingFieldsReset');
 
         $this->addMeetingToggle();
-        
+
         $this->getMeetings();
     }
 

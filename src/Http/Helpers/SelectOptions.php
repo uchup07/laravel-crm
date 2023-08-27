@@ -2,7 +2,7 @@
 
 namespace VentureDrake\LaravelCrm\Http\Helpers\SelectOptions;
 
-use \App\User;
+use App\User;
 use Carbon\Carbon;
 use Rinvex\Country\CountryLoader;
 use Rinvex\Country\CurrencyLoader;
@@ -32,7 +32,7 @@ function users($null = true)
     if ($null) {
         $array[''] = '';
     }
-    
+
     $users = [];
 
     if (config('laravel-crm.teams')) {
@@ -58,7 +58,7 @@ function users($null = true)
 function phoneTypes($null = true)
 {
     $array = [];
-    
+
     if ($null) {
         $array[''] = '';
     }
@@ -70,7 +70,7 @@ function phoneTypes($null = true)
         'fax' => 'Fax',
         'other' => "Other",
     ]);
-    
+
     return $array;
 }
 
@@ -114,7 +114,7 @@ function currencies()
     foreach ($countries->currencies()->sortBy('name')->toArray() as $currencyCode => $currency) {
         $items[$currencyCode] = $currency['name'].(' ('.$currencyCode.')');
     }*/
-    
+
     // Allow for typo in package
     if (method_exists('Rinvex\Country\CurrencyLoader', 'curriencies')) {
         foreach (CurrencyLoader::curriencies(true) as $currency) {
@@ -125,7 +125,7 @@ function currencies()
             $items[$currency['iso_4217_code']] = $currency['iso_4217_name'].(' ('.$currency['iso_4217_code'].')');
         }
     }
-    
+
     return $items;
 }
 
@@ -135,18 +135,18 @@ function timezones()
     $items = [];
 
     $items[''] = '';
-    
+
     foreach (Timezone::all() as $timezone) {
         $items[$timezone->name] = $timezone->name.' - '.$timezone->diff_from_gtm;
     }
-    
+
     return $items;
 }
 
 function dateFormats()
 {
     $now = Carbon::now();
-    
+
     return [
         'j F Y' => $now->format('j F Y'),
         'Y-m-d' => $now->format('Y-m-d'),
@@ -161,7 +161,7 @@ function dateFormats()
 function timeFormats()
 {
     $now = Carbon::now();
-    
+
     return [
         'g:i a' => $now->format('g:i a'),
         'g:i A' => $now->format('g:i A'),

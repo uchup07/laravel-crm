@@ -54,12 +54,21 @@ class Quote extends Model
         return config('laravel-crm.db_table_prefix').'quotes';
     }
 
+    public function getQuoteIdAttribute($value)
+    {
+        if ($value) {
+            return $value;
+        } else {
+            return (Setting::where('name', 'quote_prefix')->first()->value ?? null) . $this->number;
+        }
+    }
+
     public function getNumberAttribute($value)
     {
         if ($value) {
             return $value;
         } else {
-            return 1000 + $this->id;
+            return $this->id;
         }
     }
 
@@ -197,23 +206,23 @@ class Quote extends Model
     {
         return $this->hasMany(\VentureDrake\LaravelCrm\Models\Order::class);
     }
-    
+
     public function orderComplete()
     {
         foreach ($this->quoteProducts as $quoteProduct) {
             $quantity = $quoteProduct->quantity;
-            
+
             foreach ($this->orders as $order) {
                 if ($orderProduct = $order->orderProducts()->where('quote_product_id', $quoteProduct->id)->first()) {
                     $quantity -= $orderProduct->quantity;
                 }
             }
-            
+
             if ($quantity > 0) {
                 return false;
             }
         }
-        
+
         return true;
     }
 }

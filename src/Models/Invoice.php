@@ -46,9 +46,27 @@ class Invoice extends Model
         return config('laravel-crm.db_table_prefix').'invoices';
     }
 
+    public function getInvoiceIdAttribute($value)
+    {
+        if ($value) {
+            return $value;
+        } else {
+            return (Setting::where('name', 'invoice_prefix')->first()->value ?? null) . $this->number;
+        }
+    }
+
+    public function getNumberAttribute($value)
+    {
+        if ($value) {
+            return $value;
+        } else {
+            return $this->id;
+        }
+    }
+
     public function getTitleAttribute()
     {
-        return money($this->total, $this->currency).' - '.($this->organisation->name ?? $this->organisation->person->name ?? null);
+        return money($this->total, $this->currency).' - '.($this->organisation->name ?? $this->person->name ?? null);
     }
 
     public function setIssueDateAttribute($value)
@@ -80,7 +98,7 @@ class Invoice extends Model
             $this->attributes['subtotal'] = null;
         }
     }
-    
+
     public function setTaxAttribute($value)
     {
         if (isset($value)) {
@@ -105,6 +123,15 @@ class Invoice extends Model
             $this->attributes['amount_due'] = $value * 100;
         } else {
             $this->attributes['amount_due'] = null;
+        }
+    }
+
+    public function getAmountDueAttribute($value)
+    {
+        if ($value) {
+            return $value;
+        } else {
+            return $this->total;
         }
     }
 

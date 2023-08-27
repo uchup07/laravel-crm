@@ -44,7 +44,7 @@ class InvoiceController extends Controller
         $this->organisationService = $organisationService;
         $this->invoiceService = $invoiceService;
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -220,7 +220,7 @@ class InvoiceController extends Controller
     public function destroy(Invoice $invoice)
     {
         $invoice->delete();
-        
+
         flash(ucfirst(trans('laravel-crm::lang.invoice_deleted')))->success()->important();
 
         return redirect(route('laravel-crm.invoices.index'));
@@ -243,12 +243,13 @@ class InvoiceController extends Controller
         ])
             ->loadView('laravel-crm::invoices.pdf', [
                 'invoice' => $invoice,
+                'contactDetails' => $this->settingService->get('invoice_contact_details')->value ?? null,
                 'email' => $email ?? null,
                 'phone' => $phone ?? null,
                 'address' => $address ?? null,
                 'organisation_address' => $organisation_address ?? null,
                 'fromName' => $this->settingService->get('organisation_name')->value ?? null,
                 'logo' => $this->settingService->get('logo_file')->value ?? null,
-            ])->download('invoice-'.$invoice->id.'.pdf');
+            ])->download('invoice-'.strtolower($invoice->invoice_id).'.pdf');
     }
 }

@@ -22,7 +22,7 @@ class File extends Model
     {
         return config('laravel-crm.db_table_prefix').'files';
     }
-    
+
     /**
      * Get all of the owning fileable models.
      */

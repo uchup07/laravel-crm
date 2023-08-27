@@ -41,7 +41,7 @@ class InvoiceController extends Controller
         if (! $request->hasValidSignature()) {
             abort(401);
         }
-        
+
         if ($invoice->person) {
             $email = $invoice->person->getPrimaryEmail();
             $phone = $invoice->person->getPrimaryPhone();
@@ -54,6 +54,7 @@ class InvoiceController extends Controller
 
         return view('laravel-crm::portal.invoices.show', [
             'invoice' => $invoice,
+            'contactDetails' => $this->settingService->get('invoice_contact_details')->value ?? null,
             'email' => $email ?? null,
             'phone' => $phone ?? null,
             'address' => $address ?? null,
@@ -82,13 +83,14 @@ class InvoiceController extends Controller
                 ])
                     ->loadView('laravel-crm::invoices.pdf', [
                         'invoice' => $invoice,
+                        'contactDetails' => $this->settingService->get('invoice_contact_details')->value ?? null,
                         'email' => $email ?? null,
                         'phone' => $phone ?? null,
                         'address' => $address ?? null,
                         'organisation_address' => $organisation_address ?? null,
                         'fromName' => $this->settingService->get('organisation_name')->value ?? null,
                         'logo' => $this->settingService->get('logo_file')->value ?? null,
-                    ])->download('invoice-'.$invoice->id.'.pdf');
+                    ])->download('invoice-'.strtolower($invoice->invoice_id).'.pdf');
 
                 break;
         }

@@ -6,7 +6,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use VentureDrake\LaravelCrm\Http\Requests\StoreDeliveryRequest;
 use VentureDrake\LaravelCrm\Http\Requests\UpdateDeliveryRequest;
-use VentureDrake\LaravelCrm\Models\Address;
 use VentureDrake\LaravelCrm\Models\Delivery;
 use VentureDrake\LaravelCrm\Models\Order;
 use VentureDrake\LaravelCrm\Models\Organisation;
@@ -45,7 +44,7 @@ class DeliveryController extends Controller
         $this->organisationService = $organisationService;
         $this->deliveryService = $deliveryService;
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -195,7 +194,7 @@ class DeliveryController extends Controller
     public function destroy(Delivery $delivery)
     {
         $delivery->delete();
-        
+
         flash(ucfirst(trans('laravel-crm::lang.delivery_deleted')))->success()->important();
 
         return redirect(route('laravel-crm.deliveries.index'));
@@ -217,7 +216,7 @@ class DeliveryController extends Controller
         if(!File::exists($pdfLocation)){
             Storage::makeDirectory($pdfLocation);
         }*/
-        
+
         /*  return view('laravel-crm::deliveries.pdf', [
               'delivery' => $delivery,
               'order' => $delivery->order,
@@ -241,6 +240,6 @@ class DeliveryController extends Controller
                 'organisation_address' => $delivery->order->getShippingAddress() ?? $organisation_address ?? null,
                 'fromName' => $this->settingService->get('organisation_name')->value ?? null,
                 'logo' => $this->settingService->get('logo_file')->value ?? null,
-            ])->download('delivery-'.$delivery->id.'.pdf');
+            ])->download('delivery-'.strtolower($delivery->delivery_id).'.pdf');
     }
 }

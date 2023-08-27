@@ -103,12 +103,12 @@ class LeadPolicy
     {
         return false;
     }
-    
+
     protected function isEnabled()
     {
-        if(is_array(config('laravel-crm.modules')) && in_array('leads', config('laravel-crm.modules'))){
+        if(is_array(config('laravel-crm.modules')) && in_array('leads', config('laravel-crm.modules'))) {
             return true;
-        }elseif(! config('laravel-crm.modules')){
+        } elseif(! config('laravel-crm.modules')) {
             return true;
         }
     }

@@ -4,7 +4,6 @@ namespace VentureDrake\LaravelCrm\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Composer;
-use Ramsey\Uuid\Uuid;
 use VentureDrake\LaravelCrm\Models\Order;
 use VentureDrake\LaravelCrm\Models\Organisation;
 use VentureDrake\LaravelCrm\Models\Person;
@@ -17,7 +16,7 @@ class LaravelCrmUpdate extends Command
      * @var SettingService
      */
     private $settingService;
-    
+
     /**
      * The name and signature of the console command.
      *
@@ -59,8 +58,8 @@ class LaravelCrmUpdate extends Command
     public function handle()
     {
         $this->info('Updating Laravel CRM...');
-        
-        if($this->settingService->get('db_update_0180')->value == 0){
+
+        if($this->settingService->get('db_update_0180')->value == 0) {
             $this->info('Updating Laravel CRM quote numbers...');
 
             foreach (Quote::whereNull('number')->get() as $quote) {
@@ -91,7 +90,7 @@ class LaravelCrmUpdate extends Command
             $this->info('Updating Laravel CRM orders numbers complete');
         }
 
-        if($this->settingService->get('db_update_0181')->value == 0){
+        if($this->settingService->get('db_update_0181')->value == 0) {
             $this->info('Updating Laravel CRM organisation linked to person...');
 
             try {

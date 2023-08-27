@@ -40,7 +40,7 @@ class LiveDealForm extends Component
         } elseif($this->organisation_id) {
             $this->getOrganisationPeople();
         }
-        
+
         $this->title = old('title') ?? $deal->title ?? null;
         $this->generateTitle = $generateTitle;
 
@@ -54,18 +54,18 @@ class LiveDealForm extends Component
     public function updatedClientName($value)
     {
         $this->generateTitle();
-        
+
         if ($this->client_id) {
             $this->getClientOrganisations();
 
             $this->getClientPeople();
         } else {
             $this->clientHasOrganisations = false;
-            
+
             $this->clientHasPeople = false;
 
             $this->dispatchBrowserEvent('clientNameUpdated');
-            
+
             if (! $this->organisation_id) {
                 $this->dispatchBrowserEvent('selectedOrganisation');
             }

@@ -16,7 +16,7 @@ class Task extends Model
     use BelongsToTeams;
     use SearchFilters;
     use HasGlobalSettings;
-    
+
     protected $guarded = ['id'];
 
     protected $casts = [
@@ -49,7 +49,7 @@ class Task extends Model
             $this->attributes['due_at'] = Carbon::createFromFormat($this->dateFormat().' H:i', $value);
         }
     }
-    
+
     /**
      * Get all of the owning taskable models.
      */

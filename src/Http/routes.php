@@ -336,7 +336,7 @@ Route::group(['prefix' => 'orders', 'middleware' => 'auth.laravel-crm'], functio
     Route::get('{order}/download', 'VentureDrake\LaravelCrm\Http\Controllers\OrderController@download')
         ->name('laravel-crm.orders.download')
         ->middleware(['can:view,order']);
-    
+
     /* Order Products */
 
     Route::group(['prefix' => '{order}/products', 'middleware' => 'auth.laravel-crm'], function () {
@@ -1063,6 +1063,38 @@ Route::group(['prefix' => 'product-attributes', 'middleware' => 'auth.laravel-cr
     Route::delete('{productCategory}', 'VentureDrake\LaravelCrm\Http\Controllers\ProductAttributeController@destroy')
         ->name('laravel-crm.product-attributes.destroy')
         ->middleware(['can:delete,productAttribute']);
+});
+
+/* Tax Rates */
+
+Route::group(['prefix' => 'tax-rates', 'middleware' => 'auth.laravel-crm'], function () {
+    Route::get('', 'VentureDrake\LaravelCrm\Http\Controllers\TaxRateController@index')
+        ->name('laravel-crm.tax-rates.index')
+        ->middleware(['can:viewAny,VentureDrake\LaravelCrm\Models\TaxRate']);
+
+    Route::get('create', 'VentureDrake\LaravelCrm\Http\Controllers\TaxRateController@create')
+        ->name('laravel-crm.tax-rates.create')
+        ->middleware(['can:create,VentureDrake\LaravelCrm\Models\TaxRate']);
+
+    Route::post('', 'VentureDrake\LaravelCrm\Http\Controllers\TaxRateController@store')
+        ->name('laravel-crm.tax-rates.store')
+        ->middleware(['can:create,VentureDrake\LaravelCrm\Models\TaxRate']);
+
+    Route::get('{taxRate}', 'VentureDrake\LaravelCrm\Http\Controllers\TaxRateController@show')
+        ->name('laravel-crm.tax-rates.show')
+        ->middleware(['can:view,taxRate']);
+
+    Route::get('{taxRate}/edit', 'VentureDrake\LaravelCrm\Http\Controllers\TaxRateController@edit')
+        ->name('laravel-crm.tax-rates.edit')
+        ->middleware(['can:update,taxRate']);
+
+    Route::put('{taxRate}', 'VentureDrake\LaravelCrm\Http\Controllers\TaxRateController@update')
+        ->name('laravel-crm.tax-rates.update')
+        ->middleware(['can:update,taxRate']);
+
+    Route::delete('{taxRate}', 'VentureDrake\LaravelCrm\Http\Controllers\TaxRateController@destroy')
+        ->name('laravel-crm.tax-rates.destroy')
+        ->middleware(['can:delete,taxRate']);
 });
 
 /* Settings */

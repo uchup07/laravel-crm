@@ -66,29 +66,27 @@
                  ])
             </div>
         </div>
+        @livewire('product-form',[
+            'product' => $product ?? null
+        ])
         <div class="row">
             <div class="col-sm-6">
-                @include('laravel-crm::partials.form.text',[
-                     'name' => 'tax_rate',
-                     'label' => ucfirst(__('laravel-crm::lang.tax')),
-                     'append' => '<span class="fa fa-percent" aria-hidden="true"></span>',
-                     'value' => old('tax_rate', $product->tax_rate ?? null)
+                @include('laravel-crm::partials.form.select',[
+                     'name' => 'currency',
+                     'label' => ucfirst(__('laravel-crm::lang.currency')),
+                     'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\currencies(),
+                     'value' => old('currency', (isset($product) && (isset($product->getDefaultPrice()->currency)) ? $product->getDefaultPrice()->currency : null) ?? null ?? \VentureDrake\LaravelCrm\Models\Setting::currency()->value ?? 'USD')
                  ])
             </div>
             <div class="col-sm-6">
                 @include('laravel-crm::partials.form.select',[
-                    'name' => 'currency',
-                    'label' => ucfirst(__('laravel-crm::lang.currency')),
-                    'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\currencies(),
-                    'value' => old('currency', (isset($product) && (isset($product->getDefaultPrice()->currency)) ? $product->getDefaultPrice()->currency : null) ?? null ?? \VentureDrake\LaravelCrm\Models\Setting::currency()->value ?? 'USD')
-                ])
+                'name' => 'user_owner_id',
+                'label' => ucfirst(__('laravel-crm::lang.owner')),
+                'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false),
+                'value' =>  old('user_owner_id', $product->user_owner_id ?? auth()->user()->id),
+             ])
             </div>
         </div>
-        @include('laravel-crm::partials.form.select',[
-                 'name' => 'user_owner_id',
-                 'label' => ucfirst(__('laravel-crm::lang.owner')),
-                 'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(false),
-                 'value' =>  old('user_owner_id', $product->user_owner_id ?? auth()->user()->id),
-              ])
+       
     </div>
 </div>

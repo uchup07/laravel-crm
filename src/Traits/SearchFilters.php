@@ -15,7 +15,7 @@ trait SearchFilters
     {
         if ($request->search) {
             $request->session()->put(class_basename($request->route()->getController()).'.search', $request->search);
-            
+
             return $request->search;
         } elseif ($request->session()->has(class_basename($request->route()->getController()).'.search')) {
             return $request->session()->get(class_basename($request->route()->getController()).'.search');
@@ -26,7 +26,7 @@ trait SearchFilters
     {
         $request->session()->forget(class_basename($request->route()->getController()).'.search');
     }
-    
+
     public static function filters($request, $action = 'index')
     {
         if ($request->isMethod('post') && $action != 'search') {
@@ -36,17 +36,17 @@ trait SearchFilters
         } elseif ($request->session()->has(class_basename($request->route()->getController()).'.params')) {
             return $request->session()->get(class_basename($request->route()->getController()).'.params');
         }
-        
+
         return $request->except('_token');
     }
-    
+
     public static function filterValue($key)
     {
         if ($params = request()->session()->get(class_basename(request()->route()->getController()).'.params')) {
             return $params[$key] ?? null;
         }
     }
-    
+
     public static function filterActive($key, $options)
     {
         if ($params = request()->session()->get(class_basename(request()->route()->getController()).'.params')) {
@@ -64,7 +64,7 @@ trait SearchFilters
             }
         }
     }
-    
+
     public function scopeFilter($query, $params)
     {
         $createdAt = [];
