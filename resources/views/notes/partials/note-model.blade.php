@@ -1,3 +1,4 @@
+@if($note->noteable)
 @switch(class_basename($note->noteable->getMorphClass()))
     @case('Lead')
         <small>{{ ucfirst(__('laravel-crm::lang.lead')) }}: <a href="{{ route('laravel-crm.leads.show', $note->noteable) }}">{{ $note->noteable->title }}</a></small>
@@ -18,3 +19,4 @@
         <small>{{ ucfirst(__('laravel-crm::lang.organisation')) }}: <a href="{{ route('laravel-crm.organisations.show', $note->noteable) }}">{{ $note->noteable->name }}</a></small>
         @break
 @endswitch
+@endif
