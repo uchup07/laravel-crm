@@ -442,5 +442,7 @@ return [
     'tax_rate_percent' => 'tax rate %',
 	'closed_at' => 'closed at',
     'reason' => 'reason',
-    'reports' => 'reports'
+    'reports' => 'reports',
+	'delivery_prefix' => 'delivery prefix',
+    'vat_number' => 'VAT Number'
 ];

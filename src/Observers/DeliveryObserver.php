@@ -4,9 +4,20 @@ namespace VentureDrake\LaravelCrm\Observers;
 
 use Ramsey\Uuid\Uuid;
 use VentureDrake\LaravelCrm\Models\Delivery;
+use VentureDrake\LaravelCrm\Services\SettingService;
 
 class DeliveryObserver
 {
+    /**
+     * @var SettingService
+     */
+    private $settingService;
+
+    public function __construct(SettingService $settingService)
+    {
+        $this->settingService = $settingService;
+    }
+
     /**
      * Handle the delivery "creating" event.
      *
@@ -20,6 +31,15 @@ class DeliveryObserver
         if (! app()->runningInConsole()) {
             $delivery->user_created_id = auth()->user()->id ?? null;
         }
+
+        if($lastDelivery = Delivery::withTrashed()->orderBy('number', 'DESC')->first()) {
+            $delivery->number = $lastDelivery->number + 1;
+        } else {
+            $delivery->number = 1000;
+        }
+
+        $delivery->prefix = $this->settingService->get('delivery_prefix')->value;
+        $delivery->delivery_id = $delivery->prefix.$delivery->number;
     }
 
     /**

@@ -9,6 +9,7 @@ use VentureDrake\LaravelCrm\Exports\OrganisationsExport;
 use VentureDrake\LaravelCrm\Http\Requests\StoreOrganisationRequest;
 use VentureDrake\LaravelCrm\Http\Requests\UpdateOrganisationRequest;
 use VentureDrake\LaravelCrm\Http\Requests\UploadOrganisationRequest;
+use VentureDrake\LaravelCrm\Models\Contact;
 use VentureDrake\LaravelCrm\Models\Organisation;
 use VentureDrake\LaravelCrm\Services\OrganisationService;
 use Maatwebsite\Excel\Facades\Excel;
@@ -165,9 +166,15 @@ class OrganisationController extends Controller
      */
     public function destroy(Organisation $organisation)
     {
+        foreach(Contact::where([
+            'entityable_type' => $organisation->getMorphClass(),
+            'entityable_id' => $organisation->id
+        ])->get() as $contact) {
+            $contact->delete();
+        }
         // delete related first
         $organisation->people()->delete();
-        $organisation->contacts()->delete();
+        //$organisation->contacts()->delete();
         //-----------------------
 
         $organisation->delete();

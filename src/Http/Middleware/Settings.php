@@ -46,11 +46,23 @@ class Settings
                 'value' => config('laravel-crm.version'),
             ]);
 
+            Setting::firstOrCreate([
+                'name' => 'team',
+            ], [
+                'value' => 'related',
+            ]);
+
             if (config('laravel-crm.teams') && ! auth()->guest() && $currentTeam = auth()->user()->currentTeam) {
                 Setting::firstOrCreate([
                     'name' => 'organisation_name',
                 ], [
                     'value' => $currentTeam->name,
+                ]);
+            } else {
+                Setting::firstOrCreate([
+                    'name' => 'organisation_name',
+                ], [
+                    'value' => config('app.name'),
                 ]);
             }
 
@@ -121,6 +133,12 @@ class Settings
             ]);
 
             Setting::firstOrCreate([
+                'name' => 'delivery_prefix',
+            ], [
+                'value' => 'DEL-',
+            ]);
+
+            Setting::firstOrCreate([
                 'name' => 'dynamic_products',
             ], [
                 'value' => '1',
@@ -145,6 +163,42 @@ class Settings
                 Setting::firstOrCreate([
                     'global' => 1,
                     'name' => 'db_update_0181',
+                ], [
+                    'value' => 0,
+                ]);
+            }
+
+            if((int) Str::replace('.', '', config('laravel-crm.version')) >= 191) {
+                Setting::firstOrCreate([
+                    'global' => 1,
+                    'name' => 'db_update_0191',
+                ], [
+                    'value' => 0,
+                ]);
+            }
+
+            if((int) Str::replace('.', '', config('laravel-crm.version')) >= 193) {
+                Setting::firstOrCreate([
+                    'global' => 1,
+                    'name' => 'db_update_0193',
+                ], [
+                    'value' => 0,
+                ]);
+            }
+
+            if((int) Str::replace('.', '', config('laravel-crm.version')) >= 194) {
+                Setting::firstOrCreate([
+                    'global' => 1,
+                    'name' => 'db_update_0194',
+                ], [
+                    'value' => 0,
+                ]);
+            }
+
+            if((int) Str::replace('.', '', config('laravel-crm.version')) >= 199) {
+                Setting::firstOrCreate([
+                    'global' => 1,
+                    'name' => 'db_update_0199',
                 ], [
                     'value' => 0,
                 ]);

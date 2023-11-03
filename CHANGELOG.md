@@ -20,6 +20,82 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 ### Removed --->
 
+## 0.19.10 - 2023-09-25
+### Added
+- Phone, emails & address to settings and users
+- VAT/ABN to settings
+- Added setting to disable update notifications
+- Address multiple lines helper
+### Changed
+- No longer adds zero quantity items to deliveries
+### Fixed
+- Adding new organisation or person bug when creating invoice
+- Produce code required to post products to Xero api
+### Removed
+
+## 0.19.9 - 2023-09-04
+### Fixed
+- Database update for tax amounts
+
+## 0.19.8 - 2023-09-04
+### Added
+- Tax rates and tax amount added to quote products, order products & invoice lines
+- Indicate on products whether exist in Xero items
+### Fixed
+- Bug with create new products setting when creating quotes, orders, invoices
+- Tax rate show view
+### Removed
+- Save/Cancel buttons on product category show view
+
+## 0.19.7 - 2023-09-01
+### Changed
+- Switched cs from laravel to prs12
+### Fixed
+- Related contacts bug when deleting peron or organisation
+- Bug when allowing null value on custom field
+- Fixed bug by disabling create new labels when adding leads, contacts, etc
+
+## 0.19.6 - 2023-08-29
+### Fixed
+- Error when sending quotes and missing organization name setting
+- Error when deleting custom fields and attached models
+- Error when showing deliveries when order has been deleted
+- Ensure address isset on pdf before displaying
+- Error on PDF when person not set
+
+## 0.19.5 - 2023-08-29
+### Fixed
+- Consider soft deleted models when incrementing numbers
+
+## 0.19.4 - 2023-08-28
+### Added
+- Delivery number
+### Fixed
+- Copying billing & shipping address from quote to order
+- Copying shipping address from order to delivery
+
+## 0.19.3 - 2023-08-28
+### Added
+- Show quote orders
+- Show order invoices
+- Show order deliveries
+### Changed
+- Update command for order related deliveries
+
+## 0.19.2 - 2023-08-28
+### Fixed
+- Version 0.19.1 database update check
+
+## 0.19.1 - 2023-08-28
+### Changed
+- Now using Laravel Pint and Laravel preset for code style
+- Create multiple invoices from an order
+### Fixed
+- Typo on quote show view
+### Removed
+- Travis config
+- cs fixer config
+
 ## 0.19.0 - 2023-08-25
 ### Added
 - Update command for updating database

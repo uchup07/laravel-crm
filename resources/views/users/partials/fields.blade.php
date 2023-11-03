@@ -52,10 +52,10 @@
                 'value' => old('role', ((isset($user)) ? ($user->roles()->first()->id ?? null) : null)),
             ]) 
         @endif
-    </div>
-    <div class="col-sm-6">
+
         @hasteamsenabled
-        <h6 class="text-uppercase">{{ ucfirst(__('laravel-crm::lang.teams')) }}</h6>
+        <h6 class="text-uppercase mt-4 section-h6-title">{{ ucfirst(__('laravel-crm::lang.teams')) }}</h6>
+        <hr>
         @include('laravel-crm::partials.form.multiselect',[
             'name' => 'user_teams',
             'label' => null,
@@ -63,5 +63,16 @@
             'value' => old('user_teams', (isset($user)) ? $user->crmTeams()->orderBy('name','ASC')->get()->pluck('id')->toArray() : null)
         ])
         @endhasteamsenabled
+    </div>
+    <div class="col-sm-6">
+        @livewire('phone-edit', [
+        'phones' => $phones ?? null,
+        'old' => old('phones')
+        ])
+
+        @livewire('address-edit', [
+        'addresses' => $addresses ?? null,
+        'old' => old('addresses')
+        ])
     </div>
 </div>

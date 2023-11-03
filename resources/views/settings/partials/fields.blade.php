@@ -7,6 +7,12 @@
          'required' => 'true'
         ])
 
+        @include('laravel-crm::partials.form.text',[
+         'name' => 'vat_number',
+         'label' => ucfirst(trans('laravel-crm::lang.vat_number')),
+         'value' => old('vat_number', $vatNumber->value ?? null)
+        ])
+
         @if($logoFile)
         <div class="mb-3">
             <img src=" {{ ($logoFile) ? asset('storage/'.$logoFile->value) : 'https://via.placeholder.com/140x90' }}" class="img-fluid" width="200" />
@@ -17,51 +23,7 @@
              'label' => ucfirst(trans('laravel-crm::lang.logo')),
              'value' => old('logo', $timezone ?? null)
          ])
-        @hasquotesenabled
-        @include('laravel-crm::partials.form.text',[
-         'name' => 'quote_prefix',
-         'label' => ucfirst(trans('laravel-crm::lang.quote_prefix')),
-         'value' => old('quote_prefix', $quotePrefix->value ?? null)
-        ])
-        @endhasquotesenabled
-        @hasordersenabled
-        @include('laravel-crm::partials.form.text',[
-         'name' => 'order_prefix',
-         'label' => ucfirst(trans('laravel-crm::lang.order_prefix')),
-         'value' => old('order_prefix', $orderPrefix->value ?? null)
-        ])
-        @endhasordersenabled
-        @hasinvoicesenabled
-        @include('laravel-crm::partials.form.text',[
-         'name' => 'invoice_prefix',
-         'label' => ucfirst(trans('laravel-crm::lang.invoice_prefix')),
-         'value' => old('invoice_prefix', $invoicePrefix->value ?? null)
-        ])
-        @endhasinvoicesenabled
-        @hasquotesenabled
-        @include('laravel-crm::partials.form.textarea',[
-         'name' => 'quote_terms',
-         'label' => ucfirst(trans('laravel-crm::lang.quote_terms')),
-         'rows' => 5,
-         'value' => old('quote_terms', $quoteTerms->value ?? null)
-        ])
-        @endhasquotesenabled
-        @hasinvoicesenabled
-        @include('laravel-crm::partials.form.textarea',[
-         'name' => 'invoice_contact_details',
-         'label' => ucfirst(trans('laravel-crm::lang.invoice_contact_details')),
-         'rows' => 5,
-         'value' => old('invoice_contact_details', $invoiceContactDetails->value ?? null)
-        ])
-        @include('laravel-crm::partials.form.textarea',[
-         'name' => 'invoice_terms',
-         'label' => ucfirst(trans('laravel-crm::lang.invoice_terms')),
-         'rows' => 5,
-         'value' => old('invoice_terms', $invoiceTerms->value ?? null)
-        ])
-        @endhasinvoicesenabled
-    </div>
-    <div class="col">
+
         @include('laravel-crm::partials.form.select',[
                 'name' => 'country',
                 'label' => ucfirst(trans('laravel-crm::lang.country')),
@@ -83,13 +45,13 @@
            'value' => old('currency', $currency->value ?? 'USD'),
            'required' => 'true'
        ])
-       @include('laravel-crm::partials.form.select',[
-            'name' => 'timezone',
-            'label' => ucfirst(trans('laravel-crm::lang.timezone')),
-            'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\timezones(),
-            'value' => old('timezone', $timezone->value ?? null),
-            'required' => 'true'
-       ])
+        @include('laravel-crm::partials.form.select',[
+             'name' => 'timezone',
+             'label' => ucfirst(trans('laravel-crm::lang.timezone')),
+             'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\timezones(),
+             'value' => old('timezone', $timezone->value ?? null),
+             'required' => 'true'
+        ])
         @include('laravel-crm::partials.form.select',[
             'name' => 'date_format',
             'label' => ucfirst(trans('laravel-crm::lang.date_format')),
@@ -115,6 +77,56 @@
             'value' => old('tax_rate', $taxRate->value ?? null),
             'append' => '%'
        ])
+        @hasquotesenabled
+        @include('laravel-crm::partials.form.text',[
+         'name' => 'quote_prefix',
+         'label' => ucfirst(trans('laravel-crm::lang.quote_prefix')),
+         'value' => old('quote_prefix', $quotePrefix->value ?? null)
+        ])
+        @endhasquotesenabled
+        @hasordersenabled
+        @include('laravel-crm::partials.form.text',[
+         'name' => 'order_prefix',
+         'label' => ucfirst(trans('laravel-crm::lang.order_prefix')),
+         'value' => old('order_prefix', $orderPrefix->value ?? null)
+        ])
+        @endhasordersenabled
+        @hasinvoicesenabled
+        @include('laravel-crm::partials.form.text',[
+         'name' => 'invoice_prefix',
+         'label' => ucfirst(trans('laravel-crm::lang.invoice_prefix')),
+         'value' => old('invoice_prefix', $invoicePrefix->value ?? null)
+        ])
+        @endhasinvoicesenabled
+        @hasdeliveriesenabled
+        @include('laravel-crm::partials.form.text',[
+         'name' => 'delivery_prefix',
+         'label' => ucfirst(trans('laravel-crm::lang.delivery_prefix')),
+         'value' => old('delivery_prefix', $deliveryPrefix->value ?? null)
+        ])
+        @endhasdeliveriesenabled
+        @hasquotesenabled
+        @include('laravel-crm::partials.form.textarea',[
+         'name' => 'quote_terms',
+         'label' => ucfirst(trans('laravel-crm::lang.quote_terms')),
+         'rows' => 5,
+         'value' => old('quote_terms', $quoteTerms->value ?? null)
+        ])
+        @endhasquotesenabled
+        @hasinvoicesenabled
+        @include('laravel-crm::partials.form.textarea',[
+         'name' => 'invoice_contact_details',
+         'label' => ucfirst(trans('laravel-crm::lang.invoice_contact_details')),
+         'rows' => 5,
+         'value' => old('invoice_contact_details', $invoiceContactDetails->value ?? null)
+        ])
+        @include('laravel-crm::partials.form.textarea',[
+         'name' => 'invoice_terms',
+         'label' => ucfirst(trans('laravel-crm::lang.invoice_terms')),
+         'rows' => 5,
+         'value' => old('invoice_terms', $invoiceTerms->value ?? null)
+        ])
+        @endhasinvoicesenabled
         <div class="form-group">
             <label for="dynamic_products">{{ ucfirst(__('laravel-crm::lang.allow_creating_products_when_creating_quotes_orders_and_invoices')) }}</label>
             <span class="form-control-toggle">
@@ -127,5 +139,21 @@
                  <input id="show_related_activity" type="checkbox" name="show_related_activity" {{ (isset($showRelatedActivity->value) && ($showRelatedActivity->value == 1)) ? 'checked' : null }} data-toggle="toggle" data-size="sm" data-on="Yes" data-off="No" data-onstyle="success" data-offstyle="danger">
             </span>
         </div>
+    </div>
+    <div class="col">
+        @livewire('phone-edit', [
+        'phones' => $phones ?? null,
+        'old' => old('phones')
+        ])
+
+        @livewire('email-edit', [
+        'emails' => $emails ?? null,
+        'old' => old('emails')
+        ])
+
+        @livewire('address-edit', [
+        'addresses' => $addresses ?? null,
+        'old' => old('addresses')
+        ])
     </div>
 </div>
