@@ -103,10 +103,16 @@
         </div>
     </div>
     <span wire:ignore>
+        @php
+            $personOptions = (auth()->user()->hasRole(['Admin','Owner','Manager'])) ? \VentureDrake\LaravelCrm\Models\Person::all() : \VentureDrake\LaravelCrm\Models\Person::where('user_owner_id', auth()->user()->id)->get();
+            if(!is_null($people)) {
+                $personOptions = $people;
+            }
+        @endphp
     @include('laravel-crm::partials.form.multiselect',[
       'name' => 'guests',
       'label' => ucfirst(__('laravel-crm::lang.guests')),
-      'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\optionsFromModel(\VentureDrake\LaravelCrm\Models\Person::all(), false),
+      'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\optionsFromModel($personOptions, false),
       'attributes' => [
          'wire:model' => 'guests',
        ]
