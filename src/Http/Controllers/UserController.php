@@ -19,7 +19,6 @@ use VentureDrake\LaravelCrm\Models\Invite;
 use VentureDrake\LaravelCrm\Models\Role;
 use VentureDrake\LaravelCrm\Models\Team;
 use VentureDrake\LaravelCrm\Notifications\InviteNotification;
-use Ramsey\Uuid\Uuid;
 
 class UserController extends Controller
 {
