@@ -59,7 +59,7 @@ class DealSheet implements FromQuery, WithTitle, WithHeadings, WithMapping
             (($deal->organisation) ? $deal->organisation->name : ''),
             (($deal->person) ? $deal->person->name : ''),
             $deal->closed_status,
-            $deal->closed_at->format('d-m-Y'),
+            (($deal->closed_at) ? $deal->closed_at->format('d-m-Y') : ''),
             $deal->created_at->format('d-m-Y'),
         ];
     }
