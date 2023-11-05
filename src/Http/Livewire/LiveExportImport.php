@@ -29,13 +29,13 @@ class LiveExportImport extends Component
 
     public function export()
     {
-        $this->exporting = true;
-        $this->exportFinished = false;
-
         $this->validate([
             'model' => 'required',
             'owner' => 'required|exists:users,id'
         ]);
+
+        $this->exporting = true;
+        $this->exportFinished = false;
 
         $batch = Bus::batch([
             new ExportJob($this->model, $this->owner),
