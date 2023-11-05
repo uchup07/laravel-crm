@@ -499,7 +499,7 @@ class LaravelCrmServiceProvider extends ServiceProvider
         Livewire::component('live-deal-form', LiveDealForm::class); // for deal form
         Livewire::component('organisations', LiveOrganisations::class); // for organisations
         Livewire::component('import-file', LiveImportFile::class); // import file
-        Livewire::component('live-export-import', LiveExportImport::class) // live export import
+        Livewire::component('live-export-import', LiveExportImport::class); // live export import
 
         if ($this->app->runningInConsole()) {
             $this->app->booted(function () {
