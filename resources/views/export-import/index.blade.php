@@ -26,8 +26,8 @@
                             @foreach($jobs as $job)
                                 <tr>
                                     <td>{{ $job->queue }}</td>
-                                    <td>{{ ($job->payload }}</td>
-                                    <td>{{ ($job->attempts }}</td>
+                                    <td>{{ $job->payload }}</td>
+                                    <td>{{ $job->attempts }}</td>
                                     <td>{{ $job->reserved_at->format($dateFormat) }}</td>
                                     <td>{{ $job->available_at->format($dateFormat) }}</td>
                                     <td>{{ $job->created_at->format($dateFormat) }}</td>
