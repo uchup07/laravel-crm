@@ -7,6 +7,7 @@
         @endslot
 
         @slot('actions')
+            @livewire('import-file')
             @include('laravel-crm::partials.filters', [
                 'action' => route('laravel-crm.organisations.filter'),
                 'model' => '\VentureDrake\LaravelCrm\Models\Organisation'
