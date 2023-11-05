@@ -62,6 +62,7 @@ class LiveExportImport extends Component
 
     public function downloadExport()
     {
+        $this->resetExport();
         return Storage::download("public/{$this->exportFilename}.xlsx");
     }
 
@@ -72,6 +73,13 @@ class LiveExportImport extends Component
         if ($this->exportFinished) {
             $this->exporting = false;
         }
+    }
+
+    public function resetExport()
+    {
+        $this->exportFinished = false;
+        $this->model = '';
+        $this->owner = '';
     }
 
     public function render()
