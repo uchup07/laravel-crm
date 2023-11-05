@@ -1281,6 +1281,10 @@ Route::group(['prefix' => 'export-import', 'middleware' => 'auth.laravel-crm'], 
     Route::post('import', 'VentureDrake\LaravelCrm\Http\Controllers\ExportImportController@importExecute')->name('laravel-crm.export-import.import-execute');
 });
 
+Route::get('export-import', function () {
+    return redirect(route('laravel-crm.export-import.index'));
+})->name('laravel-crm.export-import');
+
 /* CRM (AJAX) */
 Route::group(['prefix' => 'crm', 'middleware' => 'auth.laravel-crm'], function () {
     Route::group(['prefix' => 'people', 'middleware' => 'auth.laravel-crm'], function () {
