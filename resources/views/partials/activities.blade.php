@@ -9,17 +9,17 @@
     </li>
     @isset($orders)
         <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" id="tab-notes" href="#tabs-orders">{{ ucfirst(__('laravel-crm::lang.orders')) }}</a>
+            <a class="nav-link" data-toggle="tab" id="tab-orders" href="#tabs-orders">{{ ucfirst(__('laravel-crm::lang.orders')) }}</a>
         </li>
     @endisset
     @isset($invoices)
         <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" id="tab-notes" href="#tabs-invoices">{{ ucfirst(__('laravel-crm::lang.invoices')) }}</a>
+            <a class="nav-link" data-toggle="tab" id="tab-invoices" href="#tabs-invoices">{{ ucfirst(__('laravel-crm::lang.invoices')) }}</a>
         </li>
     @endisset
     @isset($deliveries)
         <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" id="tab-notes" href="#tabs-deliveries">{{ ucfirst(__('laravel-crm::lang.deliveries')) }}</a>
+            <a class="nav-link" data-toggle="tab" id="tab-deliveries" href="#tabs-deliveries">{{ ucfirst(__('laravel-crm::lang.deliveries')) }}</a>
         </li>
     @endisset
 	@endcan
