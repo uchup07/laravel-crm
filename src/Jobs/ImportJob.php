@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs;
+namespace VentureDrake\LaravelCrm\Jobs;
 
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
