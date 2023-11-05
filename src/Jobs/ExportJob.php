@@ -4,7 +4,7 @@ namespace VentureDrake\LaravelCrm\Jobs;
 
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use App\Exports\TransactionExport;
+use VentureDrake\LaravelCrm\Exports\TransactionExport;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -18,14 +18,17 @@ class ExportJob implements ShouldQueue
     
     public $owner;
 
-    public function __construct($model, $owner)
+    public $filename;
+
+    public function __construct($model, $owner, $filename)
     {
         $this->model = $model;
         $this->owner = $owner;
+        $this->filename = $filename;
     }
 
     public function handle()
     {
-        (new TransactionExport($this->model, $this->owner))->store('public/transactions.xlsx');
+        (new TransactionExport($this->model, $this->owner))->store("public/{$this->filename}.xlsx");
     }
 }

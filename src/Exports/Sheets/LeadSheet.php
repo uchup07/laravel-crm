@@ -25,7 +25,7 @@ class LeadSheet implements FromQuery, WithTitle, WithHeadings, WithMapping
      */
     public function query()
     {
-        return Lead::select(['id', 'title', 'amount','currency','lead_status_id'])->where('user_owner_id', $this->owner)->query()->with(['labels','organisation','person']);
+        return Lead::select(['id', 'title', 'amount','currency','lead_status_id','organisation_id','person_id','created_at'])->where('user_owner_id', $this->owner)->newQuery()->with(['labels','organisation','person']);
     }
 
     /**
@@ -54,9 +54,9 @@ class LeadSheet implements FromQuery, WithTitle, WithHeadings, WithMapping
             $lead->id,
             $lead->title,
             (money($lead->amount, $lead->currency)),
-            $lead->organisation->name,
-            $lead->person->name,
-            $lead->created_at,
+            (($lead->organisation) ? $lead->organisation->name : ''),
+            (($lead->person) ? $lead->person->name : ''),
+            $lead->created_at->format('d-m-Y'),
         ];
     }
 

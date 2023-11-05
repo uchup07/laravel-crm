@@ -2,8 +2,10 @@
 
 namespace VentureDrake\LaravelCrm\Http\Livewire;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use VentureDrake\LaravelCrm\Jobs\ExportJob;
@@ -19,6 +21,7 @@ class LiveExportImport extends Component
     public $exportFinished = false;
     public $model;
     public $owner;
+    public $exportFilename;
 
     public $file;
 
@@ -37,8 +40,12 @@ class LiveExportImport extends Component
         $this->exporting = true;
         $this->exportFinished = false;
 
+        $user = User::find($this->owner);
+
+        $this->exportFilename = Str::camel($user->name)  . '_' . 'transactions_' . time();
+
         $batch = Bus::batch([
-            new ExportJob($this->model, $this->owner),
+            new ExportJob($this->model, $this->owner, $this->exportFilename),
         ])->dispatch();
 
         $this->batchId = $batch->id;
@@ -55,7 +62,7 @@ class LiveExportImport extends Component
 
     public function downloadExport()
     {
-        return Storage::download('public/transactions.csv');
+        return Storage::download("public/{$this->exportFilename}.xlsx");
     }
 
     public function updateExportProgress()
