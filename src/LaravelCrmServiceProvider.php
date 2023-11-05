@@ -39,6 +39,7 @@ use VentureDrake\LaravelCrm\Http\Livewire\LiveDeliveryItems;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveDealReason;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveDeals;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveEmailEdit;
+use VentureDrake\LaravelCrm\Http\Livewire\LiveExportImport;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveFiles;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveImportFile;
 use VentureDrake\LaravelCrm\Http\Livewire\LiveInvoiceLines;
@@ -498,6 +499,7 @@ class LaravelCrmServiceProvider extends ServiceProvider
         Livewire::component('live-deal-form', LiveDealForm::class); // for deal form
         Livewire::component('organisations', LiveOrganisations::class); // for organisations
         Livewire::component('import-file', LiveImportFile::class); // import file
+        Livewire::component('live-export-import', LiveExportImport::class) // live export import
 
         if ($this->app->runningInConsole()) {
             $this->app->booted(function () {
