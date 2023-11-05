@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'export_import' => 'Export/Import',
+    'export' => 'Export',
+    'import' => 'Import',
     'created_last_14_days' => 'created last 14 days',
     'dashboard' => 'dashboard',
     'deal' => 'deal',

@@ -42,4 +42,9 @@
         <a class="nav-link {{ (strpos(Route::currentRouteName(), 'laravel-crm.integrations.xero') === 0) ? 'active' : '' }}" href="{{ url(route('laravel-crm.integrations.xero')) }}" role="tab" aria-controls="integrations" aria-selected="false">{{ ucwords(__('laravel-crm::lang.integrations')) }}</a>
     </li>
     @endcan
+    @can('view crm export-import')
+    <li class="nav-item">
+        <a class="nav-link {{ (strpos(Route::currentRouteName(), 'laravel-crm.export-import') === 0) ? 'active' : '' }}" href="{{ url(route('laravel-crm.export-import')) }}" role="tab" aria-controls="export-import" aria-selected="false">{{ ucwords(__('laravel-crm::lang.export_import')) }}</a>
+    </li>
+    @endcan
 </ul>
