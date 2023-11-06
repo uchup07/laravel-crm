@@ -33,7 +33,7 @@ class DealSheet implements FromQuery, WithTitle, WithHeadings, WithMapping
      */
     public function title(): string
     {
-        return 'Leads';
+        return 'Deals';
     }
 
     public function headings(): array
