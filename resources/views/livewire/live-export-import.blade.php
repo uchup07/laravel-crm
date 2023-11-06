@@ -24,6 +24,28 @@
                             @endif
                         </div>
                     </form>
+                    <hr/>
+                    <form wire:submit.prevent="import">
+                        @include('laravel-crm::export-import.partials.fields')
+                        @include('laravel-crm::partials.form.file',[
+                              'name' => 'file',
+                              'label' => ucfirst(__('laravel-crm::lang.add_file')),
+                              'attributes' => [
+                                  'wire:model.defer' => 'file'
+                              ]
+                            ])
+                        <hr />
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-upload"></i> {{ ucwords(__('laravel-crm::lang.import')) }}</button>
+                            @if($importing && !$importFinished)
+                                <div class="d-inline" wire:poll="updateExportProgress">Importing...please wait.</div>
+                            @endif
+
+                            @if($importFinished)
+                                Import Finished. Click <a class="stretched-link" wire:click="viewImport">here</a> to view it.
+                            @endif
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
