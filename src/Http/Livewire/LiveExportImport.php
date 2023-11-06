@@ -26,6 +26,8 @@ class LiveExportImport extends Component
     public $owner;
     public $exportFilename;
 
+    public $import_model;
+    public $import_owner;
     public $file;
 
     public $importFilePath;
@@ -90,8 +92,8 @@ class LiveExportImport extends Component
     public function import()
     {
         $this->validate([
-            'model' => 'required',
-            'owner' => 'required|exists:users,id',
+            'import_model' => 'required',
+            'import_owner' => 'required|exists:users,id',
             'file' => 'required|mimes:xls,xlsx,csv'
         ]);
 
@@ -100,7 +102,7 @@ class LiveExportImport extends Component
         $this->importFilePath = $this->importFile->store('imports');
 
         $batch = Bus::batch([
-            new ImportJob($this->model, $this->owner, $this->importFilePath),
+            new ImportJob($this->import_model, $this->import_owner, $this->importFilePath),
         ])->dispatch();
 
         $this->batchId = $batch->id;

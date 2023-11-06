@@ -27,7 +27,23 @@
                     <hr/>
                     <h4 class="mb-3"> {{ ucfirst(__('laravel-crm::lang.import')) }} </h4>
                     <form wire:submit.prevent="import">
-                        @include('laravel-crm::export-import.partials.fields')
+                        @include('laravel-crm::partials.form.select',[
+                            'name' => 'import_model',
+                            'label' => ucfirst(trans('laravel-crm::lang.model_name')),
+                            'options' => ['' => '' ] + \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\fieldModels(),
+                            'attributes' => [
+                                'wire:model' => 'import_model',
+                            ]
+                            ])
+
+                        @include('laravel-crm::partials.form.select',[
+                            'name' => 'import_owner',
+                            'label' => ucfirst(trans('laravel-crm::lang.owner')),
+                            'options' => \VentureDrake\LaravelCrm\Http\Helpers\SelectOptions\users(),
+                            'attributes' => [
+                                'wire:model' => 'import_owner',
+                            ]
+                            ])
                         @include('laravel-crm::partials.form.file',[
                               'name' => 'file',
                               'label' => ucfirst(__('laravel-crm::lang.add_file')),
