@@ -25,6 +25,7 @@
                         </div>
                     </form>
                     <hr/>
+                    <h4 class="mb-3"> {{ ucfirst(__('laravel-crm::lang.import')) }} </h4>
                     <form wire:submit.prevent="import">
                         @include('laravel-crm::export-import.partials.fields')
                         @include('laravel-crm::partials.form.file',[
