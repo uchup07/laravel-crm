@@ -19,11 +19,16 @@ class LiveExportImport extends Component
     public $batchId;
     public $exporting = false;
     public $exportFinished = false;
+
+    public $importing = false;
+    public $importFinished = false;
     public $model;
     public $owner;
     public $exportFilename;
 
     public $file;
+
+    public $importFilePath;
 
     public function mount()
     {
@@ -80,6 +85,49 @@ class LiveExportImport extends Component
         $this->exportFinished = false;
         $this->model = '';
         $this->owner = '';
+    }
+
+    public function import()
+    {
+        $this->validate([
+            'model' => 'required',
+            'owner' => 'required|exists:users,id',
+            'file' => 'required|mimes:xls,xlsx,csv'
+        ]);
+
+        $this->importing = true;
+
+        $this->importFilePath = $this->importFile->store('imports');
+
+        $batch = Bus::batch([
+            new ImportJob($this->model, $this->owner, $this->importFilePath),
+        ])->dispatch();
+
+        $this->batchId = $batch->id;
+    }
+
+    public function getImportBatchProperty()
+    {
+        if (!$this->batchId) {
+            return null;
+        }
+
+        return Bus::findBatch($this->batchId);
+    }
+
+    public function updateImportProgress()
+    {
+        $this->importFinished = $this->importBatch->finished();
+
+        if ($this->importFinished) {
+            Storage::delete($this->importFilePath);
+            $this->importing = false;
+        }
+    }
+
+    public function viewImport()
+    {
+
     }
 
     public function render()
