@@ -4,7 +4,7 @@ namespace VentureDrake\LaravelCrm\Jobs;
 
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
-use App\Imports\TransactionsImport;
+use VentureDrake\LaravelCrm\Imports\TransactionsImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -16,6 +16,10 @@ class ImportJob implements ShouldQueue
 {
     use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $model;
+
+    public $owner;
+
     public $uploadFile;
 
     /**
@@ -23,8 +27,10 @@ class ImportJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($uploadFile)
+    public function __construct($model, $owner, $uploadFile)
     {
+        $this->model = $model;
+        $this->owner = $owner;
         $this->uploadFile = $uploadFile;
     }
 
@@ -35,6 +41,6 @@ class ImportJob implements ShouldQueue
      */
     public function handle()
     {
-        Excel::import(new TransactionsImport, $this->uploadFile);
+        Excel::import(new TransactionsImport($this->model, $this->owner), $this->uploadFile);
     }
 }
