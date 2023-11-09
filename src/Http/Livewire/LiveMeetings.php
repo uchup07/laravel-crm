@@ -26,11 +26,14 @@ class LiveMeetings extends Component
     public $showForm = false;
     
     public $people;
+    
+    public $contacts;
 
     protected $listeners = [
         'addMeetingActivity' => 'addMeetingOn',
         'meetingDeleted' => 'getMeetings',
         'meetingCompleted' => 'getMeetings',
+        '$refresh'
      ];
 
     public function boot(SettingService $settingService)
@@ -43,6 +46,8 @@ class LiveMeetings extends Component
         $this->model = $model;
 
         $this->getPeople();
+        
+        $this->getContacts();
 
         $this->getMeetings();
 
@@ -127,6 +132,15 @@ class LiveMeetings extends Component
             $this->people = $this->model->people()->get();
         } else {
             $this->people = null;
+        }
+    }
+
+    private function getContacts()
+    {
+        $contacts = $this->model->contacts()->where('entityable_type','like','%Person')->get();
+
+        foreach($contacts as $contact) {
+            $this->contacts[$contact->entityable->id] = $contact->entityable->name;
         }
     }
 

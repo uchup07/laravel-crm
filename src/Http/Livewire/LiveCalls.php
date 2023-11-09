@@ -27,6 +27,8 @@ class LiveCalls extends Component
 
     public $people;
 
+    public $contacts;
+
     protected $listeners = [
         'addCallActivity' => 'addCallOn',
         'callDeleted' => 'getCalls',
@@ -43,6 +45,9 @@ class LiveCalls extends Component
         $this->model = $model;
 
         $this->getPeople();
+
+        $this->getContacts();
+
         $this->getCalls();
 
         if (! $this->calls || ($this->calls && $this->calls->count() < 1)) {
@@ -126,6 +131,15 @@ class LiveCalls extends Component
             $this->people = $this->model->people()->get();
         } else {
             $this->people = null;
+        }
+    }
+
+    private function getContacts()
+    {
+        $contacts = $this->model->contacts()->where('entityable_type','like','%Person')->get();
+
+        foreach($contacts as $contact) {
+            $this->contacts[$contact->entityable->id] = $contact->entityable->name;
         }
     }
 
