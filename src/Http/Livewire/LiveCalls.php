@@ -136,10 +136,12 @@ class LiveCalls extends Component
 
     private function getContacts()
     {
-        $contacts = $this->model->contacts()->where('entityable_type','like','%Person')->get();
+        if($this->model->contacts) {
+            $contacts = $this->model->contacts()->where('entityable_type','like','%Person')->get();
 
-        foreach($contacts as $contact) {
-            $this->contacts[$contact->entityable->id] = $contact->entityable->name;
+            foreach($contacts as $contact) {
+                $this->contacts[$contact->entityable->id] = $contact->entityable->name;
+            }
         }
     }
 
