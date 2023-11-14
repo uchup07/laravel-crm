@@ -33,6 +33,7 @@ class LiveMeetings extends Component
         'addMeetingActivity' => 'addMeetingOn',
         'meetingDeleted' => 'getMeetings',
         'meetingCompleted' => 'getMeetings',
+        'refreshContacts' => 'getContacts',
         '$refresh'
      ];
 

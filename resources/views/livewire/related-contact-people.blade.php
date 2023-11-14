@@ -30,10 +30,28 @@
                                 <input wire:model.debounce.10000ms="person_name" type="text" class="form-control" name="person_name" autocomplete="{{ \Illuminate\Support\Str::random() }}">
                                 @error('person_name') <span class="text-danger invalid-feedback-custom">{{ $message }}</span>@enderror
                             </div>
+                            <div class="form-group @error('person_email') text-danger @enderror">
+                                <label>{{ ucfirst(__('laravel-crm::lang.email')) }}</label>
+                                <input wire:model="person_email" type="text" class="form-control" name="person_email">
+                                @error('person_email') <span class="text-danger invalid-feedback-custom">{{ $message }}</span>@enderror
+                            </div>
+                            <div class="form-group @error('person_phone') text-danger @enderror">
+                                <label>{{ ucfirst(__('laravel-crm::lang.phone')) }}</label>
+                                <input wire:model="person_phone" type="text" class="form-control" name="person_phone">
+                                @error('person_phone') <span class="text-danger invalid-feedback-custom">{{ $message }}</span>@enderror
+                            </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">{{ ucfirst(__('laravel-crm::lang.cancel')) }}</button>
-                            <button wire:click.prevent="link()" type="button" class="btn btn-primary">{{ ucwords(__('laravel-crm::lang.link_person')) }}</button>
+                            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" wire:loading.attr="disabled">{{ ucfirst(__('laravel-crm::lang.cancel')) }}</button>
+                            <button wire:click.prevent="link()" type="button" class="btn btn-primary" wire:loading.attr="disabled">
+                                <div wire:loading.remove>
+                                    {{ ucwords(__('laravel-crm::lang.link_person')) }}
+                                </div>
+                                <div wire:loading>
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                    Loading...
+                                </div>
+                            </button>
                         </div>
                     </form>
                 </div>
