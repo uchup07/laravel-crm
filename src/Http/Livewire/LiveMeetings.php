@@ -136,7 +136,7 @@ class LiveMeetings extends Component
         }
     }
 
-    private function getContacts()
+    public function getContacts()
     {
         if($this->model->contacts) {
             $contacts = $this->model->contacts()->where('entityable_type','like','%Person')->get();
