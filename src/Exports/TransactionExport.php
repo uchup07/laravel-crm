@@ -8,6 +8,7 @@ use VentureDrake\LaravelCrm\Exports\Sheets\LabelsSheet;
 use VentureDrake\LaravelCrm\Exports\Sheets\PeopleSheet;
 use VentureDrake\LaravelCrm\Exports\Sheets\LeadSheet;
 use VentureDrake\LaravelCrm\Exports\Sheets\DealSheet;
+use VentureDrake\LaravelCrm\Exports\Sheets\OrganisationSheet;
 use VentureDrake\LaravelCrm\Exports\Sheets\OrganisationsSheet;
 use VentureDrake\LaravelCrm\Exports\Sheets\OrganisationTypesSheet;
 use VentureDrake\LaravelCrm\Exports\Sheets\UsersSheet;
@@ -46,9 +47,16 @@ class TransactionExport implements WithMultipleSheets
                 ];
                 break;
                 
-            case 'VenturaDrake\LaravelCrm\Models\People':
+            case 'VentureDrake\LaravelCrm\Models\Person':
                 $sheets = [
                     new PeopleSheet($this->owner),
+                    new LabelsSheet()
+                ];
+                break;
+
+            case 'VentureDrake\LaravelCrm\Models\Organisation':
+                $sheets = [
+                    new OrganisationSheet($this->owner),
                     new LabelsSheet()
                 ];
                 break;

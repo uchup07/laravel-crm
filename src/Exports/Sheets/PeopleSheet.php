@@ -25,7 +25,7 @@ class PeopleSheet implements FromQuery, WithTitle, WithHeadings, WithMapping
      */
     public function query()
     {
-        return Person::select(['id', 'first_name', 'last_name','middle_name','title','birthday','gender'])->where('user_owner_id', $this->owner)->newQuery()->with(['labels','organisation','contacts']);
+        return Person::select(['id', 'first_name', 'last_name','middle_name','title','birthday','gender'])->where('user_owner_id', $this->owner)->newQuery()->with(['labels','contacts']);
     }
 
     /**
@@ -55,7 +55,7 @@ class PeopleSheet implements FromQuery, WithTitle, WithHeadings, WithMapping
         return [
             $person->id,
             $person->name,
-            $person->birthday->format('Y-m-d'),
+            ($person->birthday) ? $person->birthday->format('Y-m-d') : null,
             $person->gender,
             $this->organisations($person),
             $this->labels($person),
@@ -86,7 +86,7 @@ class PeopleSheet implements FromQuery, WithTitle, WithHeadings, WithMapping
         if($organisations) {
             foreach($organisations as $organisation)
             {
-                $arr[] = $organisation->entityable->name;
+                $arr[] = $organisation->entityable->name ?? null;
             }
         }
 
@@ -95,7 +95,7 @@ class PeopleSheet implements FromQuery, WithTitle, WithHeadings, WithMapping
 
     private function labels($person)
     {
-        $arr = $person->labels->pluck('name');
+        $arr = $person->labels->pluck('name')->all();
 
         return implode(', ', $arr);
     }
