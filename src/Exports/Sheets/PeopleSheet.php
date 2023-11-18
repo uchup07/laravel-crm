@@ -10,7 +10,7 @@ use VentureDrake\LaravelCrm\Models\Person;
 use VentureDrake\LaravelCrm\Models\Contact;
 
 
-class DealSheet implements FromQuery, WithTitle, WithHeadings, WithMapping
+class PeopleSheet implements FromQuery, WithTitle, WithHeadings, WithMapping
 {
 
     public $owner;

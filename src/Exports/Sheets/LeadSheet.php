@@ -44,6 +44,7 @@ class LeadSheet implements FromQuery, WithTitle, WithHeadings, WithMapping
             'Value',
             'Organisation',
             'Contact Person',
+            'Label',
             'Created'
         ];
     }
