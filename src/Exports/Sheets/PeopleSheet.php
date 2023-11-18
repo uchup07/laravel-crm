@@ -55,7 +55,7 @@ class PeopleSheet implements FromQuery, WithTitle, WithHeadings, WithMapping
         return [
             $person->id,
             $person->name,
-            ($person->birthday) ? $person->birthday->format('Y-m-d') : null,
+            $person->birthday ?? null,
             $person->gender,
             $this->organisations($person),
             $this->labels($person),
