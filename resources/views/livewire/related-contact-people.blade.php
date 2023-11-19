@@ -3,7 +3,20 @@
         <h6 class="text-uppercase mt-4 section-h6-title"><span>{{ ucfirst(__('laravel-crm::lang.people')) }} ({{ $contacts->count() }})</span>@can('create crm contacts')<span class="float-right"><a href="#" data-toggle="modal" data-target="#linkPersonModal" class="btn btn-outline-secondary btn-sm"><span class="fa fa-plus" aria-hidden="true"></span></a></span>@endcan</h6>
         <hr />
         @foreach($contacts as $contact)
-            <p><span class="fa fa-user mr-1" aria-hidden="true"></span> <a href="{{ route('laravel-crm.people.show',$contact->entityable) }}">{{ $contact->entityable->name }}</a> <span class="float-right"><button wire:click.prevent="remove({{ $contact->entityable->id }})" type="button" class="btn btn-outline-danger btn-sm"><span class="fa fa-remove"></span></button></span></p>
+            <p>
+                <span class="fa fa-user mr-1" aria-hidden="true"></span> 
+                <a href="{{ route('laravel-crm.people.show',$contact->entityable) }}">{{ $contact->entityable->name }}</a> 
+                <span class="float-right">
+                    <button wire:click.prevent="remove({{ $contact->entityable->id }})" type="button" class="btn btn-outline-danger btn-sm">
+                        <div wire:loading.remove wire.target="remove">
+                            <span class="fa fa-remove"></span>
+                        </div>
+                        <div wire:loading wire.target="remove">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        </div>
+                    </button>
+                </span>
+            </p>
         @endforeach
 
         <!-- Modal -->
@@ -42,12 +55,12 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" wire:loading.attr="disabled">{{ ucfirst(__('laravel-crm::lang.cancel')) }}</button>
+                            <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" wire:loading.attr="disabled" wire.target="link">{{ ucfirst(__('laravel-crm::lang.cancel')) }}</button>
                             <button wire:click.prevent="link()" type="button" class="btn btn-primary" wire:loading.attr="disabled">
-                                <div wire:loading.remove>
+                                <div wire:loading.remove wire.target="link">
                                     {{ ucwords(__('laravel-crm::lang.link_person')) }}
                                 </div>
-                                <div wire:loading>
+                                <div wire:loading wire.target="link">
                                     <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                     Loading...
                                 </div>
