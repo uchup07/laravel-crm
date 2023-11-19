@@ -58,6 +58,7 @@ class LeadSheet implements FromQuery, WithTitle, WithHeadings, WithMapping, Shou
             (money($lead->amount, $lead->currency)),
             (($lead->organisation) ? $lead->organisation->name : ''),
             (($lead->person) ? $lead->person->name : ''),
+            $this->labels($lead),
             $lead->created_at->format('d-m-Y'),
         ];
     }
@@ -70,7 +71,15 @@ class LeadSheet implements FromQuery, WithTitle, WithHeadings, WithMapping, Shou
             'amount',
             'organisation',
             'person',
+            'labels',
             'created_at'
         ];
+    }
+
+    private function labels($lead)
+    {
+        $arr = $lead->labels->pluck('name')->all();
+
+        return implode(', ', $arr);
     }
 }

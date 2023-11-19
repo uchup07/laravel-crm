@@ -42,6 +42,7 @@ class DealSheet implements FromQuery, WithTitle, WithHeadings, WithMapping, Shou
         return [
             '#',
             'Title',
+            'Label',
             'Value',
             'Organisation',
             'Contact Person',
@@ -56,6 +57,7 @@ class DealSheet implements FromQuery, WithTitle, WithHeadings, WithMapping, Shou
         return [
             $deal->id,
             $deal->title,
+            $this->labels($deal),
             (money($deal->amount, $deal->currency)),
             (($deal->organisation) ? $deal->organisation->name : ''),
             (($deal->person) ? $deal->person->name : ''),
@@ -70,6 +72,7 @@ class DealSheet implements FromQuery, WithTitle, WithHeadings, WithMapping, Shou
         return [
             'id',
             'title',
+            'labels',
             'amount',
             'organisation',
             'person',
@@ -77,5 +80,12 @@ class DealSheet implements FromQuery, WithTitle, WithHeadings, WithMapping, Shou
             'closed_at',
             'created_at'
         ];
+    }
+
+    private function labels($deal)
+    {
+        $arr = $deal->labels->pluck('name')->all();
+
+        return implode(', ', $arr);
     }
 }
