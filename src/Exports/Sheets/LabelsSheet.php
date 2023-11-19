@@ -3,12 +3,13 @@
 namespace VentureDrake\LaravelCrm\Exports\Sheets;
 
 use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use VentureDrake\LaravelCrm\Models\Label;
 
 
-class LabelsSheet implements FromQuery, WithTitle, WithHeadings
+class LabelsSheet implements FromQuery, WithTitle, WithHeadings, ShouldAutoSize
 {
     /**
      * @return Builder

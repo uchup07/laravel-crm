@@ -3,6 +3,7 @@
 namespace VentureDrake\LaravelCrm\Exports\Sheets;
 
 use Maatwebsite\Excel\Concerns\FromQuery;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -10,7 +11,7 @@ use VentureDrake\LaravelCrm\Models\Person;
 use VentureDrake\LaravelCrm\Models\Contact;
 
 
-class PeopleSheet implements FromQuery, WithTitle, WithHeadings, WithMapping
+class PeopleSheet implements FromQuery, WithTitle, WithHeadings, WithMapping, ShouldAutoSize
 {
 
     public $owner;
