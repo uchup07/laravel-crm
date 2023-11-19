@@ -172,13 +172,35 @@ function timeFormats()
 
 function fieldModels()
 {
-    return [
-        'VentureDrake\LaravelCrm\Models\Lead' => ucfirst(__('laravel-crm::lang.leads')),
-        'VentureDrake\LaravelCrm\Models\Deal' => ucfirst(__('laravel-crm::lang.deals')),
-        'VentureDrake\LaravelCrm\Models\Quote' => ucfirst(__('laravel-crm::lang.quotes')),
-        'VentureDrake\LaravelCrm\Models\Order' => ucfirst(__('laravel-crm::lang.orders')),
-        'VentureDrake\LaravelCrm\Models\Person' => ucfirst(__('laravel-crm::lang.people')),
-        'VentureDrake\LaravelCrm\Models\Organisation' => ucfirst(__('laravel-crm::lang.organizations')),
-        'VentureDrake\LaravelCrm\Models\Product' => ucfirst(__('laravel-crm::lang.products')),
-    ];
+    $arr = [];
+
+    if(auth()->user()->can('view crm leads')) {
+        $arr['VentureDrake\LaravelCrm\Models\Lead'] =  ucfirst(__('laravel-crm::lang.leads'));
+    }
+
+    if(auth()->user()->can('view crm deals')) {
+        $arr['VentureDrake\LaravelCrm\Models\Deal'] = ucfirst(__('laravel-crm::lang.deals'));
+    }
+
+    if(auth()->user()->can('view crm quotes')) {
+        $arr['VentureDrake\LaravelCrm\Models\Quote'] = ucfirst(__('laravel-crm::lang.quotes'));
+    }
+
+    if(auth()->user()->can('view crm orders')) {
+        $arr['VentureDrake\LaravelCrm\Models\Order'] = ucfirst(__('laravel-crm::lang.orders'));
+    }
+
+    if(auth()->user()->can('view crm people')) {
+        $arr['VentureDrake\LaravelCrm\Models\Person'] = ucfirst(__('laravel-crm::lang.people'));
+    }
+
+    if(auth()->user()->can('view crm organisations')) {
+        $arr['VentureDrake\LaravelCrm\Models\Organisation'] = ucfirst(__('laravel-crm::lang.organizations'));
+    }
+
+    if(auth()->user()->can('view crm products')) {
+        $arr['VentureDrake\LaravelCrm\Models\Product'] = ucfirst(__('laravel-crm::lang.products'));
+    }
+
+    return $arr;
 }
