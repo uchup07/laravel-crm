@@ -453,6 +453,14 @@ return [
 	'closed_at' => 'closed at',
     'reason' => 'reason',
     'reports' => 'reports',
-	'delivery_prefix' => 'delivery prefix',
-    'vat_number' => 'VAT Number'
+    'delivery_prefix' => 'delivery prefix',
+    'vat_number' => 'VAT Number',
+    'total_orders' => 'total orders',
+    'total_deliveries' => 'total deliveries',
+    'default_tax_rate' => 'default tax rate',
+    'total_money_raised' => 'total money raised',
+    'number_of_employees' => 'number of employees',
+    'industry' => 'industry',
+    'linkedin' => 'LinkedIn',
+    'linkedin_company_page' => 'LinkedIn company page',
 ];

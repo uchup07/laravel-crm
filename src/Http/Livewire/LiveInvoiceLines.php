@@ -4,6 +4,7 @@ namespace VentureDrake\LaravelCrm\Http\Livewire;
 
 use Livewire\Component;
 use VentureDrake\LaravelCrm\Models\Product;
+use VentureDrake\LaravelCrm\Models\TaxRate;
 use VentureDrake\LaravelCrm\Services\SettingService;
 use VentureDrake\LaravelCrm\Traits\NotifyToast;
 
@@ -31,6 +32,8 @@ class LiveInvoiceLines extends Component
     public $quantity;
 
     public $amount;
+
+    public $comments;
 
     public $inputs = [];
 
@@ -77,6 +80,7 @@ class LiveInvoiceLines extends Component
 
                 $this->price[$this->i] = $old['price'] ?? null;
                 $this->amount[$this->i] = $old['amount'] ?? null;
+                $this->comments[$this->i] = $old['comments'] ?? null;
             }
         } elseif ($this->invoiceLines && $this->invoiceLines->count() > 0) {
             foreach ($this->invoiceLines as $invoiceLine) {
@@ -101,6 +105,7 @@ class LiveInvoiceLines extends Component
 
                 $this->price[$this->i] = $invoiceLine->price / 100;
                 $this->amount[$this->i] = $invoiceLine->amount / 100;
+                $this->comments[$this->i] = $invoiceLine->comments;
             }
         } elseif (! $this->fromOrder) {
             $this->add($this->i);
@@ -144,6 +149,8 @@ class LiveInvoiceLines extends Component
             if (isset($this->product_id[$i])) {
                 if($product = \VentureDrake\LaravelCrm\Models\Product::find($this->product_id[$i])) {
                     $taxRate = $product->taxRate->rate ?? $product->tax_rate ?? 0;
+                } elseif($taxRate = TaxRate::where('default', 1)->first()) {
+                    $taxRate = $taxRate->rate;
                 } elseif($taxRate = $this->settingService->get('tax_rate')) {
                     $taxRate = $taxRate->value;
                 } else {

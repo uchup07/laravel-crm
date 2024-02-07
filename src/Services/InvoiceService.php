@@ -8,6 +8,7 @@ use VentureDrake\LaravelCrm\Models\Invoice;
 use VentureDrake\LaravelCrm\Models\InvoiceLine;
 use VentureDrake\LaravelCrm\Models\Product;
 use VentureDrake\LaravelCrm\Models\Setting;
+use VentureDrake\LaravelCrm\Models\TaxRate;
 use VentureDrake\LaravelCrm\Models\XeroInvoice;
 use VentureDrake\LaravelCrm\Repositories\InvoiceRepository;
 
@@ -59,6 +60,8 @@ class InvoiceService
                             $taxRate = $product->taxRate->rate;
                         } elseif($product->tax_rate) {
                             $taxRate = $product->tax_rate;
+                        } elseif($taxRate = TaxRate::where('default', 1)->first()) {
+                            $taxRate = $taxRate->rate;
                         } else {
                             $taxRate = Setting::where('name', 'tax_rate')->first()->value ?? 0;
                         }
@@ -73,6 +76,7 @@ class InvoiceService
                         'tax_amount' => $invoiceLine['amount'] * ($taxRate / 100),
                         'currency' => $request->currency,
                         'order_product_id' => $invoiceLine['order_product_id'] ?? null,
+                        'comments' => $invoiceLine['comments'],
                     ]);
                 }
             }
@@ -159,6 +163,8 @@ class InvoiceService
                                     $taxRate = $product->taxRate->rate;
                                 } elseif($product->tax_rate) {
                                     $taxRate = $product->tax_rate;
+                                } elseif($taxRate = TaxRate::where('default', 1)->first()) {
+                                    $taxRate = $taxRate->rate;
                                 } else {
                                     $taxRate = Setting::where('name', 'tax_rate')->first()->value ?? 0;
                                 }
@@ -172,6 +178,7 @@ class InvoiceService
                                 'tax_rate' => $taxRate ?? 0,
                                 'tax_amount' => $line['amount'] * ($taxRate / 100),
                                 'currency' => $request->currency,
+                                'comments' => $line['comments'],
                             ]);
 
                             $invoiceLineIds[] = $invoiceLine->id;
@@ -189,6 +196,8 @@ class InvoiceService
                                 $taxRate = $product->taxRate->rate;
                             } elseif($product->tax_rate) {
                                 $taxRate = $product->tax_rate;
+                            } elseif($taxRate = TaxRate::where('default', 1)->first()) {
+                                $taxRate = $taxRate->rate;
                             } else {
                                 $taxRate = Setting::where('name', 'tax_rate')->first()->value ?? 0;
                             }
@@ -202,6 +211,7 @@ class InvoiceService
                             'tax_rate' => $taxRate ?? 0,
                             'tax_amount' => $line['amount'] * ($taxRate / 100),
                             'currency' => $request->currency,
+                            'comments' => $line['comments'],
                         ]);
 
                         $invoiceLineIds[] = $invoiceLine->id;
@@ -221,9 +231,12 @@ class InvoiceService
 
     protected function addProduct($product, $request)
     {
+        $taxRate = TaxRate::where('default', 1)->first();
+
         $newProduct = Product::create([
             'name' => $product['product_id'],
-            'tax_rate' => Setting::where('name', 'tax_rate')->first()->value ?? null,
+            'tax_rate_id' => $taxRate->id ?? null,
+            'tax_rate' => $taxRate->id ?? Setting::where('name', 'tax_rate')->first()->value ?? null,
             'user_owner_id' => $request->user_owner_id ?? auth()->user()->id,
         ]);
 
