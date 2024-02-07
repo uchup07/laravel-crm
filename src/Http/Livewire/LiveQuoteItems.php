@@ -4,6 +4,7 @@ namespace VentureDrake\LaravelCrm\Http\Livewire;
 
 use Livewire\Component;
 use VentureDrake\LaravelCrm\Models\Product;
+use VentureDrake\LaravelCrm\Models\TaxRate;
 use VentureDrake\LaravelCrm\Services\SettingService;
 use VentureDrake\LaravelCrm\Traits\NotifyToast;
 
@@ -121,7 +122,9 @@ class LiveQuoteItems extends Component
         for ($i = 1; $i <= $this->i; $i++) {
             if (isset($this->product_id[$i])) {
                 if($product = \VentureDrake\LaravelCrm\Models\Product::find($this->product_id[$i])) {
-                    $taxRate = $product->tax_rate ?? $product->taxRate->rate ?? 0;
+                    $taxRate = $product->taxRate->rate ?? $product->tax_rate ?? 0;
+                } elseif($taxRate = TaxRate::where('default', 1)->first()) {
+                    $taxRate = $taxRate->rate;
                 } elseif($taxRate = $this->settingService->get('tax_rate')) {
                     $taxRate = $taxRate->value;
                 } else {

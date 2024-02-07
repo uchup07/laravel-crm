@@ -23,9 +23,10 @@
             <thead>
             <tr>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.created')) }}</th>
-                <th scope="col">{{ ucwords(__('laravel-crm::lang.reference')) }}</th>
+                <th scope="col">{{ ucwords(__('laravel-crm::lang.number')) }}</th>
                 @hasordersenabled
-                    <th scope="col">{{ ucwords(__('laravel-crm::lang.order')) }}</th>
+                <th scope="col">{{ ucwords(__('laravel-crm::lang.reference')) }}</th>
+                <th scope="col">{{ ucwords(__('laravel-crm::lang.order')) }}</th>
                 @endhasordersenabled
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.customer')) }}</th>
                 <th scope="col">{{ ucwords(__('laravel-crm::lang.shipping_address')) }}</th>
@@ -39,12 +40,13 @@
             @foreach($deliveries as $delivery)
                 <tr class="has-link" data-url="{{ url(route('laravel-crm.deliveries.show', $delivery)) }}">
                     <td>{{ $delivery->created_at->diffForHumans() }}</td>
+                    <td>{{ $delivery->delivery_id }}</td>
+                    @hasordersenabled
                     <td>
                         @if($delivery->order)
-                            <a href="{{ route('laravel-crm.orders.show', $delivery->order) }}">{{ $delivery->order->reference }}</a>
-                        @endif    
+                            {{ $delivery->order->reference }}
+                        @endif
                     </td>
-                    @hasordersenabled
                     <td>
                         @if($delivery->order)
                             <a href="{{ route('laravel-crm.orders.show', $delivery->order) }}">{{ $delivery->order->order_id }}</a>
@@ -52,8 +54,21 @@
                     </td>
                     @endhasordersenabled
                     <td>
-                        {{ $delivery->order->organisation->name ?? null }}<br />
-                        <small>{{ $delivery->order->person->name ?? null }}</small>
+                        @if($delivery->order)
+                            @if($delivery->order->client)
+                                {{ $delivery->order->client->name }}
+                            @endif
+                            @if($delivery->order->organisation)
+                                @if($delivery->order->client)<br /><small>@endif
+                                    {{ $delivery->order->organisation->name }}
+                                    @if($delivery->order->client)</small>@endif
+                            @endif
+                            @if($delivery->order->organisation && $delivery->order->person)
+                                <br /><small>{{ $delivery->order->person->name }}</small>
+                            @elseif($delivery->order->person)
+                                {{ $delivery->order->person->name }}
+                            @endif
+                        @endif
                     </td>
                     <td>
                         @if($address = $delivery->getShippingAddress())

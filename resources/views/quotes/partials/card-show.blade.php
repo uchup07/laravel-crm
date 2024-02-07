@@ -35,7 +35,9 @@
                 @can('view crm quotes')
                     <a class="btn btn-outline-secondary btn-sm" href="{{ route('laravel-crm.quotes.download', $quote) }}">{{ ucfirst(__('laravel-crm::lang.download')) }}</a>
                 @endcan    
-                @include('laravel-crm::partials.navs.activities') |
+                @include('laravel-crm::partials.navs.activities', [
+                    'orders' => $orders
+                ]) |
                 @can('edit crm quotes')
                     @if(! $quote->accepted_at)
                         <a href="{{ route('laravel-crm.quotes.edit',$quote) }}" class="btn btn-outline-secondary btn-sm"><span class="fa fa-edit" aria-hidden="true"></span></a>
@@ -60,7 +62,7 @@
                 <h6 class="text-uppercase">{{ ucfirst(__('laravel-crm::lang.details')) }}</h6>
                 <hr />
                 <dl class="row">
-                    <dt class="col-sm-3 text-right">{{ ucfirst(__('laravel-crm::langs.number')) }}</dt>
+                    <dt class="col-sm-3 text-right">{{ ucfirst(__('laravel-crm::lang.number')) }}</dt>
                     <dd class="col-sm-9">{{ $quote->quote_id }}</dd>
                     <dt class="col-sm-3 text-right">Reference</dt>
                     <dd class="col-sm-9">{{ $quote->reference }}</dd>
@@ -101,6 +103,7 @@
                         <th scope="col">{{ ucfirst(__('laravel-crm::lang.item')) }}</th>
                         <th scope="col">{{ ucfirst(__('laravel-crm::lang.price')) }}</th>
                         <th scope="col">{{ ucfirst(__('laravel-crm::lang.quantity')) }}</th>
+                        <th scope="col">{{ $taxName }}</th>
                         <th scope="col">{{ ucfirst(__('laravel-crm::lang.amount')) }}</th>
                     </tr>
                     </thead>
@@ -115,6 +118,7 @@
                             </td>
                             <td>{{ money($quoteProduct->price ?? null, $quoteProduct->currency) }}</td>
                             <td>{{ $quoteProduct->quantity }}</td>
+                            <td>{{ money($quoteProduct->tax_amount ?? null, $quoteProduct->currency) }}</td>
                             <td>
                                 @if(! \VentureDrake\LaravelCrm\Http\Helpers\CheckAmount\lineAmount($quoteProduct))
                                     <span data-toggle="tooltip" data-placement="top" title="Error with amount" class="text-danger">
@@ -127,7 +131,7 @@
                         </tr>
                         @if($quoteProduct->comments)
                         <tr>
-                            <td colspan="4" class="border-0 pt-0">
+                            <td colspan="5" class="border-0 pt-0">
                                 <strong>{{ ucfirst(__('laravel-crm::lang.comments')) }}</strong><br />
                                 {{ $quoteProduct->comments }}
                             </td>
@@ -137,6 +141,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
+                            <td></td>
                             <td></td>
                             <td></td>
                             <td><strong>{{ ucfirst(__('laravel-crm::lang.sub_total')) }}</strong></td>
@@ -153,10 +158,12 @@
                         <tr>
                             <td></td>
                             <td></td>
+                            <td></td>
                             <td><strong>{{ ucfirst(__('laravel-crm::lang.discount')) }}</strong></td>
                             <td>{{ money($quote->discount, $quote->currency) }}</td>
                         </tr>
                         <tr>
+                            <td></td>
                             <td></td>
                             <td></td>
                             <td><strong>{{ ucfirst(__('laravel-crm::lang.tax')) }}</strong></td>
@@ -165,10 +172,12 @@
                         <tr>
                             <td></td>
                             <td></td>
+                            <td></td>
                             <td><strong>{{ ucfirst(__('laravel-crm::lang.adjustment')) }}</strong></td>
                             <td>{{ money($quote->adjustments, $quote->currency) }}</td>
                         </tr>
                         <tr>
+                            <td></td>
                             <td></td>
                             <td></td>
                             <td><strong>{{ ucfirst(__('laravel-crm::lang.total')) }}</strong></td>

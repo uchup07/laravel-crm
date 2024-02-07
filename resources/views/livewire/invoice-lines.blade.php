@@ -98,12 +98,12 @@
             $(document).ready(function () {
                 window.addEventListener('addedItem', event => {
                     if($('meta[name=dynamic_products]').length > 0){
-                        var tags = $('meta[name=dynamic_products]').attr('content');
+                        var tags = JSON.parse($('meta[name=dynamic_products]').attr('content'));
                     }else{
-                        var tags = 'true';
+                        var tags = true;
                     }
                     
-                    $("tr[data-number='" + event.detail.id + "'] select[name^='invoiceLines']").select2({
+                    $("tr[data-number='" + event.detail.id + "'] td.bind-select2 select[name^='invoiceLines']").select2({
                         data: products,
                         tags: tags
                     }).select2('open')
@@ -114,7 +114,7 @@
                         });
                 });
 
-                $("select[name^='invoiceLines']").on('change', function (e) {
+                $("td.bind-select2 select[name^='invoiceLines']").on('change', function (e) {
                     @this.set('product_id.' + $(this).data('value'), $(this).val());
                     @this.set('name.' + $(this).data('value'), $(this).find("option:selected").text());
                     Livewire.emit('loadInvoiceLineDefault', $(this).data('value'))

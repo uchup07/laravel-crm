@@ -32,14 +32,14 @@
             <tr>
                 <td>
                     <strong>{{ ucfirst(__('laravel-crm::lang.to')) }}</strong><br />
-                    {{ $order->organisation->name ?? $order->organisation->person->name }}<br />
+                    {{ $order->organisation->name ?? $order->organisation->person->name ?? null }}<br />
                     @isset($order->person)
                         {{ $order->person->name }}<br />
                     @endisset
-                    @if($address->contact)
+                    @if($address && $address->contact)
                         <strong>{{ ucwords(__('laravel-crm::lang.contact')) }}: {{ $address->contact }}</strong><br >
                     @endif
-                    @if($address->phone)
+                    @if($address && $address->phone)
                         <strong>{{ ucwords(__('laravel-crm::lang.phone')) }}: {{ $address->phone }}</strong><br >
                     @endif
                     @if($address)
@@ -98,11 +98,11 @@
         </tr>
         </thead>
         <tbody>
-        @foreach($order->orderProducts()->whereNotNull('product_id')->get() as $orderProduct)
+        @foreach($delivery->deliveryProducts()->where('quantity', '>', 0)->get() as $deliveryProduct)
             <tr>
-                <td>{{ $orderProduct->product->name }}</td>
-                <td>{{ $orderProduct->quantity }}</td>
-                <td>{{ $orderProduct->comments }}</td>
+                <td>{{ $deliveryProduct->orderProduct->product->name }}</td>
+                <td>{{ $deliveryProduct->quantity }}</td>
+                <td>{{ $deliveryProduct->orderProduct->comments }}</td>
             </tr>
         @endforeach
         </tbody>

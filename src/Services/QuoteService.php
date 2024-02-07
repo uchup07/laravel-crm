@@ -6,6 +6,7 @@ use VentureDrake\LaravelCrm\Models\Product;
 use VentureDrake\LaravelCrm\Models\Quote;
 use VentureDrake\LaravelCrm\Models\QuoteProduct;
 use VentureDrake\LaravelCrm\Models\Setting;
+use VentureDrake\LaravelCrm\Models\TaxRate;
 use VentureDrake\LaravelCrm\Repositories\QuoteRepository;
 
 class QuoteService
@@ -58,11 +59,25 @@ class QuoteService
                 }
 
                 if (isset($product['product_id']) && $product['product_id'] > 0 && $product['quantity'] > 0) {
+                    if($productForTax = Product::find($product['product_id'])) {
+                        if($productForTax->taxRate) {
+                            $taxRate = $productForTax->taxRate->rate;
+                        } elseif($productForTax->tax_rate) {
+                            $taxRate = $productForTax->tax_rate;
+                        } elseif($taxRate = TaxRate::where('default', 1)->first()) {
+                            $taxRate = $taxRate->rate;
+                        } else {
+                            $taxRate = Setting::where('name', 'tax_rate')->first()->value ?? 0;
+                        }
+                    }
+
                     $quote->quoteProducts()->create([
                         'product_id' => $product['product_id'],
                         'quantity' => $product['quantity'],
                         'price' => $product['unit_price'],
                         'amount' => $product['amount'],
+                        'tax_rate' => $taxRate ?? 0,
+                        'tax_amount' => ($product['amount'] * 100) * ($taxRate / 100),
                         'currency' => $request->currency,
                         'comments' => $product['comments'],
                     ]);
@@ -101,19 +116,40 @@ class QuoteService
 
             foreach ($request->products as $product) {
                 if (isset($product['quote_product_id']) && $quoteProduct = QuoteProduct::find($product['quote_product_id'])) {
-                    $quoteProductIds[] = $product['quote_product_id'];
-
                     if (! isset($product['product_id']) || $product['quantity'] == 0) {
                         $quoteProduct->delete();
                     } else {
-                        $quoteProduct->update([
-                            'product_id' => $product['product_id'],
-                            'quantity' => $product['quantity'],
-                            'price' => $product['unit_price'],
-                            'amount' => $product['amount'],
-                            'currency' => $request->currency,
-                            'comments' => $product['comments'],
-                        ]);
+                        if(! Product::find($product['product_id'])) {
+                            $newProduct = $this->addProduct($product, $request);
+                            $product['product_id'] = $newProduct->id;
+                        }
+
+                        if (isset($product['product_id']) && $product['product_id'] > 0 && $product['quantity'] > 0) {
+                            if($productForTax = Product::find($product['product_id'])) {
+                                if($productForTax->taxRate) {
+                                    $taxRate = $productForTax->taxRate->rate;
+                                } elseif($productForTax->tax_rate) {
+                                    $taxRate = $productForTax->tax_rate;
+                                } elseif($taxRate = TaxRate::where('default', 1)->first()) {
+                                    $taxRate = $taxRate->rate;
+                                } else {
+                                    $taxRate = Setting::where('name', 'tax_rate')->first()->value ?? 0;
+                                }
+                            }
+
+                            $quoteProduct->update([
+                                'product_id' => $product['product_id'],
+                                'quantity' => $product['quantity'],
+                                'price' => $product['unit_price'],
+                                'amount' => $product['amount'],
+                                'tax_rate' => $taxRate ?? 0,
+                                'tax_amount' => ($product['amount'] * 100) * ($taxRate / 100),
+                                'currency' => $request->currency,
+                                'comments' => $product['comments'],
+                            ]);
+
+                            $quoteProductIds[] = $quoteProduct->id;
+                        }
                     }
                 } elseif(isset($product['product_id']) && $product['quantity'] > 0) {
                     if(! Product::find($product['product_id'])) {
@@ -122,11 +158,25 @@ class QuoteService
                     }
 
                     if (isset($product['product_id']) && $product['product_id'] > 0 && $product['quantity'] > 0) {
+                        if($productForTax = Product::find($product['product_id'])) {
+                            if($productForTax->taxRate) {
+                                $taxRate = $productForTax->taxRate->rate;
+                            } elseif($productForTax->tax_rate) {
+                                $taxRate = $productForTax->tax_rate;
+                            } elseif($taxRate = TaxRate::where('default', 1)->first()) {
+                                $taxRate = $taxRate->rate;
+                            } else {
+                                $taxRate = Setting::where('name', 'tax_rate')->first()->value ?? 0;
+                            }
+                        }
+
                         $quoteProduct = $quote->quoteProducts()->create([
                             'product_id' => $product['product_id'],
                             'quantity' => $product['quantity'],
                             'price' => $product['unit_price'],
                             'amount' => $product['amount'],
+                            'tax_rate' => $taxRate ?? 0,
+                            'tax_amount' => ($product['amount'] * 100) * ($taxRate / 100),
                             'currency' => $request->currency,
                             'comments' => $product['comments'],
                         ]);
@@ -148,9 +198,12 @@ class QuoteService
 
     protected function addProduct($product, $request)
     {
+        $taxRate = TaxRate::where('default', 1)->first();
+
         $newProduct = Product::create([
             'name' => $product['product_id'],
-            'tax_rate' => Setting::where('name', 'tax_rate')->first()->value ?? null,
+            'tax_rate_id' => $taxRate->id ?? null,
+            'tax_rate' => $taxRate->id ?? Setting::where('name', 'tax_rate')->first()->value ?? null,
             'user_owner_id' => $request->user_owner_id,
         ]);
 

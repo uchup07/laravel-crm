@@ -66,9 +66,9 @@ const appJquery = function() {
             });
 
             $('select[name="labels[]"]').select2({
-                tags: true,
+               /* tags: true,*/
                 tokenSeparators: [','],
-                createTag: function (params) {
+                /*createTag: function (params) {
                     var term = params.term;
 
                     if (term === '') {
@@ -78,16 +78,16 @@ const appJquery = function() {
                     return {
                         id: 'new_label_' + term,
                         text: term,
-                        newTag: true // add additional parameters
+                        newTag: true
                     }
-                }
+                }*/
             });
 
             if(typeof products !== 'undefined'){
                 if($('meta[name=dynamic_products]').length > 0){
-                    var tags = $('meta[name=dynamic_products]').attr('content');
+                    var tags = JSON.parse($('meta[name=dynamic_products]').attr('content'));
                 }else{
-                    var tags = 'true';
+                    var tags = true;
                 }
                 
                 $("td.bind-select2 select[name^='products']").select2({
@@ -95,7 +95,7 @@ const appJquery = function() {
                     tags: tags
                 });
 
-                $("select[name^='invoiceLines']").select2({
+                $("td.bind-select2 select[name^='invoiceLines']").select2({
                     data: products,
                     tags: tags
                 });

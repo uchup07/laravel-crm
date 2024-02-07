@@ -12,10 +12,11 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 use VentureDrake\LaravelCrm\Console\LaravelCrmAddressTypes;
+use VentureDrake\LaravelCrm\Console\LaravelCrmContactTypes;
 use VentureDrake\LaravelCrm\Console\LaravelCrmInstall;
 use VentureDrake\LaravelCrm\Console\LaravelCrmLabels;
 use VentureDrake\LaravelCrm\Console\LaravelCrmOrganisationTypes;
@@ -140,6 +141,7 @@ use VentureDrake\LaravelCrm\Observers\XeroInvoiceObserver;
 use VentureDrake\LaravelCrm\Observers\XeroItemObserver;
 use VentureDrake\LaravelCrm\Observers\XeroPersonObserver;
 use VentureDrake\LaravelCrm\Observers\XeroTokenObserver;
+use VentureDrake\LaravelCrm\View\Composers\SettingsComposer;
 
 class LaravelCrmServiceProvider extends ServiceProvider
 {
@@ -199,6 +201,7 @@ class LaravelCrmServiceProvider extends ServiceProvider
          * Optional methods to load your package assets
          */
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'laravel-crm');
+        // TBC: BS or TW mode, setting on config
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'laravel-crm');
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
@@ -409,6 +412,13 @@ class LaravelCrmServiceProvider extends ServiceProvider
                 __DIR__ . '/../database/migrations/add_quote_product_id_to_laravel_crm_order_products_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_quote_product_id_to_laravel_crm_order_products_table.php', 78),
                 __DIR__ . '/../database/migrations/add_quantity_to_laravel_crm_delivery_products_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_quantity_to_laravel_crm_delivery_products_table.php', 79),
                 __DIR__ . '/../database/migrations/create_laravel_crm_tax_rates_table.php.stub' => $this->getMigrationFileName($filesystem, 'create_laravel_crm_tax_rates_table.php', 80),
+                __DIR__ . '/../database/migrations/add_order_product_id_to_laravel_crm_invoice_lines_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_order_product_id_to_laravel_crm_invoice_lines_table.php', 81),
+                __DIR__ . '/../database/migrations/add_prefix_to_laravel_crm_deliveries_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_prefix_to_laravel_crm_deliveries_table.php', 82),
+                __DIR__ . '/../database/migrations/alter_value_on_laravel_crm_field_values_table.php.stub' => $this->getMigrationFileName($filesystem, 'alter_value_on_laravel_crm_field_values_table.php', 83),
+                __DIR__ . '/../database/migrations/add_comments_to_laravel_crm_invoice_lines_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_comments_to_laravel_crm_invoice_lines_table.php', 84),
+                __DIR__ . '/../database/migrations/add_default_to_laravel_crm_tax_rates_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_default_to_laravel_crm_tax_rates_table.php', 85),
+                __DIR__ . '/../database/migrations/create_laravel_crm_industries_table.php.stub' => $this->getMigrationFileName($filesystem, 'create_laravel_crm_industries_table.php', 86),
+                __DIR__ . '/../database/migrations/add_extra_fields_to_laravel_crm_organisations_table.php.stub' => $this->getMigrationFileName($filesystem, 'add_extra_fields_to_laravel_crm_organisations_table.php', 87),
             ], 'migrations');
 
             // Publishing the seeders
@@ -437,7 +447,8 @@ class LaravelCrmServiceProvider extends ServiceProvider
                 LaravelCrmAddressTypes::class,
                 LaravelCrmOrganisationTypes::class,
                 LaravelCrmXero::class,
-                LaravelCrmReminders::class
+                LaravelCrmReminders::class,
+                LaravelCrmContactTypes::class
             ]);
 
             // Register the model factories
@@ -508,30 +519,7 @@ class LaravelCrmServiceProvider extends ServiceProvider
             });
         }
 
-        // This was causing composer install post dump autoload to fail when no DB connected
-        if (! $this->app->runningInConsole()) {
-            if (Schema::hasTable(config('laravel-crm.db_table_prefix').'settings')) {
-                view()->share('dateFormat', Setting::where('name', 'date_format')->first()->value ?? 'Y/m/d');
-                view()->share('timeFormat', Setting::where('name', 'time_format')->first()->value ?? 'H:i');
-                view()->share('timezone', Setting::where('name', 'timezone')->first()->value ?? 'UTC');
-                view()->share('taxName', Setting::where('name', 'tax_name')->first()->value ?? 'Tax');
-
-                if($setting = Setting::where('name', 'dynamic_products')->first()) {
-                    if($setting->value == 1) {
-                        view()->share('dynamicProducts', 'true');
-                    } else {
-                        view()->share('dynamicProducts', 'false');
-                    }
-                } else {
-                    view()->share('dynamicProducts', 'true');
-                }
-            } else {
-                view()->share('dateFormat', 'Y/m/d');
-                view()->share('timeFormat', 'H:i');
-                view()->share('timezone', 'UTC');
-                view()->share('taxName', 'Tax');
-            }
-        }
+        View::composer('*', SettingsComposer::class);
 
         Blade::if('hasleadsenabled', function () {
             if(is_array(config('laravel-crm.modules')) && in_array('leads', config('laravel-crm.modules'))) {
